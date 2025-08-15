@@ -1,0 +1,793 @@
+filename,line_number,content
+underfloor_heating_diagnosis.md,1,# Underfloor Heating Fault Finding Guide
+underfloor_heating_diagnosis.md,2,
+underfloor_heating_diagnosis.md,3,"This comprehensive guide addresses diagnostic procedures for both water-based and electric underfloor heating systems, covering common faults, testing methods, and remedial actions."
+underfloor_heating_diagnosis.md,4,
+underfloor_heating_diagnosis.md,5,## PART 1: UNDERSTANDING UNDERFLOOR HEATING SYSTEMS
+underfloor_heating_diagnosis.md,6,
+underfloor_heating_diagnosis.md,7,### Types of Underfloor Heating Systems
+underfloor_heating_diagnosis.md,8,
+underfloor_heating_diagnosis.md,9,**1. Water-Based (Wet) Systems**
+underfloor_heating_diagnosis.md,10,- Heated water circulates through pipes beneath the floor
+underfloor_heating_diagnosis.md,11,- Connected to boiler or heat pump
+underfloor_heating_diagnosis.md,12,- Typically uses manifold to distribute water to zones
+underfloor_heating_diagnosis.md,13,"- Controlled via thermostats, actuators, and pumps"
+underfloor_heating_diagnosis.md,14,- Higher initial installation cost but lower running costs
+underfloor_heating_diagnosis.md,15,
+underfloor_heating_diagnosis.md,16,**2. Electric (Dry) Systems**
+underfloor_heating_diagnosis.md,17,- Electrical heating elements beneath the floor
+underfloor_heating_diagnosis.md,18,- Either heating mats or heating cables
+underfloor_heating_diagnosis.md,19,- Connected to mains electricity
+underfloor_heating_diagnosis.md,20,- Controlled via thermostats
+underfloor_heating_diagnosis.md,21,- Lower installation cost but higher running costs
+underfloor_heating_diagnosis.md,22,
+underfloor_heating_diagnosis.md,23,### Key Components in Water-Based Systems
+underfloor_heating_diagnosis.md,24,
+underfloor_heating_diagnosis.md,25,**1. Heat Source**
+underfloor_heating_diagnosis.md,26,"- Boiler (gas, oil, or electric)"
+underfloor_heating_diagnosis.md,27,- Heat pump (air or ground source)
+underfloor_heating_diagnosis.md,28,- Solar thermal system (usually supplementary)
+underfloor_heating_diagnosis.md,29,
+underfloor_heating_diagnosis.md,30,**2. Manifold Assembly**
+underfloor_heating_diagnosis.md,31,- Distribution manifold (flow and return headers)
+underfloor_heating_diagnosis.md,32,- Actuators for zone control
+underfloor_heating_diagnosis.md,33,- Flow gauges and balancing valves
+underfloor_heating_diagnosis.md,34,- Air vents
+underfloor_heating_diagnosis.md,35,- Temperature gauges
+underfloor_heating_diagnosis.md,36,- Isolation valves
+underfloor_heating_diagnosis.md,37,
+underfloor_heating_diagnosis.md,38,**3. Circulation System**
+underfloor_heating_diagnosis.md,39,- Circulation pump
+underfloor_heating_diagnosis.md,40,- Mixing valve (to regulate temperature)
+underfloor_heating_diagnosis.md,41,- Expansion vessel
+underfloor_heating_diagnosis.md,42,- Pressure relief valve
+underfloor_heating_diagnosis.md,43,
+underfloor_heating_diagnosis.md,44,**4. Control System**
+underfloor_heating_diagnosis.md,45,- Room thermostats (wired or wireless)
+underfloor_heating_diagnosis.md,46,- Wiring center/controller
+underfloor_heating_diagnosis.md,47,- Actuators
+underfloor_heating_diagnosis.md,48,- System programmer/timer
+underfloor_heating_diagnosis.md,49,
+underfloor_heating_diagnosis.md,50,**5. Pipework**
+underfloor_heating_diagnosis.md,51,"- PEX, PE-RT, or multi-layer composite"
+underfloor_heating_diagnosis.md,52,- Typically 16mm or 20mm diameter
+underfloor_heating_diagnosis.md,53,- Laid in loops under the floor
+underfloor_heating_diagnosis.md,54,
+underfloor_heating_diagnosis.md,55,### Key Components in Electric Systems
+underfloor_heating_diagnosis.md,56,
+underfloor_heating_diagnosis.md,57,**1. Heating Elements**
+underfloor_heating_diagnosis.md,58,- Heating mats (fixed size sheets)
+underfloor_heating_diagnosis.md,59,- Loose cables (flexible installation)
+underfloor_heating_diagnosis.md,60,- Heating films (usually for laminate/wood floors)
+underfloor_heating_diagnosis.md,61,
+underfloor_heating_diagnosis.md,62,**2. Control System**
+underfloor_heating_diagnosis.md,63,- Thermostats (often with floor sensors)
+underfloor_heating_diagnosis.md,64,- Relay boxes for multiple zones
+underfloor_heating_diagnosis.md,65,- Timer/programmer functions
+underfloor_heating_diagnosis.md,66,
+underfloor_heating_diagnosis.md,67,**3. Power Supply**
+underfloor_heating_diagnosis.md,68,- Dedicated electrical circuit
+underfloor_heating_diagnosis.md,69,- RCD protection
+underfloor_heating_diagnosis.md,70,- Junction boxes
+underfloor_heating_diagnosis.md,71,
+underfloor_heating_diagnosis.md,72,## PART 2: COMMON FAULTS IN WATER-BASED UNDERFLOOR HEATING
+underfloor_heating_diagnosis.md,73,
+underfloor_heating_diagnosis.md,74,### Single Zone Not Heating
+underfloor_heating_diagnosis.md,75,
+underfloor_heating_diagnosis.md,76,**Symptoms:**
+underfloor_heating_diagnosis.md,77,- One room or area remains cold
+underfloor_heating_diagnosis.md,78,- Other zones heating correctly
+underfloor_heating_diagnosis.md,79,- Inconsistent temperature in affected zone
+underfloor_heating_diagnosis.md,80,
+underfloor_heating_diagnosis.md,81,**Possible Causes:**
+underfloor_heating_diagnosis.md,82,
+underfloor_heating_diagnosis.md,83,1. **Actuator Issues**
+underfloor_heating_diagnosis.md,84,   - Stuck actuator pin
+underfloor_heating_diagnosis.md,85,   - Failed actuator
+underfloor_heating_diagnosis.md,86,   - Wiring fault to actuator
+underfloor_heating_diagnosis.md,87,
+underfloor_heating_diagnosis.md,88,2. **Air in System**
+underfloor_heating_diagnosis.md,89,   - Airlock in specific loop
+underfloor_heating_diagnosis.md,90,   - Inadequate bleeding
+underfloor_heating_diagnosis.md,91,   - Air entering system
+underfloor_heating_diagnosis.md,92,
+underfloor_heating_diagnosis.md,93,3. **Flow Restrictions**
+underfloor_heating_diagnosis.md,94,   - Flow gauge not opened correctly
+underfloor_heating_diagnosis.md,95,   - Debris blockage in specific loop
+underfloor_heating_diagnosis.md,96,   - Kinked or damaged pipe
+underfloor_heating_diagnosis.md,97,
+underfloor_heating_diagnosis.md,98,4. **Control Issues**
+underfloor_heating_diagnosis.md,99,   - Faulty thermostat
+underfloor_heating_diagnosis.md,100,   - Incorrectly wired zone
+underfloor_heating_diagnosis.md,101,   - Thermostat calibration error
+underfloor_heating_diagnosis.md,102,
+underfloor_heating_diagnosis.md,103,### Multiple Zones or Entire System Not Heating
+underfloor_heating_diagnosis.md,104,
+underfloor_heating_diagnosis.md,105,**Symptoms:**
+underfloor_heating_diagnosis.md,106,- All or most zones remain cold
+underfloor_heating_diagnosis.md,107,- System appears powered but no heat output
+underfloor_heating_diagnosis.md,108,- Pump running but no heat distribution
+underfloor_heating_diagnosis.md,109,
+underfloor_heating_diagnosis.md,110,**Possible Causes:**
+underfloor_heating_diagnosis.md,111,
+underfloor_heating_diagnosis.md,112,1. **Circulation Problems**
+underfloor_heating_diagnosis.md,113,   - Pump failure
+underfloor_heating_diagnosis.md,114,   - Seized mixing valve
+underfloor_heating_diagnosis.md,115,   - Closed isolation valves
+underfloor_heating_diagnosis.md,116,
+underfloor_heating_diagnosis.md,117,2. **Control System Faults**
+underfloor_heating_diagnosis.md,118,   - Wiring center failure
+underfloor_heating_diagnosis.md,119,   - No power to system
+underfloor_heating_diagnosis.md,120,   - Controller programming error
+underfloor_heating_diagnosis.md,121,
+underfloor_heating_diagnosis.md,122,3. **Heat Source Issues**
+underfloor_heating_diagnosis.md,123,   - Boiler not receiving call for heat
+underfloor_heating_diagnosis.md,124,   - Heat pump fault
+underfloor_heating_diagnosis.md,125,   - Interlock preventing operation
+underfloor_heating_diagnosis.md,126,
+underfloor_heating_diagnosis.md,127,4. **System Pressure Issues**
+underfloor_heating_diagnosis.md,128,   - Low pressure causing boiler lockout
+underfloor_heating_diagnosis.md,129,   - Air in main system
+underfloor_heating_diagnosis.md,130,   - Water leak
+underfloor_heating_diagnosis.md,131,
+underfloor_heating_diagnosis.md,132,### Temperature Control Problems
+underfloor_heating_diagnosis.md,133,
+underfloor_heating_diagnosis.md,134,**Symptoms:**
+underfloor_heating_diagnosis.md,135,- Overheating
+underfloor_heating_diagnosis.md,136,- Underheating
+underfloor_heating_diagnosis.md,137,- Temperature fluctuations
+underfloor_heating_diagnosis.md,138,
+underfloor_heating_diagnosis.md,139,**Possible Causes:**
+underfloor_heating_diagnosis.md,140,
+underfloor_heating_diagnosis.md,141,1. **Mixing Valve Issues**
+underfloor_heating_diagnosis.md,142,   - Incorrect temperature setting
+underfloor_heating_diagnosis.md,143,   - Seized or sticking valve
+underfloor_heating_diagnosis.md,144,   - Actuator fault on valve
+underfloor_heating_diagnosis.md,145,
+underfloor_heating_diagnosis.md,146,2. **Control System Problems**
+underfloor_heating_diagnosis.md,147,   - Thermostat placement issues
+underfloor_heating_diagnosis.md,148,   - Faulty temperature sensors
+underfloor_heating_diagnosis.md,149,   - Incorrect settings
+underfloor_heating_diagnosis.md,150,
+underfloor_heating_diagnosis.md,151,3. **Flow Rate Issues**
+underfloor_heating_diagnosis.md,152,   - Incorrect system balancing
+underfloor_heating_diagnosis.md,153,   - Pump speed too high/low
+underfloor_heating_diagnosis.md,154,   - Flow restrictions
+underfloor_heating_diagnosis.md,155,
+underfloor_heating_diagnosis.md,156,### Noise Issues
+underfloor_heating_diagnosis.md,157,
+underfloor_heating_diagnosis.md,158,**Symptoms:**
+underfloor_heating_diagnosis.md,159,- Gurgling sounds
+underfloor_heating_diagnosis.md,160,- Pump noise
+underfloor_heating_diagnosis.md,161,- Clicking from manifold
+underfloor_heating_diagnosis.md,162,
+underfloor_heating_diagnosis.md,163,**Possible Causes:**
+underfloor_heating_diagnosis.md,164,
+underfloor_heating_diagnosis.md,165,1. **Air in System**
+underfloor_heating_diagnosis.md,166,   - Inadequate bleeding
+underfloor_heating_diagnosis.md,167,   - Continuous air ingress
+underfloor_heating_diagnosis.md,168,   - Air trapped in pump
+underfloor_heating_diagnosis.md,169,
+underfloor_heating_diagnosis.md,170,2. **Pump Issues**
+underfloor_heating_diagnosis.md,171,   - Pump speed too high
+underfloor_heating_diagnosis.md,172,   - Worn pump bearings
+underfloor_heating_diagnosis.md,173,   - Cavitation
+underfloor_heating_diagnosis.md,174,
+underfloor_heating_diagnosis.md,175,3. **Pressure Issues**
+underfloor_heating_diagnosis.md,176,   - Excessive system pressure
+underfloor_heating_diagnosis.md,177,   - Expansion vessel failure
+underfloor_heating_diagnosis.md,178,   - Pressure fluctuations
+underfloor_heating_diagnosis.md,179,
+underfloor_heating_diagnosis.md,180,### Pressure Problems
+underfloor_heating_diagnosis.md,181,
+underfloor_heating_diagnosis.md,182,**Symptoms:**
+underfloor_heating_diagnosis.md,183,- Frequent pressure drops
+underfloor_heating_diagnosis.md,184,- Excessive pressure
+underfloor_heating_diagnosis.md,185,- Pressure relief valve activation
+underfloor_heating_diagnosis.md,186,
+underfloor_heating_diagnosis.md,187,**Possible Causes:**
+underfloor_heating_diagnosis.md,188,
+underfloor_heating_diagnosis.md,189,1. **Leaks**
+underfloor_heating_diagnosis.md,190,   - Pipe connections
+underfloor_heating_diagnosis.md,191,   - Manifold seals
+underfloor_heating_diagnosis.md,192,   - Underfloor pipework
+underfloor_heating_diagnosis.md,193,
+underfloor_heating_diagnosis.md,194,2. **Expansion Vessel Issues**
+underfloor_heating_diagnosis.md,195,   - Failed diaphragm
+underfloor_heating_diagnosis.md,196,   - Incorrect pre-charge
+underfloor_heating_diagnosis.md,197,   - Undersized vessel
+underfloor_heating_diagnosis.md,198,
+underfloor_heating_diagnosis.md,199,3. **Filling Issues**
+underfloor_heating_diagnosis.md,200,   - Automatic filler faults
+underfloor_heating_diagnosis.md,201,   - Manual filling errors
+underfloor_heating_diagnosis.md,202,   - System oversized
+underfloor_heating_diagnosis.md,203,
+underfloor_heating_diagnosis.md,204,## PART 3: COMMON FAULTS IN ELECTRIC UNDERFLOOR HEATING
+underfloor_heating_diagnosis.md,205,
+underfloor_heating_diagnosis.md,206,### No Heat Output
+underfloor_heating_diagnosis.md,207,
+underfloor_heating_diagnosis.md,208,**Symptoms:**
+underfloor_heating_diagnosis.md,209,- Floor remains cold
+underfloor_heating_diagnosis.md,210,- No response from system
+underfloor_heating_diagnosis.md,211,- Thermostat appears operational
+underfloor_heating_diagnosis.md,212,
+underfloor_heating_diagnosis.md,213,**Possible Causes:**
+underfloor_heating_diagnosis.md,214,
+underfloor_heating_diagnosis.md,215,1. **Power Supply Issues**
+underfloor_heating_diagnosis.md,216,   - Tripped RCD/circuit breaker
+underfloor_heating_diagnosis.md,217,   - Failed fuse
+underfloor_heating_diagnosis.md,218,   - Loose connections
+underfloor_heating_diagnosis.md,219,
+underfloor_heating_diagnosis.md,220,2. **Heating Element Problems**
+underfloor_heating_diagnosis.md,221,   - Broken element
+underfloor_heating_diagnosis.md,222,   - Disconnected wire
+underfloor_heating_diagnosis.md,223,   - Manufacturing fault
+underfloor_heating_diagnosis.md,224,
+underfloor_heating_diagnosis.md,225,3. **Control System Faults**
+underfloor_heating_diagnosis.md,226,   - Faulty thermostat
+underfloor_heating_diagnosis.md,227,   - Floor sensor issue
+underfloor_heating_diagnosis.md,228,   - Relay failure
+underfloor_heating_diagnosis.md,229,
+underfloor_heating_diagnosis.md,230,### Partial Heating
+underfloor_heating_diagnosis.md,231,
+underfloor_heating_diagnosis.md,232,**Symptoms:**
+underfloor_heating_diagnosis.md,233,- Cold spots on floor
+underfloor_heating_diagnosis.md,234,   - Some areas heat while others remain cold
+underfloor_heating_diagnosis.md,235,   - Inconsistent heating across floor
+underfloor_heating_diagnosis.md,236,
+underfloor_heating_diagnosis.md,237,**Possible Causes:**
+underfloor_heating_diagnosis.md,238,
+underfloor_heating_diagnosis.md,239,1. **Heating Element Damage**
+underfloor_heating_diagnosis.md,240,   - Partial break in element
+underfloor_heating_diagnosis.md,241,   - Installation damage
+underfloor_heating_diagnosis.md,242,   - Mat/cable separation
+underfloor_heating_diagnosis.md,243,
+underfloor_heating_diagnosis.md,244,2. **Insulation Issues**
+underfloor_heating_diagnosis.md,245,   - Inadequate insulation in specific areas
+underfloor_heating_diagnosis.md,246,   - Thermal bridging
+underfloor_heating_diagnosis.md,247,   - Heat sink effect from objects
+underfloor_heating_diagnosis.md,248,
+underfloor_heating_diagnosis.md,249,3. **Control Issues**
+underfloor_heating_diagnosis.md,250,   - Sensor placement problems
+underfloor_heating_diagnosis.md,251,   - Multiple zone control fault
+underfloor_heating_diagnosis.md,252,   - Power output limitations
+underfloor_heating_diagnosis.md,253,
+underfloor_heating_diagnosis.md,254,### Overheating
+underfloor_heating_diagnosis.md,255,
+underfloor_heating_diagnosis.md,256,**Symptoms:**
+underfloor_heating_diagnosis.md,257,- Floor excessively hot
+underfloor_heating_diagnosis.md,258,- System doesn't regulate temperature
+underfloor_heating_diagnosis.md,259,- Thermal cutout activation
+underfloor_heating_diagnosis.md,260,
+underfloor_heating_diagnosis.md,261,**Possible Causes:**
+underfloor_heating_diagnosis.md,262,
+underfloor_heating_diagnosis.md,263,1. **Thermostat Issues**
+underfloor_heating_diagnosis.md,264,   - Faulty floor sensor
+underfloor_heating_diagnosis.md,265,   - Incorrect settings
+underfloor_heating_diagnosis.md,266,   - Failed thermostat
+underfloor_heating_diagnosis.md,267,
+underfloor_heating_diagnosis.md,268,2. **Installation Problems**
+underfloor_heating_diagnosis.md,269,   - Heating elements too close together
+underfloor_heating_diagnosis.md,270,   - Excessive insulation trapping heat
+underfloor_heating_diagnosis.md,271,   - Incorrect element for floor type
+underfloor_heating_diagnosis.md,272,
+underfloor_heating_diagnosis.md,273,### Thermostat Problems
+underfloor_heating_diagnosis.md,274,
+underfloor_heating_diagnosis.md,275,**Symptoms:**
+underfloor_heating_diagnosis.md,276,- Blank display
+underfloor_heating_diagnosis.md,277,- Error codes
+underfloor_heating_diagnosis.md,278,- Unresponsive controls
+underfloor_heating_diagnosis.md,279,
+underfloor_heating_diagnosis.md,280,**Possible Causes:**
+underfloor_heating_diagnosis.md,281,
+underfloor_heating_diagnosis.md,282,1. **Power Issues**
+underfloor_heating_diagnosis.md,283,   - Battery failure (if battery-powered)
+underfloor_heating_diagnosis.md,284,   - Loose connections
+underfloor_heating_diagnosis.md,285,   - Power surge damage
+underfloor_heating_diagnosis.md,286,
+underfloor_heating_diagnosis.md,287,2. **Sensor Problems**
+underfloor_heating_diagnosis.md,288,   - Floor sensor failure
+underfloor_heating_diagnosis.md,289,   - Sensor wire damage
+underfloor_heating_diagnosis.md,290,   - Incorrect sensor type
+underfloor_heating_diagnosis.md,291,
+underfloor_heating_diagnosis.md,292,3. **Control Unit Failure**
+underfloor_heating_diagnosis.md,293,   - Electronic component failure
+underfloor_heating_diagnosis.md,294,   - Software glitch
+underfloor_heating_diagnosis.md,295,   - Water damage
+underfloor_heating_diagnosis.md,296,
+underfloor_heating_diagnosis.md,297,## PART 4: DIAGNOSTIC PROCEDURES FOR WATER-BASED UFH
+underfloor_heating_diagnosis.md,298,
+underfloor_heating_diagnosis.md,299,### Initial Assessment
+underfloor_heating_diagnosis.md,300,
+underfloor_heating_diagnosis.md,301,1. **System Overview Check**
+underfloor_heating_diagnosis.md,302,   - Verify heat source is operational
+underfloor_heating_diagnosis.md,303,   - Check programmer/timer settings
+underfloor_heating_diagnosis.md,304,   - Confirm power to controls
+underfloor_heating_diagnosis.md,305,   - Verify system pressure (typically 1-2 bar)
+underfloor_heating_diagnosis.md,306,
+underfloor_heating_diagnosis.md,307,2. **Zone-by-Zone Assessment**
+underfloor_heating_diagnosis.md,308,   - Identify which zones are affected
+underfloor_heating_diagnosis.md,309,   - Check thermostat settings for each zone
+underfloor_heating_diagnosis.md,310,   - Listen for actuator operation
+underfloor_heating_diagnosis.md,311,   - Feel manifold pipes for temperature difference
+underfloor_heating_diagnosis.md,312,
+underfloor_heating_diagnosis.md,313,3. **Manifold Inspection**
+underfloor_heating_diagnosis.md,314,   - Check flow gauges are open (typically 1-3 turns)
+underfloor_heating_diagnosis.md,315,   - Verify isolation valves are open
+underfloor_heating_diagnosis.md,316,   - Look for signs of leaks
+underfloor_heating_diagnosis.md,317,   - Check temperature gauges (supply typically 35-45°C)
+underfloor_heating_diagnosis.md,318,
+underfloor_heating_diagnosis.md,319,### Actuator Testing
+underfloor_heating_diagnosis.md,320,
+underfloor_heating_diagnosis.md,321,**Equipment Needed:**
+underfloor_heating_diagnosis.md,322,- Multimeter
+underfloor_heating_diagnosis.md,323,- Small screwdriver
+underfloor_heating_diagnosis.md,324,- Silicone spray (for stuck pins)
+underfloor_heating_diagnosis.md,325,
+underfloor_heating_diagnosis.md,326,**Testing Procedure:**
+underfloor_heating_diagnosis.md,327,
+underfloor_heating_diagnosis.md,328,1. **Visual Inspection**
+underfloor_heating_diagnosis.md,329,   - Check for LED indicators on actuators
+underfloor_heating_diagnosis.md,330,   - Look for visible damage
+underfloor_heating_diagnosis.md,331,   - Verify proper mounting
+underfloor_heating_diagnosis.md,332,
+underfloor_heating_diagnosis.md,333,2. **Pin Check**
+underfloor_heating_diagnosis.md,334,   - Remove actuator (usually twist or unclip)
+underfloor_heating_diagnosis.md,335,   - Check pin beneath actuator moves freely
+underfloor_heating_diagnosis.md,336,   - Use silicone spray if stuck
+underfloor_heating_diagnosis.md,337,   - Manually depress and release to test
+underfloor_heating_diagnosis.md,338,
+underfloor_heating_diagnosis.md,339,3. **Electrical Testing**
+underfloor_heating_diagnosis.md,340,   - Measure voltage at actuator terminals (typically 230V or 24V)
+underfloor_heating_diagnosis.md,341,   - Check resistance of actuator coil (if applicable)
+underfloor_heating_diagnosis.md,342,   - Verify signal from thermostat reaching actuator
+underfloor_heating_diagnosis.md,343,
+underfloor_heating_diagnosis.md,344,### Air Lock Diagnosis and Bleeding
+underfloor_heating_diagnosis.md,345,
+underfloor_heating_diagnosis.md,346,**Equipment Needed:**
+underfloor_heating_diagnosis.md,347,- Allen key or radiator key for air vents
+underfloor_heating_diagnosis.md,348,   - Container to catch water
+underfloor_heating_diagnosis.md,349,   - Towels
+underfloor_heating_diagnosis.md,350,   - Hoses for power flushing
+underfloor_heating_diagnosis.md,351,
+underfloor_heating_diagnosis.md,352,**Testing and Correction Procedure:**
+underfloor_heating_diagnosis.md,353,
+underfloor_heating_diagnosis.md,354,1. **Identify Air Presence**
+underfloor_heating_diagnosis.md,355,   - Listen for gurgling sounds
+underfloor_heating_diagnosis.md,356,   - Check for temperature inconsistency
+underfloor_heating_diagnosis.md,357,   - Note cold spots in floor
+underfloor_heating_diagnosis.md,358,
+underfloor_heating_diagnosis.md,359,2. **Manual Bleeding**
+underfloor_heating_diagnosis.md,360,   - Turn off system
+underfloor_heating_diagnosis.md,361,   - Open air vent on manifold slowly
+underfloor_heating_diagnosis.md,362,   - Allow air to escape until water appears
+underfloor_heating_diagnosis.md,363,   - Close vent and repeat on return manifold
+underfloor_heating_diagnosis.md,364,
+underfloor_heating_diagnosis.md,365,3. **Power Flushing Single Zone**
+underfloor_heating_diagnosis.md,366,   - Close all loops except affected one
+underfloor_heating_diagnosis.md,367,   - Remove actuator from affected loop
+underfloor_heating_diagnosis.md,368,   - Connect hosepipe to flow valve
+underfloor_heating_diagnosis.md,369,   - Connect drain hose to return valve
+underfloor_heating_diagnosis.md,370,   - Flush with mains pressure until clear
+underfloor_heating_diagnosis.md,371,
+underfloor_heating_diagnosis.md,372,### Pump and Circulation Testing
+underfloor_heating_diagnosis.md,373,
+underfloor_heating_diagnosis.md,374,**Equipment Needed:**
+underfloor_heating_diagnosis.md,375,- Pressure gauge
+underfloor_heating_diagnosis.md,376,- Screwdriver
+underfloor_heating_diagnosis.md,377,- Multimeter
+underfloor_heating_diagnosis.md,378,
+underfloor_heating_diagnosis.md,379,**Testing Procedure:**
+underfloor_heating_diagnosis.md,380,
+underfloor_heating_diagnosis.md,381,1. **Pump Operation Check**
+underfloor_heating_diagnosis.md,382,   - Verify pump is running (vibration/noise)
+underfloor_heating_diagnosis.md,383,   - Check pump settings (speed/mode)
+underfloor_heating_diagnosis.md,384,   - Look for error lights on pump
+underfloor_heating_diagnosis.md,385,
+underfloor_heating_diagnosis.md,386,2. **Flow Check**
+underfloor_heating_diagnosis.md,387,   - Feel temperature difference between flow and return pipes
+underfloor_heating_diagnosis.md,388,   - Check flow temperature at manifold
+underfloor_heating_diagnosis.md,389,   - Verify adequate flow rate at gauges
+underfloor_heating_diagnosis.md,390,
+underfloor_heating_diagnosis.md,391,3. **Electrical Testing**
+underfloor_heating_diagnosis.md,392,   - Verify power supply to pump (typically 230V)
+underfloor_heating_diagnosis.md,393,   - Check pump relay operation
+underfloor_heating_diagnosis.md,394,   - Test controller output to pump
+underfloor_heating_diagnosis.md,395,
+underfloor_heating_diagnosis.md,396,### Mixing Valve Diagnosis
+underfloor_heating_diagnosis.md,397,
+underfloor_heating_diagnosis.md,398,**Equipment Needed:**
+underfloor_heating_diagnosis.md,399,- Thermometer
+underfloor_heating_diagnosis.md,400,- Silicone spray
+underfloor_heating_diagnosis.md,401,- Allen keys
+underfloor_heating_diagnosis.md,402,
+underfloor_heating_diagnosis.md,403,**Testing Procedure:**
+underfloor_heating_diagnosis.md,404,
+underfloor_heating_diagnosis.md,405,1. **Temperature Check**
+underfloor_heating_diagnosis.md,406,   - Measure flow temperature at manifold
+underfloor_heating_diagnosis.md,407,   - Compare with mixing valve setting
+underfloor_heating_diagnosis.md,408,   - Verify return temperature
+underfloor_heating_diagnosis.md,409,
+underfloor_heating_diagnosis.md,410,2. **Actuator Function**
+underfloor_heating_diagnosis.md,411,   - Remove actuator head
+underfloor_heating_diagnosis.md,412,   - Check pin movement
+underfloor_heating_diagnosis.md,413,   - Verify thermostat control
+underfloor_heating_diagnosis.md,414,   - Test manual operation
+underfloor_heating_diagnosis.md,415,
+underfloor_heating_diagnosis.md,416,3. **Valve Body Inspection**
+underfloor_heating_diagnosis.md,417,   - Check for scale buildup
+underfloor_heating_diagnosis.md,418,   - Verify free movement
+underfloor_heating_diagnosis.md,419,   - Inspect for leaks
+underfloor_heating_diagnosis.md,420,
+underfloor_heating_diagnosis.md,421,## PART 5: DIAGNOSTIC PROCEDURES FOR ELECTRIC UFH
+underfloor_heating_diagnosis.md,422,
+underfloor_heating_diagnosis.md,423,### Initial Assessment
+underfloor_heating_diagnosis.md,424,
+underfloor_heating_diagnosis.md,425,1. **System Overview Check**
+underfloor_heating_diagnosis.md,426,   - Verify power supply (circuit breaker)
+underfloor_heating_diagnosis.md,427,   - Check programmer/timer settings
+underfloor_heating_diagnosis.md,428,   - Confirm thermostat display working
+underfloor_heating_diagnosis.md,429,   - Test manual override function
+underfloor_heating_diagnosis.md,430,
+underfloor_heating_diagnosis.md,431,2. **Floor Temperature Assessment**
+underfloor_heating_diagnosis.md,432,   - Use thermal imaging camera if available
+underfloor_heating_diagnosis.md,433,   - Check for cold spots
+underfloor_heating_diagnosis.md,434,   - Measure floor temperature at different points
+underfloor_heating_diagnosis.md,435,   - Compare with thermostat setting
+underfloor_heating_diagnosis.md,436,
+underfloor_heating_diagnosis.md,437,### Electrical Testing
+underfloor_heating_diagnosis.md,438,
+underfloor_heating_diagnosis.md,439,**Equipment Needed:**
+underfloor_heating_diagnosis.md,440,- Multimeter
+underfloor_heating_diagnosis.md,441,- Insulation resistance tester
+underfloor_heating_diagnosis.md,442,- Circuit breaker finder
+underfloor_heating_diagnosis.md,443,
+underfloor_heating_diagnosis.md,444,**Testing Procedure:**
+underfloor_heating_diagnosis.md,445,
+underfloor_heating_diagnosis.md,446,1. **Power Supply Check**
+underfloor_heating_diagnosis.md,447,   - Verify voltage at thermostat (230V)
+underfloor_heating_diagnosis.md,448,   - Check fuse/circuit breaker
+underfloor_heating_diagnosis.md,449,   - Test RCD operation
+underfloor_heating_diagnosis.md,450,
+underfloor_heating_diagnosis.md,451,2. **Heating Element Continuity Test**
+underfloor_heating_diagnosis.md,452,   - Disconnect from thermostat
+underfloor_heating_diagnosis.md,453,   - Measure resistance of heating element
+underfloor_heating_diagnosis.md,454,   - Compare with manufacturer specifications
+underfloor_heating_diagnosis.md,455,   - Check for infinite resistance (indicating break)
+underfloor_heating_diagnosis.md,456,
+underfloor_heating_diagnosis.md,457,3. **Insulation Resistance Test**
+underfloor_heating_diagnosis.md,458,   - Disconnect from power
+underfloor_heating_diagnosis.md,459,   - Test between conductors and earth
+underfloor_heating_diagnosis.md,460,   - Should be >1MΩ at 500V DC
+underfloor_heating_diagnosis.md,461,   - Lower values indicate insulation damage
+underfloor_heating_diagnosis.md,462,
+underfloor_heating_diagnosis.md,463,### Thermostat and Sensor Testing
+underfloor_heating_diagnosis.md,464,
+underfloor_heating_diagnosis.md,465,**Equipment Needed:**
+underfloor_heating_diagnosis.md,466,- Multimeter
+underfloor_heating_diagnosis.md,467,- Manufacturer's resistance charts
+underfloor_heating_diagnosis.md,468,- Small screwdriver
+underfloor_heating_diagnosis.md,469,
+underfloor_heating_diagnosis.md,470,**Testing Procedure:**
+underfloor_heating_diagnosis.md,471,
+underfloor_heating_diagnosis.md,472,1. **Thermostat Power Check**
+underfloor_heating_diagnosis.md,473,   - Verify supply voltage
+underfloor_heating_diagnosis.md,474,   - Check display operation
+underfloor_heating_diagnosis.md,475,   - Test button functionality
+underfloor_heating_diagnosis.md,476,
+underfloor_heating_diagnosis.md,477,2. **Floor Sensor Testing**
+underfloor_heating_diagnosis.md,478,   - Disconnect sensor from thermostat
+underfloor_heating_diagnosis.md,479,   - Measure resistance of sensor
+underfloor_heating_diagnosis.md,480,   - Compare with temperature/resistance chart
+underfloor_heating_diagnosis.md,481,   - Check for infinite resistance (indicating break)
+underfloor_heating_diagnosis.md,482,
+underfloor_heating_diagnosis.md,483,3. **Thermostat Output Testing**
+underfloor_heating_diagnosis.md,484,   - Measure voltage at output terminals when calling for heat
+underfloor_heating_diagnosis.md,485,   - Check relay operation (audible click)
+underfloor_heating_diagnosis.md,486,   - Verify load switching capacity
+underfloor_heating_diagnosis.md,487,
+underfloor_heating_diagnosis.md,488,### Heating Mat/Cable Fault Location
+underfloor_heating_diagnosis.md,489,
+underfloor_heating_diagnosis.md,490,**Equipment Needed:**
+underfloor_heating_diagnosis.md,491,- TDR (Time Domain Reflectometer) or specialized cable fault finder
+underfloor_heating_diagnosis.md,492,- Thermal imaging camera (if available)
+underfloor_heating_diagnosis.md,493,- Resistance meter
+underfloor_heating_diagnosis.md,494,
+underfloor_heating_diagnosis.md,495,**Testing Procedure:**
+underfloor_heating_diagnosis.md,496,
+underfloor_heating_diagnosis.md,497,1. **Resistance Mapping**
+underfloor_heating_diagnosis.md,498,   - Take multiple resistance readings
+underfloor_heating_diagnosis.md,499,   - Compare with installation diagrams
+underfloor_heating_diagnosis.md,500,   - Identify potential break locations
+underfloor_heating_diagnosis.md,501,
+underfloor_heating_diagnosis.md,502,2. **Thermal Imaging**
+underfloor_heating_diagnosis.md,503,   - Power system at low voltage
+underfloor_heating_diagnosis.md,504,   - Use thermal camera to identify cold spots
+underfloor_heating_diagnosis.md,505,   - Map against floor plan
+underfloor_heating_diagnosis.md,506,
+underfloor_heating_diagnosis.md,507,3. **Advanced Fault Finding**
+underfloor_heating_diagnosis.md,508,   - Use TDR to locate cable breaks
+underfloor_heating_diagnosis.md,509,   - Measure distance to fault
+underfloor_heating_diagnosis.md,510,   - Mark location for repair access
+underfloor_heating_diagnosis.md,511,
+underfloor_heating_diagnosis.md,512,## PART 6: REMEDIAL ACTIONS FOR WATER-BASED UFH
+underfloor_heating_diagnosis.md,513,
+underfloor_heating_diagnosis.md,514,### Resolving Air Lock Issues
+underfloor_heating_diagnosis.md,515,
+underfloor_heating_diagnosis.md,516,1. **Standard Bleeding Procedure**
+underfloor_heating_diagnosis.md,517,   - Turn system off
+underfloor_heating_diagnosis.md,518,   - Open air vents on manifold sequentially
+underfloor_heating_diagnosis.md,519,   - Close when water appears
+underfloor_heating_diagnosis.md,520,   - Check system pressure after bleeding
+underfloor_heating_diagnosis.md,521,   - Top up if necessary
+underfloor_heating_diagnosis.md,522,
+underfloor_heating_diagnosis.md,523,2. **Power Flushing Individual Loops**
+underfloor_heating_diagnosis.md,524,   - Isolate affected loop
+underfloor_heating_diagnosis.md,525,   - Connect flushing hoses
+underfloor_heating_diagnosis.md,526,   - Flush with fresh water until clear
+underfloor_heating_diagnosis.md,527,   - Reconnect and test
+underfloor_heating_diagnosis.md,528,
+underfloor_heating_diagnosis.md,529,3. **Full System Power Flush**
+underfloor_heating_diagnosis.md,530,   - Connect professional flushing machine
+underfloor_heating_diagnosis.md,531,   - Add appropriate cleaning chemicals
+underfloor_heating_diagnosis.md,532,   - Flush entire system
+underfloor_heating_diagnosis.md,533,   - Refill with treated water
+underfloor_heating_diagnosis.md,534,
+underfloor_heating_diagnosis.md,535,### Actuator Replacement
+underfloor_heating_diagnosis.md,536,
+underfloor_heating_diagnosis.md,537,1. **Removal Procedure**
+underfloor_heating_diagnosis.md,538,   - Turn off system
+underfloor_heating_diagnosis.md,539,   - Remove actuator (usually twist or unclip)
+underfloor_heating_diagnosis.md,540,   - Clean valve pin
+underfloor_heating_diagnosis.md,541,   - Check pin operation manually
+underfloor_heating_diagnosis.md,542,
+underfloor_heating_diagnosis.md,543,2. **Replacement Installation**
+underfloor_heating_diagnosis.md,544,   - Ensure pin is in correct position
+underfloor_heating_diagnosis.md,545,   - Align new actuator
+underfloor_heating_diagnosis.md,546,   - Secure in place
+underfloor_heating_diagnosis.md,547,   - Connect wiring
+underfloor_heating_diagnosis.md,548,   - Test operation
+underfloor_heating_diagnosis.md,549,
+underfloor_heating_diagnosis.md,550,3. **System Testing**
+underfloor_heating_diagnosis.md,551,   - Power up system
+underfloor_heating_diagnosis.md,552,   - Set thermostat to call for heat
+underfloor_heating_diagnosis.md,553,   - Verify actuator operation
+underfloor_heating_diagnosis.md,554,   - Check heating response
+underfloor_heating_diagnosis.md,555,
+underfloor_heating_diagnosis.md,556,### Pump Maintenance and Replacement
+underfloor_heating_diagnosis.md,557,
+underfloor_heating_diagnosis.md,558,1. **Basic Maintenance**
+underfloor_heating_diagnosis.md,559,   - Check for debris in pump housing
+underfloor_heating_diagnosis.md,560,   - Unblock if necessary
+underfloor_heating_diagnosis.md,561,   - Set correct speed
+underfloor_heating_diagnosis.md,562,   - Bleed air from pump
+underfloor_heating_diagnosis.md,563,
+underfloor_heating_diagnosis.md,564,2. **Replacement Procedure**
+underfloor_heating_diagnosis.md,565,   - Turn off system
+underfloor_heating_diagnosis.md,566,   - Isolate pump (close valves)
+underfloor_heating_diagnosis.md,567,   - Disconnect electrical supply
+underfloor_heating_diagnosis.md,568,   - Remove old pump
+underfloor_heating_diagnosis.md,569,   - Install new pump with correct orientation
+underfloor_heating_diagnosis.md,570,   - Reconnect electrical supply
+underfloor_heating_diagnosis.md,571,   - Open isolation valves
+underfloor_heating_diagnosis.md,572,   - Test operation
+underfloor_heating_diagnosis.md,573,
+underfloor_heating_diagnosis.md,574,### Fixing Control System Issues
+underfloor_heating_diagnosis.md,575,
+underfloor_heating_diagnosis.md,576,1. **Thermostat Replacement**
+underfloor_heating_diagnosis.md,577,   - Turn off power
+underfloor_heating_diagnosis.md,578,   - Remove old thermostat
+underfloor_heating_diagnosis.md,579,   - Label wires if not labeled
+underfloor_heating_diagnosis.md,580,   - Connect new thermostat
+underfloor_heating_diagnosis.md,581,   - Program settings
+underfloor_heating_diagnosis.md,582,   - Test operation
+underfloor_heating_diagnosis.md,583,
+underfloor_heating_diagnosis.md,584,2. **Wiring Center Repair**
+underfloor_heating_diagnosis.md,585,   - Turn off power
+underfloor_heating_diagnosis.md,586,   - Identify faulty components
+underfloor_heating_diagnosis.md,587,   - Replace fuses/relays as needed
+underfloor_heating_diagnosis.md,588,   - Check all connections
+underfloor_heating_diagnosis.md,589,   - Test operation of each zone
+underfloor_heating_diagnosis.md,590,
+underfloor_heating_diagnosis.md,591,3. **System Reprogramming**
+underfloor_heating_diagnosis.md,592,   - Reset controller to defaults
+underfloor_heating_diagnosis.md,593,   - Reprogram time schedules
+underfloor_heating_diagnosis.md,594,   - Set correct temperatures
+underfloor_heating_diagnosis.md,595,   - Test all functions
+underfloor_heating_diagnosis.md,596,
+underfloor_heating_diagnosis.md,597,## PART 7: REMEDIAL ACTIONS FOR ELECTRIC UFH
+underfloor_heating_diagnosis.md,598,
+underfloor_heating_diagnosis.md,599,### Repairing Damaged Heating Elements
+underfloor_heating_diagnosis.md,600,
+underfloor_heating_diagnosis.md,601,**Note: Complete cable replacement is often more practical than repair for in-screed installations**
+underfloor_heating_diagnosis.md,602,
+underfloor_heating_diagnosis.md,603,1. **Localized Repair (if accessible)**
+underfloor_heating_diagnosis.md,604,   - Expose damaged section
+underfloor_heating_diagnosis.md,605,   - Cut out damaged portion
+underfloor_heating_diagnosis.md,606,   - Splice in replacement section using manufacturer-approved connectors
+underfloor_heating_diagnosis.md,607,   - Reapply insulation
+underfloor_heating_diagnosis.md,608,   - Test thoroughly before reinstating floor covering
+underfloor_heating_diagnosis.md,609,
+underfloor_heating_diagnosis.md,610,2. **Bypass Strategy (for multiple breaks)**
+underfloor_heating_diagnosis.md,611,   - Locate multiple breaks
+underfloor_heating_diagnosis.md,612,   - Assess if section can be bypassed
+underfloor_heating_diagnosis.md,613,   - Use approved splice kits
+underfloor_heating_diagnosis.md,614,   - Insulate repairs thoroughly
+underfloor_heating_diagnosis.md,615,   - Verify system resistance
+underfloor_heating_diagnosis.md,616,
+underfloor_heating_diagnosis.md,617,### Thermostat Replacement
+underfloor_heating_diagnosis.md,618,
+underfloor_heating_diagnosis.md,619,1. **Removal Procedure**
+underfloor_heating_diagnosis.md,620,   - Turn off power
+underfloor_heating_diagnosis.md,621,   - Remove old thermostat
+underfloor_heating_diagnosis.md,622,   - Label wires carefully
+underfloor_heating_diagnosis.md,623,   - Remove floor sensor if accessible
+underfloor_heating_diagnosis.md,624,
+underfloor_heating_diagnosis.md,625,2. **Installation Procedure**
+underfloor_heating_diagnosis.md,626,   - Install new floor sensor if possible
+underfloor_heating_diagnosis.md,627,   - Connect wiring according to diagram
+underfloor_heating_diagnosis.md,628,   - Mount new thermostat
+underfloor_heating_diagnosis.md,629,   - Program settings
+underfloor_heating_diagnosis.md,630,   - Test operation at low temperature first
+underfloor_heating_diagnosis.md,631,
+underfloor_heating_diagnosis.md,632,3. **System Testing**
+underfloor_heating_diagnosis.md,633,   - Monitor initial heating cycle
+underfloor_heating_diagnosis.md,634,   - Check floor temperature response
+underfloor_heating_diagnosis.md,635,   - Verify limiting functions
+underfloor_heating_diagnosis.md,636,   - Test timer operation
+underfloor_heating_diagnosis.md,637,
+underfloor_heating_diagnosis.md,638,### Resolving Electrical Supply Issues
+underfloor_heating_diagnosis.md,639,
+underfloor_heating_diagnosis.md,640,1. **Circuit Protection Reset/Replacement**
+underfloor_heating_diagnosis.md,641,   - Reset tripped breakers
+underfloor_heating_diagnosis.md,642,   - Replace blown fuses
+underfloor_heating_diagnosis.md,643,   - Check RCD operation
+underfloor_heating_diagnosis.md,644,   - Test circuit isolation
+underfloor_heating_diagnosis.md,645,
+underfloor_heating_diagnosis.md,646,2. **Connection Repair**
+underfloor_heating_diagnosis.md,647,   - Identify loose connections
+underfloor_heating_diagnosis.md,648,   - Tighten terminal screws
+underfloor_heating_diagnosis.md,649,   - Replace damaged terminals
+underfloor_heating_diagnosis.md,650,   - Verify secure connections
+underfloor_heating_diagnosis.md,651,
+underfloor_heating_diagnosis.md,652,3. **Load Assessment**
+underfloor_heating_diagnosis.md,653,   - Calculate total system load
+underfloor_heating_diagnosis.md,654,   - Verify circuit capacity is adequate
+underfloor_heating_diagnosis.md,655,   - Distribute load if necessary
+underfloor_heating_diagnosis.md,656,   - Upgrade circuit protection if required
+underfloor_heating_diagnosis.md,657,
+underfloor_heating_diagnosis.md,658,## PART 8: PREVENTATIVE MAINTENANCE
+underfloor_heating_diagnosis.md,659,
+underfloor_heating_diagnosis.md,660,### Water-Based UFH Maintenance
+underfloor_heating_diagnosis.md,661,
+underfloor_heating_diagnosis.md,662,**Annual Checks:**
+underfloor_heating_diagnosis.md,663,1. **Pressure Verification**
+underfloor_heating_diagnosis.md,664,   - Check system pressure (1-2 bar cold)
+underfloor_heating_diagnosis.md,665,   - Top up if necessary
+underfloor_heating_diagnosis.md,666,   - Look for pressure drops indicating leaks
+underfloor_heating_diagnosis.md,667,
+underfloor_heating_diagnosis.md,668,2. **Visual Inspection**
+underfloor_heating_diagnosis.md,669,   - Check manifold for leaks
+underfloor_heating_diagnosis.md,670,   - Inspect pump for signs of failure
+underfloor_heating_diagnosis.md,671,   - Look for moisture around fittings
+underfloor_heating_diagnosis.md,672,   - Verify actuator operation
+underfloor_heating_diagnosis.md,673,
+underfloor_heating_diagnosis.md,674,3. **Performance Assessment**
+underfloor_heating_diagnosis.md,675,   - Check flow temperatures (typically 35-45°C)
+underfloor_heating_diagnosis.md,676,   - Verify return temperatures
+underfloor_heating_diagnosis.md,677,   - Test response time to thermostat changes
+underfloor_heating_diagnosis.md,678,   - Check heat distribution across floors
+underfloor_heating_diagnosis.md,679,
+underfloor_heating_diagnosis.md,680,4. **System Protection**
+underfloor_heating_diagnosis.md,681,   - Check inhibitor levels
+underfloor_heating_diagnosis.md,682,   - Add inhibitor if necessary
+underfloor_heating_diagnosis.md,683,   - Clean filters
+underfloor_heating_diagnosis.md,684,   - Check expansion vessel pressure
+underfloor_heating_diagnosis.md,685,
+underfloor_heating_diagnosis.md,686,### Electric UFH Maintenance
+underfloor_heating_diagnosis.md,687,
+underfloor_heating_diagnosis.md,688,**Annual Checks:**
+underfloor_heating_diagnosis.md,689,1. **Electrical Inspection**
+underfloor_heating_diagnosis.md,690,   - Test RCD operation
+underfloor_heating_diagnosis.md,691,   - Check thermostat function
+underfloor_heating_diagnosis.md,692,   - Verify timing programs
+underfloor_heating_diagnosis.md,693,   - Test manual override
+underfloor_heating_diagnosis.md,694,
+underfloor_heating_diagnosis.md,695,2. **Performance Assessment**
+underfloor_heating_diagnosis.md,696,   - Measure floor warm-up time
+underfloor_heating_diagnosis.md,697,   - Check temperature accuracy
+underfloor_heating_diagnosis.md,698,   - Verify even heat distribution
+underfloor_heating_diagnosis.md,699,   - Test energy consumption if metered
+underfloor_heating_diagnosis.md,700,
+underfloor_heating_diagnosis.md,701,3. **Floor Sensor Verification**
+underfloor_heating_diagnosis.md,702,   - Check sensor readings
+underfloor_heating_diagnosis.md,703,   - Compare with actual temperatures
+underfloor_heating_diagnosis.md,704,   - Test sensor resistance if accessible
+underfloor_heating_diagnosis.md,705,
+underfloor_heating_diagnosis.md,706,## PART 9: REFERENCE TABLES
+underfloor_heating_diagnosis.md,707,
+underfloor_heating_diagnosis.md,708,### Water Temperature Guide for Different Floor Coverings
+underfloor_heating_diagnosis.md,709,
+underfloor_heating_diagnosis.md,710,| Floor Covering | Maximum Flow Temperature | Notes |
+underfloor_heating_diagnosis.md,711,|----------------|--------------------------|-------|
+underfloor_heating_diagnosis.md,712,| Tile/Stone | 45°C | High thermal conductivity |
+underfloor_heating_diagnosis.md,713,| Engineered Wood | 40°C | Check manufacturer limits |
+underfloor_heating_diagnosis.md,714,| Vinyl/Linoleum | 35°C | Risk of damage above 27°C floor temp |
+underfloor_heating_diagnosis.md,715,| Carpet | 40-45°C | Depends on thickness/tog value |
+underfloor_heating_diagnosis.md,716,| Solid Wood | 35°C | Gradual warm-up essential |
+underfloor_heating_diagnosis.md,717,
+underfloor_heating_diagnosis.md,718,### Common Error Codes (Digital Controls)
+underfloor_heating_diagnosis.md,719,
+underfloor_heating_diagnosis.md,720,| Manufacturer | Code | Meaning | Typical Solution |
+underfloor_heating_diagnosis.md,721,|--------------|------|---------|------------------|
+underfloor_heating_diagnosis.md,722,"| Heatmiser | E1 | Floor sensor fault | Check connections, replace sensor |"
+underfloor_heating_diagnosis.md,723,| Honeywell | Err1 | Internal sensor fault | Replace thermostat |
+underfloor_heating_diagnosis.md,724,"| OJ Electronics | E2 | Floor sensor short circuit | Check wiring, replace sensor |"
+underfloor_heating_diagnosis.md,725,"| Warmup | ER1 | No floor sensor detected | Connect sensor, check wiring |"
+underfloor_heating_diagnosis.md,726,"| Nu-Heat | O/C | Open circuit on sensor | Replace sensor, check connections |"
+underfloor_heating_diagnosis.md,727,
+underfloor_heating_diagnosis.md,728,### Expected Resistance Values (Electric UFH)
+underfloor_heating_diagnosis.md,729,
+underfloor_heating_diagnosis.md,730,| Mat/Cable Power Rating | Area (m²) | Expected Resistance Range (Ohms) |
+underfloor_heating_diagnosis.md,731,|------------------------|-----------|----------------------------------|
+underfloor_heating_diagnosis.md,732,| 100W/m² | 1 | 460-540 |
+underfloor_heating_diagnosis.md,733,| 100W/m² | 5 | 90-110 |
+underfloor_heating_diagnosis.md,734,| 150W/m² | 1 | 320-360 |
+underfloor_heating_diagnosis.md,735,| 150W/m² | 5 | 60-75 |
+underfloor_heating_diagnosis.md,736,| 200W/m² | 1 | 240-280 |
+underfloor_heating_diagnosis.md,737,| 200W/m² | 5 | 45-55 |
+underfloor_heating_diagnosis.md,738,
+underfloor_heating_diagnosis.md,739,*Note: Always check manufacturer's specifications as these are typical values only*
+underfloor_heating_diagnosis.md,740,
+underfloor_heating_diagnosis.md,741,### Normal Operating Values (Water-Based UFH)
+underfloor_heating_diagnosis.md,742,
+underfloor_heating_diagnosis.md,743,| Parameter | Normal Range | Warning Signs |
+underfloor_heating_diagnosis.md,744,|-----------|--------------|--------------|
+underfloor_heating_diagnosis.md,745,| Flow Temperature | 35-45°C | >50°C or <30°C |
+underfloor_heating_diagnosis.md,746,| Return Temperature | 25-35°C | <5°C differential from flow |
+underfloor_heating_diagnosis.md,747,| System Pressure (cold) | 1.0-1.5 bar | <0.8 bar or >2.5 bar |
+underfloor_heating_diagnosis.md,748,| Pump Head | 3-6m | Inadequate for design |
+underfloor_heating_diagnosis.md,749,| Flow Rate | 1.5-2.5 L/min per loop | <1.0 L/min indicates restriction |
+underfloor_heating_diagnosis.md,750,
+underfloor_heating_diagnosis.md,751,## PART 10: SAFETY CONSIDERATIONS
+underfloor_heating_diagnosis.md,752,
+underfloor_heating_diagnosis.md,753,### Working with Water-Based Systems
+underfloor_heating_diagnosis.md,754,
+underfloor_heating_diagnosis.md,755,1. **Pressure Hazards**
+underfloor_heating_diagnosis.md,756,   - Never open system under pressure
+underfloor_heating_diagnosis.md,757,   - Use pressure gauge before work
+underfloor_heating_diagnosis.md,758,   - Allow system to cool before work
+underfloor_heating_diagnosis.md,759,   - Be aware of scalding risk from hot water
+underfloor_heating_diagnosis.md,760,
+underfloor_heating_diagnosis.md,761,2. **Electrical Safety**
+underfloor_heating_diagnosis.md,762,   - Isolate power before working on pumps/controls
+underfloor_heating_diagnosis.md,763,   - Verify isolation with test equipment
+underfloor_heating_diagnosis.md,764,   - Use RCD protection
+underfloor_heating_diagnosis.md,765,   - Keep electrical components away from water
+underfloor_heating_diagnosis.md,766,
+underfloor_heating_diagnosis.md,767,3. **Chemical Safety**
+underfloor_heating_diagnosis.md,768,   - Wear gloves when handling inhibitors
+underfloor_heating_diagnosis.md,769,   - Follow manufacturer's dilution instructions
+underfloor_heating_diagnosis.md,770,   - Avoid skin contact with system water
+underfloor_heating_diagnosis.md,771,   - Provide adequate ventilation
+underfloor_heating_diagnosis.md,772,
+underfloor_heating_diagnosis.md,773,### Working with Electric Systems
+underfloor_heating_diagnosis.md,774,
+underfloor_heating_diagnosis.md,775,1. **Electrical Hazards**
+underfloor_heating_diagnosis.md,776,   - Always disconnect power before work
+underfloor_heating_diagnosis.md,777,   - Verify isolation with test equipment
+underfloor_heating_diagnosis.md,778,   - Use RCD protection
+underfloor_heating_diagnosis.md,779,   - Never modify heating elements
+underfloor_heating_diagnosis.md,780,   - Work within competence limits
+underfloor_heating_diagnosis.md,781,
+underfloor_heating_diagnosis.md,782,2. **Testing Safety**
+underfloor_heating_diagnosis.md,783,   - Use insulated tools
+underfloor_heating_diagnosis.md,784,   - Never touch live parts
+underfloor_heating_diagnosis.md,785,   - High resistance tests should only be performed by qualified persons
+underfloor_heating_diagnosis.md,786,   - Follow manufacturer's test procedures
+underfloor_heating_diagnosis.md,787,
+underfloor_heating_diagnosis.md,788,3. **Repair Limitations**
+underfloor_heating_diagnosis.md,789,   - Know when replacement is safer than repair
+underfloor_heating_diagnosis.md,790,   - Never compromise on connection quality
+underfloor_heating_diagnosis.md,791,   - Use only manufacturer-approved parts
+underfloor_heating_diagnosis.md,792,   - Document all changes made

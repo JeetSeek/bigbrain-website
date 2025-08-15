@@ -1,0 +1,20 @@
+        spinner.succeed('Connected to Supabase successfully');
+      }
+    } catch (error) {
+      spinner.warn(`Supabase connection issue: ${error.message} - will attempt to proceed anyway`);
+    }
+    
+    // Process each knowledge type
+    await processFaultCodes();
+    await processSymptoms();
+    await processSafetyWarnings();
+    
+    console.log(chalk.green('✅ Knowledge embedding complete!'));
+  } catch (error) {
+    console.error(chalk.red('❌ Error:'), error.message);
+    process.exit(1);
+  }
+}
+
+// Run the script
+main();

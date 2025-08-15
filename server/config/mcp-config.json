@@ -1,0 +1,102 @@
+{
+  "mcpServers": {
+    "youtube": {
+      "name": "youtube-mcp",
+      "description": "YouTube video search and transcript extraction for diagnostic tutorials",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-youtube"],
+      "env": ["YOUTUBE_API_KEY"],
+      "capabilities": [
+        "search_videos",
+        "get_transcript",
+        "get_video_details"
+      ],
+      "rateLimit": {
+        "requestsPerMinute": 100,
+        "requestsPerDay": 10000
+      }
+    },
+    "brave-search": {
+      "name": "brave-search-mcp",
+      "description": "Web search for additional diagnostic information and manuals",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-brave-search"],
+      "env": ["BRAVE_API_KEY"],
+      "capabilities": [
+        "web_search",
+        "news_search"
+      ],
+      "rateLimit": {
+        "requestsPerMinute": 60,
+        "requestsPerDay": 2000
+      }
+    },
+    "web-scraper": {
+      "name": "web-scraper-mcp",
+      "description": "Extract content from manufacturer websites and technical documentation",
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-puppeteer"],
+      "env": [],
+      "capabilities": [
+        "scrape_page",
+        "extract_text",
+        "get_pdf_content"
+      ],
+      "rateLimit": {
+        "requestsPerMinute": 30,
+        "requestsPerDay": 1000
+      }
+    }
+  },
+  "searchQueries": {
+    "faultCodeTemplates": [
+      "{manufacturer} {model} {faultCode} fault code repair",
+      "{manufacturer} boiler {faultCode} diagnostic procedure",
+      "{faultCode} fault {manufacturer} troubleshooting guide",
+      "gas safe {manufacturer} {faultCode} repair tutorial",
+      "{manufacturer} {faultCode} error code fix"
+    ],
+    "generalDiagnosticTemplates": [
+      "{manufacturer} {model} service manual",
+      "{manufacturer} boiler diagnostic procedures",
+      "gas safe {manufacturer} repair guide",
+      "{manufacturer} boiler troubleshooting"
+    ]
+  },
+  "videoFilters": {
+    "minDuration": 120,
+    "maxDuration": 3600,
+    "preferredChannels": [
+      "Gas Safe Register",
+      "Boiler Training",
+      "HVAC Training",
+      "Gas Engineer Training"
+    ],
+    "excludeKeywords": [
+      "unboxing",
+      "review only",
+      "comedy",
+      "parody"
+    ],
+    "boostKeywords": [
+      "gas safe",
+      "engineer",
+      "professional",
+      "diagnostic",
+      "repair",
+      "troubleshoot",
+      "service",
+      "fault finding"
+    ]
+  },
+  "knowledgeExtraction": {
+    "enableTranscriptExtraction": true,
+    "maxTranscriptsPerQuery": 2,
+    "extractionPatterns": {
+      "procedures": "(?:step \\d+|first|second|third|next|then|finally)[\\s:]+([^.!?]+[.!?])",
+      "tools": "(?:use|need|require|get)[\\s]+(?:a|an|the)?\\s*(multimeter|manometer|gas analyzer|screwdriver|spanner|wrench|probe|tester)",
+      "safety": "(turn off|isolate|safety|danger|warning|caution|gas off|electric off)[^.!?]*[.!?]",
+      "timeEstimates": "(\\d+)\\s*(minute|hour|second)s?"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "manufacturer": "Ideal",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Ideal Boilers Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "L1",
+      "description": "Flow temperature overheat",
+      "troubleshooting_steps": "Check pump operation. Ensure radiators are bled. Check for blockages in the heating system.",
+      "safety_warning": "Allow the system to cool before handling components.",
+      "components": ["pump", "flow sensor", "heating circuit"]
+    },
+    {
+      "code": "L2",
+      "description": "Ignition lockout",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue for blockages. Reset boiler.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas valve", "ignition electrode", "flue", "PCB"]
+    },
+    {
+      "code": "L6",
+      "description": "False flame lockout",
+      "troubleshooting_steps": "Check flame sensing electrode. Check earth connection. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flame sensing electrode", "PCB", "wiring"]
+    },
+    {
+      "code": "F1",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "pressure relief valve"]
+    },
+    {
+      "code": "F2",
+      "description": "Flame loss",
+      "troubleshooting_steps": "Check gas supply. Check flame sensing electrode. Check flue for blockages.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["flame sensing electrode", "gas valve", "flue"]
+    },
+    {
+      "code": "F3",
+      "description": "Fan fault",
+      "troubleshooting_steps": "Check fan connection. Check fan impeller. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    }
+  ]
+}

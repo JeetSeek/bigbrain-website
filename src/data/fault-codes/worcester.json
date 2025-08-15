@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "manufacturer": "Worcester",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Worcester Bosch Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "EA",
+      "description": "Ignition fault",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue for blockages.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["ignition electrode", "gas valve", "PCB"]
+    },
+    {
+      "code": "A1",
+      "description": "Pump fault",
+      "troubleshooting_steps": "Check pump connection. Check pump for blockages. Check pump operation.",
+      "safety_warning": "Disconnect power before handling electrical components.",
+      "components": ["pump", "PCB", "wiring"]
+    },
+    {
+      "code": "C1",
+      "description": "Fan speed too low",
+      "troubleshooting_steps": "Check fan connection. Check fan impeller. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "C6",
+      "description": "Fan speed too high",
+      "troubleshooting_steps": "Check fan connection. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "F0",
+      "description": "Internal PCB fault",
+      "troubleshooting_steps": "Reset boiler. If fault persists, replace PCB.",
+      "safety_warning": "Disconnect power before replacing components.",
+      "components": ["PCB"]
+    },
+    {
+      "code": "F7",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "pressure relief valve"]
+    }
+  ]
+}

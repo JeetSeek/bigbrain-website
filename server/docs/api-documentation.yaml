@@ -1,0 +1,746 @@
+openapi: 3.0.3
+info:
+  title: BoilerBrain Professional Gas Safe Diagnostic API
+  description: |
+    Comprehensive API for professional Gas Safe diagnostic platform providing:
+    - Fault code lookup and diagnostic guidance
+    - AI-powered chat diagnostics with expert-level responses
+    - Knowledge management and ingestion
+    - Session management and conversation state
+    - Real-time monitoring and health checks
+    
+    ## Authentication
+    Most endpoints require valid session management. Some administrative endpoints may require additional authentication.
+    
+    ## Rate Limiting
+    API requests are rate-limited to ensure system stability:
+    - Chat endpoints: 10 requests per minute per session
+    - Search endpoints: 60 requests per minute per IP
+    - Knowledge management: 30 requests per minute per user
+    
+    ## Error Handling
+    All endpoints return consistent error responses with appropriate HTTP status codes and detailed error messages.
+  version: 2.0.0
+  contact:
+    name: BoilerBrain Support
+    email: support@boilerbrain.com
+  license:
+    name: Proprietary
+    url: https://boilerbrain.com/license
+
+servers:
+  - url: http://localhost:3204/api
+    description: Development server
+  - url: https://api.boilerbrain.com/api
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Basic health check
+      description: Returns basic server health status and version information
+      tags:
+        - Health & Monitoring
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                    example: healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2024-01-15T10:30:00Z"
+                  version:
+                    type: string
+                    example: "2.0.0"
+                  uptime:
+                    type: number
+                    description: Server uptime in seconds
+                    example: 86400
+
+  /health/detailed:
+    get:
+      summary: Detailed health check
+      description: Returns comprehensive health information including service dependencies
+      tags:
+        - Health & Monitoring
+      responses:
+        '200':
+          description: Detailed health information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  timestamp:
+                    type: string
+                    format: date-time
+                  services:
+                    type: object
+                    properties:
+                      database:
+                        $ref: '#/components/schemas/ServiceHealth'
+                      ai:
+                        $ref: '#/components/schemas/ServiceHealth'
+                      mcp:
+                        $ref: '#/components/schemas/ServiceHealth'
+                  metrics:
+                    type: object
+                    properties:
+                      requestsPerMinute:
+                        type: number
+                      averageResponseTime:
+                        type: number
+                      errorRate:
+                        type: number
+
+  /fault-codes/search:
+    get:
+      summary: Search fault codes
+      description: Search for fault codes by manufacturer and code
+      tags:
+        - Fault Codes
+      parameters:
+        - name: manufacturer
+          in: query
+          required: true
+          description: Boiler manufacturer name
+          schema:
+            type: string
+            example: ideal
+        - name: code
+          in: query
+          required: true
+          description: Fault code to search for
+          schema:
+            type: string
+            example: L2
+      responses:
+        '200':
+          description: Fault code found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/FaultCodeResult'
+                  message:
+                    type: string
+                    example: "Fault code found"
+        '400':
+          description: Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Fault code not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /fault-codes/manufacturers:
+    get:
+      summary: Get supported manufacturers
+      description: Returns list of all supported boiler manufacturers
+      tags:
+        - Fault Codes
+      responses:
+        '200':
+          description: List of manufacturers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Ideal"
+                        normalized:
+                          type: string
+                          example: "ideal"
+                        faultCodeCount:
+                          type: number
+                          example: 45
+
+  /fault-codes/{manufacturer}/codes:
+    get:
+      summary: Get fault codes for manufacturer
+      description: Returns all fault codes for a specific manufacturer
+      tags:
+        - Fault Codes
+      parameters:
+        - name: manufacturer
+          in: path
+          required: true
+          description: Manufacturer name (normalized)
+          schema:
+            type: string
+            example: ideal
+      responses:
+        '200':
+          description: Fault codes for manufacturer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FaultCode'
+
+  /chat:
+    post:
+      summary: Send chat message for diagnosis
+      description: |
+        Send a diagnostic query and receive professional Gas Safe engineer-level guidance.
+        Supports context-aware conversations with session management.
+      tags:
+        - Chat & Diagnostics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+                - sessionId
+              properties:
+                message:
+                  type: string
+                  description: Diagnostic query or follow-up question
+                  example: "Ideal Logic 24 combi showing L2 error, no hot water"
+                sessionId:
+                  type: string
+                  format: uuid
+                  description: Session ID for conversation continuity
+                  example: "550e8400-e29b-41d4-a716-446655440000"
+                context:
+                  type: object
+                  description: Additional context for the diagnostic query
+                  properties:
+                    boilerModel:
+                      type: string
+                      example: "Logic 24"
+                    symptoms:
+                      type: array
+                      items:
+                        type: string
+                      example: ["no hot water", "error code showing"]
+      responses:
+        '200':
+          description: Diagnostic response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  response:
+                    type: string
+                    description: Professional diagnostic guidance
+                  confidence:
+                    type: number
+                    minimum: 0
+                    maximum: 1
+                    description: Confidence score for the diagnosis
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          enum: [database, manual, web, video]
+                        title:
+                          type: string
+                        url:
+                          type: string
+                  sessionId:
+                    type: string
+                    format: uuid
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/history/{sessionId}:
+    get:
+      summary: Get chat history
+      description: Retrieve conversation history for a session
+      tags:
+        - Chat & Diagnostics
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: Session ID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+
+  /sessions:
+    post:
+      summary: Create new session
+      description: Create a new conversation session
+      tags:
+        - Session Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+              properties:
+                userId:
+                  type: string
+                  example: "user-123"
+                metadata:
+                  type: object
+                  description: Additional session metadata
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  sessionId:
+                    type: string
+                    format: uuid
+                  expiresAt:
+                    type: string
+                    format: date-time
+
+  /sessions/{sessionId}:
+    put:
+      summary: Update session
+      description: Update session data and extend expiration
+      tags:
+        - Session Management
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lastActivity:
+                  type: string
+                  format: date-time
+                metadata:
+                  type: object
+      responses:
+        '200':
+          description: Session updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+    delete:
+      summary: Delete session
+      description: Delete a session and all associated data
+      tags:
+        - Session Management
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /knowledge/stats:
+    get:
+      summary: Get knowledge base statistics
+      description: Returns statistics about the knowledge base and ingestion system
+      tags:
+        - Knowledge Management
+      responses:
+        '200':
+          description: Knowledge base statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  stats:
+                    type: object
+                    properties:
+                      totalItems:
+                        type: number
+                      pendingReview:
+                        type: number
+                      approvedItems:
+                        type: number
+                      rejectedItems:
+                        type: number
+                      averageReliabilityScore:
+                        type: number
+                      sourceBreakdown:
+                        type: object
+                        additionalProperties:
+                          type: number
+
+  /knowledge/pending:
+    get:
+      summary: Get pending knowledge items
+      description: Returns knowledge items pending review and approval
+      tags:
+        - Knowledge Management
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Pending knowledge items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KnowledgeItem'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /knowledge/approve/{id}:
+    post:
+      summary: Approve knowledge item
+      description: Approve a pending knowledge item for inclusion in the knowledge base
+      tags:
+        - Knowledge Management
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Knowledge item approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /knowledge/reject/{id}:
+    post:
+      summary: Reject knowledge item
+      description: Reject a pending knowledge item with reason
+      tags:
+        - Knowledge Management
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reason
+              properties:
+                reason:
+                  type: string
+                  description: Reason for rejection
+                  example: "Inaccurate technical information"
+      responses:
+        '200':
+          description: Knowledge item rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+components:
+  schemas:
+    ServiceHealth:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        responseTime:
+          type: number
+          description: Response time in milliseconds
+        lastCheck:
+          type: string
+          format: date-time
+        error:
+          type: string
+          description: Error message if unhealthy
+
+    FaultCodeResult:
+      type: object
+      properties:
+        manufacturer:
+          type: string
+          example: "Ideal"
+        code:
+          type: string
+          example: "L2"
+        description:
+          type: string
+          example: "Ignition lockout"
+        category:
+          type: string
+          example: "Ignition"
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        solutions:
+          type: array
+          items:
+            type: object
+            properties:
+              step:
+                type: number
+              description:
+                type: string
+              safetyLevel:
+                type: string
+                enum: [safe, caution, danger]
+        technicalSpecs:
+          type: object
+          properties:
+            testVoltages:
+              type: array
+              items:
+                type: string
+            pressureRanges:
+              type: array
+              items:
+                type: string
+            partNumbers:
+              type: array
+              items:
+                type: string
+
+    FaultCode:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        severity:
+          type: string
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+
+    KnowledgeItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        source:
+          type: string
+        sourceUrl:
+          type: string
+        reliabilityScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        createdAt:
+          type: string
+          format: date-time
+        reviewedAt:
+          type: string
+          format: date-time
+        reviewedBy:
+          type: string
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code for programmatic handling
+        details:
+          type: object
+          description: Additional error details
+        requestId:
+          type: string
+          description: Request ID for tracking
+        timestamp:
+          type: string
+          format: date-time
+
+  securitySchemes:
+    SessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-ID
+      description: Session-based authentication using session ID
+
+security:
+  - SessionAuth: []
+
+tags:
+  - name: Health & Monitoring
+    description: System health checks and monitoring endpoints
+  - name: Fault Codes
+    description: Fault code lookup and diagnostic information
+  - name: Chat & Diagnostics
+    description: AI-powered diagnostic chat and guidance
+  - name: Session Management
+    description: Session creation, management, and cleanup
+  - name: Knowledge Management
+    description: Knowledge base management and content approval

@@ -1,0 +1,653 @@
+filename,line_number,content
+circulation_pump_diagnostics.md,1,# Circulation Pump Diagnostic and Fault Finding Guide
+circulation_pump_diagnostics.md,2,
+circulation_pump_diagnostics.md,3,"This comprehensive guide covers advanced diagnostic procedures for circulation pumps in heating systems, including variable speed pumps, ECM technology, and specialized troubleshooting techniques beyond basic checks."
+circulation_pump_diagnostics.md,4,
+circulation_pump_diagnostics.md,5,## PART 1: UNDERSTANDING MODERN CIRCULATION PUMPS
+circulation_pump_diagnostics.md,6,
+circulation_pump_diagnostics.md,7,### Pump Technology Overview
+circulation_pump_diagnostics.md,8,
+circulation_pump_diagnostics.md,9,**1. Standard Fixed-Speed Pumps**
+circulation_pump_diagnostics.md,10,- **Single-Speed**: Basic on/off operation
+circulation_pump_diagnostics.md,11,- **Multi-Speed**: Manual selection of fixed speeds (typically 3)
+circulation_pump_diagnostics.md,12,- **Permanent Split Capacitor (PSC) Motors**: Traditional technology
+circulation_pump_diagnostics.md,13,
+circulation_pump_diagnostics.md,14,**2. Variable Speed Pumps**
+circulation_pump_diagnostics.md,15,- **Electronically Commutated Motors (ECM)**: Highly efficient DC motors
+circulation_pump_diagnostics.md,16,- **PWM-Controlled**: External signal modulates speed
+circulation_pump_diagnostics.md,17,- **Self-Modulating**: Internal programming adjusts to system conditions
+circulation_pump_diagnostics.md,18,- **Smart Pumps**: Network connectivity and advanced control integration
+circulation_pump_diagnostics.md,19,
+circulation_pump_diagnostics.md,20,**3. Key Components**
+circulation_pump_diagnostics.md,21,- **Pump Housing**: Contains impeller and water channels
+circulation_pump_diagnostics.md,22,- **Impeller**: Creates water movement
+circulation_pump_diagnostics.md,23,- **Rotor/Stator**: Electrical components that create rotation
+circulation_pump_diagnostics.md,24,- **Control Module**: Houses electronics for variable speed models
+circulation_pump_diagnostics.md,25,"- **Sensors**: Pressure differentials, temperature, flow detection"
+circulation_pump_diagnostics.md,26,
+circulation_pump_diagnostics.md,27,### Pump Operation Principles
+circulation_pump_diagnostics.md,28,
+circulation_pump_diagnostics.md,29,**1. System Resistance Curve**
+circulation_pump_diagnostics.md,30,- Relationship between flow rate and pressure
+circulation_pump_diagnostics.md,31,"- Affected by pipework, valves, heat exchangers"
+circulation_pump_diagnostics.md,32,- Changes as system components open/close
+circulation_pump_diagnostics.md,33,
+circulation_pump_diagnostics.md,34,**2. Pump Performance Curve**
+circulation_pump_diagnostics.md,35,- Head pressure vs. flow rate
+circulation_pump_diagnostics.md,36,- Each pump has a specific performance profile
+circulation_pump_diagnostics.md,37,- Multiple curves for different speeds
+circulation_pump_diagnostics.md,38,
+circulation_pump_diagnostics.md,39,**3. Balance Point**
+circulation_pump_diagnostics.md,40,- Intersection of system curve and pump curve
+circulation_pump_diagnostics.md,41,- Determines actual operating condition
+circulation_pump_diagnostics.md,42,- Changes as speed or system conditions vary
+circulation_pump_diagnostics.md,43,
+circulation_pump_diagnostics.md,44,**4. Control Modes**
+circulation_pump_diagnostics.md,45,- Constant pressure
+circulation_pump_diagnostics.md,46,- Proportional pressure
+circulation_pump_diagnostics.md,47,- Constant curve (fixed speed)
+circulation_pump_diagnostics.md,48,- Temperature differential
+circulation_pump_diagnostics.md,49,- Auto adapt (smart algorithms)
+circulation_pump_diagnostics.md,50,
+circulation_pump_diagnostics.md,51,## PART 2: VARIABLE SPEED PUMP PROBLEMS
+circulation_pump_diagnostics.md,52,
+circulation_pump_diagnostics.md,53,### Control Signal Issues
+circulation_pump_diagnostics.md,54,
+circulation_pump_diagnostics.md,55,**Symptoms:**
+circulation_pump_diagnostics.md,56,- Pump running at incorrect speed
+circulation_pump_diagnostics.md,57,- Failure to modulate appropriately
+circulation_pump_diagnostics.md,58,"- ""Maximum"" or ""Minimum"" speed regardless of demand"
+circulation_pump_diagnostics.md,59,- Erratic speed changes
+circulation_pump_diagnostics.md,60,- Error codes related to control signals
+circulation_pump_diagnostics.md,61,- Temperature fluctuations in heating system
+circulation_pump_diagnostics.md,62,
+circulation_pump_diagnostics.md,63,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,64,
+circulation_pump_diagnostics.md,65,1. **Control Signal Verification**
+circulation_pump_diagnostics.md,66,"   - Check signal type (0-10V, PWM, ModBus, etc.)"
+circulation_pump_diagnostics.md,67,   - Measure voltage/duty cycle at pump terminals
+circulation_pump_diagnostics.md,68,   - Verify connection integrity
+circulation_pump_diagnostics.md,69,   - Check for interference/noise in signal
+circulation_pump_diagnostics.md,70,   - Confirm signal ground reference
+circulation_pump_diagnostics.md,71,
+circulation_pump_diagnostics.md,72,2. **PWM Signal Testing**
+circulation_pump_diagnostics.md,73,   - Measure frequency (typically 100-2000Hz)
+circulation_pump_diagnostics.md,74,   - Check duty cycle (0-100%)
+circulation_pump_diagnostics.md,75,   - Verify pulse amplitude
+circulation_pump_diagnostics.md,76,   - Test with known good signal source if possible
+circulation_pump_diagnostics.md,77,   - Check for signal stability
+circulation_pump_diagnostics.md,78,
+circulation_pump_diagnostics.md,79,3. **Control Interface Inspection**
+circulation_pump_diagnostics.md,80,   - Verify DIP switch settings match system requirements
+circulation_pump_diagnostics.md,81,   - Check jumper configurations
+circulation_pump_diagnostics.md,82,   - Inspect for moisture or corrosion on control board
+circulation_pump_diagnostics.md,83,   - Verify LED indicators match expected operation
+circulation_pump_diagnostics.md,84,   - Test manual override functionality
+circulation_pump_diagnostics.md,85,
+circulation_pump_diagnostics.md,86,**Common Faults and Solutions:**
+circulation_pump_diagnostics.md,87,
+circulation_pump_diagnostics.md,88,1. **No Control Signal**
+circulation_pump_diagnostics.md,89,   - Symptoms: Pump defaults to internal program or safety mode
+circulation_pump_diagnostics.md,90,"   - Cause: Broken wires, controller failure, incorrect configuration"
+circulation_pump_diagnostics.md,91,   - Solution:
+circulation_pump_diagnostics.md,92,     * Repair damaged wiring
+circulation_pump_diagnostics.md,93,     * Verify controller output
+circulation_pump_diagnostics.md,94,     * Check configuration settings
+circulation_pump_diagnostics.md,95,     * Consider signal isolator if electrical noise present
+circulation_pump_diagnostics.md,96,
+circulation_pump_diagnostics.md,97,2. **Incorrect Signal Type**
+circulation_pump_diagnostics.md,98,"   - Symptoms: Erratic operation, unexpected speed"
+circulation_pump_diagnostics.md,99,"   - Cause: Mismatched signal types, incorrect settings"
+circulation_pump_diagnostics.md,100,   - Solution:
+circulation_pump_diagnostics.md,101,     * Verify proper signal type (PWM vs. 0-10V)
+circulation_pump_diagnostics.md,102,     * Check pump requirements against controller output
+circulation_pump_diagnostics.md,103,     * Adjust settings to match required protocol
+circulation_pump_diagnostics.md,104,     * Install signal converter if necessary
+circulation_pump_diagnostics.md,105,
+circulation_pump_diagnostics.md,106,3. **Inverted Signal Logic**
+circulation_pump_diagnostics.md,107,   - Symptoms: Pump does opposite of intended (high speed at low demand)
+circulation_pump_diagnostics.md,108,   - Cause: Incorrect signal profile configuration
+circulation_pump_diagnostics.md,109,   - Solution:
+circulation_pump_diagnostics.md,110,     * Check pump settings for PWM profile (Type 1/Type 2)
+circulation_pump_diagnostics.md,111,     * Verify controller output logic matches pump requirements
+circulation_pump_diagnostics.md,112,     * Adjust inverter settings if available
+circulation_pump_diagnostics.md,113,     * Reconfigure control system if necessary
+circulation_pump_diagnostics.md,114,
+circulation_pump_diagnostics.md,115,### ECM Pump Electronic Failures
+circulation_pump_diagnostics.md,116,
+circulation_pump_diagnostics.md,117,**Symptoms:**
+circulation_pump_diagnostics.md,118,- Complete pump failure
+circulation_pump_diagnostics.md,119,- Intermittent operation
+circulation_pump_diagnostics.md,120,- Error codes on pump display
+circulation_pump_diagnostics.md,121,- Unusual noises from electronic components
+circulation_pump_diagnostics.md,122,- Overheating of control module
+circulation_pump_diagnostics.md,123,- Communication failures with building management systems
+circulation_pump_diagnostics.md,124,
+circulation_pump_diagnostics.md,125,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,126,
+circulation_pump_diagnostics.md,127,1. **Power Supply Testing**
+circulation_pump_diagnostics.md,128,   - Check voltage at pump (230V AC or as specified)
+circulation_pump_diagnostics.md,129,   - Test for voltage fluctuations under load
+circulation_pump_diagnostics.md,130,   - Measure for electrical noise/spikes
+circulation_pump_diagnostics.md,131,   - Verify proper phase connection if three-phase
+circulation_pump_diagnostics.md,132,   - Check for loose connections
+circulation_pump_diagnostics.md,133,
+circulation_pump_diagnostics.md,134,2. **Control Module Assessment**
+circulation_pump_diagnostics.md,135,   - Visually inspect for damage or swelling
+circulation_pump_diagnostics.md,136,   - Check for signs of overheating
+circulation_pump_diagnostics.md,137,   - Look for moisture ingress or corrosion
+circulation_pump_diagnostics.md,138,   - Test capacitors if accessible
+circulation_pump_diagnostics.md,139,   - Verify proper grounding
+circulation_pump_diagnostics.md,140,
+circulation_pump_diagnostics.md,141,3. **Electrical Isolation Testing**
+circulation_pump_diagnostics.md,142,   - Check insulation resistance between windings and ground
+circulation_pump_diagnostics.md,143,   - Test for short circuits between windings
+circulation_pump_diagnostics.md,144,   - Verify isolation between control electronics and water components
+circulation_pump_diagnostics.md,145,   - Look for evidence of water penetration
+circulation_pump_diagnostics.md,146,
+circulation_pump_diagnostics.md,147,**Common Faults and Solutions:**
+circulation_pump_diagnostics.md,148,
+circulation_pump_diagnostics.md,149,1. **Control Module Failure**
+circulation_pump_diagnostics.md,150,"   - Symptoms: No operation, error codes, partial functions"
+circulation_pump_diagnostics.md,151,"   - Cause: Component failure, moisture damage, overheating"
+circulation_pump_diagnostics.md,152,   - Solution:
+circulation_pump_diagnostics.md,153,     * Replace control module if available separately
+circulation_pump_diagnostics.md,154,     * Replace entire pump if module not separable
+circulation_pump_diagnostics.md,155,     * Ensure proper ventilation around module
+circulation_pump_diagnostics.md,156,     * Protect from water and condensation
+circulation_pump_diagnostics.md,157,
+circulation_pump_diagnostics.md,158,2. **Capacitor Issues**
+circulation_pump_diagnostics.md,159,"   - Symptoms: Difficulty starting, intermittent operation"
+circulation_pump_diagnostics.md,160,"   - Cause: Failed capacitor, poor connections"
+circulation_pump_diagnostics.md,161,   - Solution:
+circulation_pump_diagnostics.md,162,     * Replace run or start capacitor if external
+circulation_pump_diagnostics.md,163,     * Check capacitor value matches specification
+circulation_pump_diagnostics.md,164,     * Ensure proper connections
+circulation_pump_diagnostics.md,165,     * Replace pump if integrated capacitors failed
+circulation_pump_diagnostics.md,166,
+circulation_pump_diagnostics.md,167,3. **Communication Interface Failures**
+circulation_pump_diagnostics.md,168,   - Symptoms: No response to BMS or system controller
+circulation_pump_diagnostics.md,169,"   - Cause: Damaged communication circuit, protocol mismatch"
+circulation_pump_diagnostics.md,170,   - Solution:
+circulation_pump_diagnostics.md,171,     * Check communication wiring
+circulation_pump_diagnostics.md,172,"     * Verify protocol settings (BACnet, Modbus, etc.)"
+circulation_pump_diagnostics.md,173,     * Test with alternative control system if possible
+circulation_pump_diagnostics.md,174,     * Replace communication module if available separately
+circulation_pump_diagnostics.md,175,
+circulation_pump_diagnostics.md,176,### Mechanical Pump Faults
+circulation_pump_diagnostics.md,177,
+circulation_pump_diagnostics.md,178,**Symptoms:**
+circulation_pump_diagnostics.md,179,"- Unusual noise (grinding, knocking, whining)"
+circulation_pump_diagnostics.md,180,- Excessive vibration
+circulation_pump_diagnostics.md,181,- Reduced flow despite normal speed
+circulation_pump_diagnostics.md,182,- Overheating of pump body
+circulation_pump_diagnostics.md,183,- Leak from shaft seal or housing
+circulation_pump_diagnostics.md,184,- Excessive energy consumption
+circulation_pump_diagnostics.md,185,
+circulation_pump_diagnostics.md,186,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,187,
+circulation_pump_diagnostics.md,188,1. **Noise Analysis**
+circulation_pump_diagnostics.md,189,"   - Identify type of noise (continuous, intermittent, startup only)"
+circulation_pump_diagnostics.md,190,   - Localize source within pump assembly
+circulation_pump_diagnostics.md,191,   - Check if noise varies with speed
+circulation_pump_diagnostics.md,192,   - Test if noise transmits through pipework
+circulation_pump_diagnostics.md,193,   - Listen for harmonics or resonance
+circulation_pump_diagnostics.md,194,
+circulation_pump_diagnostics.md,195,2. **Vibration Testing**
+circulation_pump_diagnostics.md,196,   - Use vibration analyzer if available
+circulation_pump_diagnostics.md,197,   - Check mounting security
+circulation_pump_diagnostics.md,198,   - Look for imbalance indicators
+circulation_pump_diagnostics.md,199,   - Test at different speeds
+circulation_pump_diagnostics.md,200,   - Check pipe flexibility at pump connections
+circulation_pump_diagnostics.md,201,
+circulation_pump_diagnostics.md,202,3. **Physical Inspection**
+circulation_pump_diagnostics.md,203,   - Remove pump if necessary
+circulation_pump_diagnostics.md,204,   - Check impeller for damage or contamination
+circulation_pump_diagnostics.md,205,   - Inspect for debris in pump chamber
+circulation_pump_diagnostics.md,206,   - Check shaft for free movement
+circulation_pump_diagnostics.md,207,   - Look for signs of overheating
+circulation_pump_diagnostics.md,208,
+circulation_pump_diagnostics.md,209,**Common Faults and Solutions:**
+circulation_pump_diagnostics.md,210,
+circulation_pump_diagnostics.md,211,1. **Worn Bearings**
+circulation_pump_diagnostics.md,212,"   - Symptoms: Rumbling noise, worse at startup, excessive heat"
+circulation_pump_diagnostics.md,213,"   - Cause: Age, contamination, improper installation"
+circulation_pump_diagnostics.md,214,   - Solution:
+circulation_pump_diagnostics.md,215,     * Replace bearings if serviceable design
+circulation_pump_diagnostics.md,216,     * Replace pump if integrated design
+circulation_pump_diagnostics.md,217,     * Check system for contamination causing wear
+circulation_pump_diagnostics.md,218,     * Verify proper installation orientation
+circulation_pump_diagnostics.md,219,
+circulation_pump_diagnostics.md,220,2. **Impeller Damage**
+circulation_pump_diagnostics.md,221,"   - Symptoms: Reduced performance, cavitation noise, vibration"
+circulation_pump_diagnostics.md,222,"   - Cause: Debris impact, cavitation erosion, manufacturing defect"
+circulation_pump_diagnostics.md,223,   - Solution:
+circulation_pump_diagnostics.md,224,     * Replace impeller if possible
+circulation_pump_diagnostics.md,225,     * Check system for debris source
+circulation_pump_diagnostics.md,226,     * Install strainer upstream of pump
+circulation_pump_diagnostics.md,227,     * Verify system pressure meets NPSH requirements
+circulation_pump_diagnostics.md,228,
+circulation_pump_diagnostics.md,229,3. **Shaft Issues**
+circulation_pump_diagnostics.md,230,"   - Symptoms: Wobbling, noise, leakage around shaft"
+circulation_pump_diagnostics.md,231,"   - Cause: Bent shaft, worn seal, misalignment"
+circulation_pump_diagnostics.md,232,   - Solution:
+circulation_pump_diagnostics.md,233,     * Replace shaft seal if serviceable
+circulation_pump_diagnostics.md,234,     * Check for proper alignment
+circulation_pump_diagnostics.md,235,     * Replace pump if shaft damaged
+circulation_pump_diagnostics.md,236,     * Verify proper mounting and support
+circulation_pump_diagnostics.md,237,
+circulation_pump_diagnostics.md,238,## PART 3: PUMP AIRLOCKING AND BLEEDING ISSUES
+circulation_pump_diagnostics.md,239,
+circulation_pump_diagnostics.md,240,### Identifying Air Problems
+circulation_pump_diagnostics.md,241,
+circulation_pump_diagnostics.md,242,**Symptoms:**
+circulation_pump_diagnostics.md,243,"- Noisy operation (gurgling, hissing)"
+circulation_pump_diagnostics.md,244,- Reduced or no flow despite pump running
+circulation_pump_diagnostics.md,245,- Erratic flow rate
+circulation_pump_diagnostics.md,246,- Overheating pump
+circulation_pump_diagnostics.md,247,- System pressure drops
+circulation_pump_diagnostics.md,248,- Heating system balancing issues
+circulation_pump_diagnostics.md,249,- Cold radiators or heat emitters
+circulation_pump_diagnostics.md,250,
+circulation_pump_diagnostics.md,251,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,252,
+circulation_pump_diagnostics.md,253,1. **System Pressure Testing**
+circulation_pump_diagnostics.md,254,   - Check static pressure when cold (typically 1-1.5 bar)
+circulation_pump_diagnostics.md,255,   - Monitor pressure during operation
+circulation_pump_diagnostics.md,256,   - Check for pressure drops during pump startup
+circulation_pump_diagnostics.md,257,   - Verify expansion vessel is functioning properly
+circulation_pump_diagnostics.md,258,   - Look for correlation between noise and pressure changes
+circulation_pump_diagnostics.md,259,
+circulation_pump_diagnostics.md,260,2. **Flow Verification**
+circulation_pump_diagnostics.md,261,   - Use ultrasonic flow meter if available
+circulation_pump_diagnostics.md,262,   - Check temperature differential across heat emitters
+circulation_pump_diagnostics.md,263,   - Feel pipes for expected temperature difference
+circulation_pump_diagnostics.md,264,   - Verify flow switch operation if present
+circulation_pump_diagnostics.md,265,   - Check pump LED indicators for flow detection
+circulation_pump_diagnostics.md,266,
+circulation_pump_diagnostics.md,267,3. **Air Presence Confirmation**
+circulation_pump_diagnostics.md,268,   - Locate air vents throughout system
+circulation_pump_diagnostics.md,269,   - Test manual bleeding at high points
+circulation_pump_diagnostics.md,270,   - Check for bubble formation in sight glasses if fitted
+circulation_pump_diagnostics.md,271,   - Listen for characteristic air movement sounds
+circulation_pump_diagnostics.md,272,   - Examine circulating water for tiny bubbles
+circulation_pump_diagnostics.md,273,
+circulation_pump_diagnostics.md,274,**Common Airlocking Issues and Solutions:**
+circulation_pump_diagnostics.md,275,
+circulation_pump_diagnostics.md,276,1. **Pump Air Binding**
+circulation_pump_diagnostics.md,277,"   - Symptoms: Pump runs but no flow, overheating"
+circulation_pump_diagnostics.md,278,   - Cause: Air trapped in pump housing
+circulation_pump_diagnostics.md,279,   - Solution:
+circulation_pump_diagnostics.md,280,     * Locate and use pump bleed screw
+circulation_pump_diagnostics.md,281,     * Increase system pressure temporarily
+circulation_pump_diagnostics.md,282,     * Perform dynamic bleeding procedure
+circulation_pump_diagnostics.md,283,     * Consider automatic air separator installation
+circulation_pump_diagnostics.md,284,
+circulation_pump_diagnostics.md,285,2. **Recurring Air Problems**
+circulation_pump_diagnostics.md,286,   - Symptoms: System requires frequent bleeding
+circulation_pump_diagnostics.md,287,"   - Cause: Air ingress, microbubble formation"
+circulation_pump_diagnostics.md,288,   - Solution:
+circulation_pump_diagnostics.md,289,     * Check for negative pressure points
+circulation_pump_diagnostics.md,290,     * Verify all joints are airtight
+circulation_pump_diagnostics.md,291,     * Install micro-bubble deaerator
+circulation_pump_diagnostics.md,292,     * Check expansion vessel pressure
+circulation_pump_diagnostics.md,293,     * Investigate for small leaks drawing in air
+circulation_pump_diagnostics.md,294,
+circulation_pump_diagnostics.md,295,3. **Air Removal System Failures**
+circulation_pump_diagnostics.md,296,   - Symptoms: Automatic air vents not functioning
+circulation_pump_diagnostics.md,297,"   - Cause: Clogged vents, stuck floats, incorrect installation"
+circulation_pump_diagnostics.md,298,   - Solution:
+circulation_pump_diagnostics.md,299,     * Clean or replace automatic air vents
+circulation_pump_diagnostics.md,300,     * Verify proper installation orientation
+circulation_pump_diagnostics.md,301,     * Install dirt separator before air separator
+circulation_pump_diagnostics.md,302,     * Consider higher quality air separation devices
+circulation_pump_diagnostics.md,303,
+circulation_pump_diagnostics.md,304,### Advanced Air Removal Techniques
+circulation_pump_diagnostics.md,305,
+circulation_pump_diagnostics.md,306,**Dynamic Pump Bleeding:**
+circulation_pump_diagnostics.md,307,- Variable speed cycling to dislodge air pockets
+circulation_pump_diagnostics.md,308,- Pressure pulsing techniques
+circulation_pump_diagnostics.md,309,- Sequential zone operation for systematic air removal
+circulation_pump_diagnostics.md,310,- Controlled system overpressure during bleeding
+circulation_pump_diagnostics.md,311,
+circulation_pump_diagnostics.md,312,**System Design Solutions:**
+circulation_pump_diagnostics.md,313,- Low-loss headers with air separation
+circulation_pump_diagnostics.md,314,- Dirt and air separators at critical points
+circulation_pump_diagnostics.md,315,- Proper pipe gradient to facilitate air movement
+circulation_pump_diagnostics.md,316,- Header tank positioning and design
+circulation_pump_diagnostics.md,317,- Heat exchanger orientation for self-venting
+circulation_pump_diagnostics.md,318,
+circulation_pump_diagnostics.md,319,**Bleeding Sequence for Complex Systems:**
+circulation_pump_diagnostics.md,320,1. Ensure adequate system pressure
+circulation_pump_diagnostics.md,321,2. Begin with main system air separators
+circulation_pump_diagnostics.md,322,3. Progress to highest points first
+circulation_pump_diagnostics.md,323,4. Move methodically through zones
+circulation_pump_diagnostics.md,324,5. Repeat process until all air removed
+circulation_pump_diagnostics.md,325,6. Monitor pressure throughout procedure
+circulation_pump_diagnostics.md,326,
+circulation_pump_diagnostics.md,327,## PART 4: PWM SIGNAL ISSUES FOR MODERN ECM PUMPS
+circulation_pump_diagnostics.md,328,
+circulation_pump_diagnostics.md,329,### Understanding PWM Control
+circulation_pump_diagnostics.md,330,
+circulation_pump_diagnostics.md,331,**PWM Signal Characteristics:**
+circulation_pump_diagnostics.md,332,- Digital square wave signal
+circulation_pump_diagnostics.md,333,- Typically 100-5000Hz frequency (often 490Hz for pumps)
+circulation_pump_diagnostics.md,334,- Duty cycle (on-time percentage) controls speed
+circulation_pump_diagnostics.md,335,"- 0% = minimum speed, 100% = maximum speed"
+circulation_pump_diagnostics.md,336,- May use Type 1 (direct) or Type 2 (inverse) profiles
+circulation_pump_diagnostics.md,337,
+circulation_pump_diagnostics.md,338,**Signal Components:**
+circulation_pump_diagnostics.md,339,- Signal wire (usually white or yellow)
+circulation_pump_diagnostics.md,340,- Ground reference (usually black or blue)
+circulation_pump_diagnostics.md,341,- Power supply (separate from control)
+circulation_pump_diagnostics.md,342,- Pull-up resistor (in some designs)
+circulation_pump_diagnostics.md,343,
+circulation_pump_diagnostics.md,344,**Control Profiles:**
+circulation_pump_diagnostics.md,345,"- Type 1: 0% PWM = minimum speed, 100% = maximum speed"
+circulation_pump_diagnostics.md,346,"- Type 2: 0% PWM = maximum speed, 100% = minimum speed (or off)"
+circulation_pump_diagnostics.md,347,- Custom curves for specific applications
+circulation_pump_diagnostics.md,348,- Minimum thresholds for valid signal detection
+circulation_pump_diagnostics.md,349,
+circulation_pump_diagnostics.md,350,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,351,
+circulation_pump_diagnostics.md,352,1. **Signal Measurement**
+circulation_pump_diagnostics.md,353,   - Use oscilloscope to view actual PWM waveform
+circulation_pump_diagnostics.md,354,   - Measure frequency and duty cycle
+circulation_pump_diagnostics.md,355,   - Check for clean square wave pattern
+circulation_pump_diagnostics.md,356,   - Verify voltage levels meet pump requirements
+circulation_pump_diagnostics.md,357,   - Test under varying load conditions
+circulation_pump_diagnostics.md,358,
+circulation_pump_diagnostics.md,359,2. **Controller Output Verification**
+circulation_pump_diagnostics.md,360,   - Test controller output directly
+circulation_pump_diagnostics.md,361,   - Verify controller is configured for correct PWM type
+circulation_pump_diagnostics.md,362,   - Check for proper ground reference
+circulation_pump_diagnostics.md,363,   - Ensure controller power supply is stable
+circulation_pump_diagnostics.md,364,   - Verify program logic for expected output
+circulation_pump_diagnostics.md,365,
+circulation_pump_diagnostics.md,366,3. **Pump Response Testing**
+circulation_pump_diagnostics.md,367,   - Observe pump speed at different duty cycles
+circulation_pump_diagnostics.md,368,   - Check minimum signal threshold for response
+circulation_pump_diagnostics.md,369,   - Verify speed changes proportionally to signal
+circulation_pump_diagnostics.md,370,   - Look for unexpected behavior at signal transitions
+circulation_pump_diagnostics.md,371,   - Test with known good PWM generator if available
+circulation_pump_diagnostics.md,372,
+circulation_pump_diagnostics.md,373,**Common Faults and Solutions:**
+circulation_pump_diagnostics.md,374,
+circulation_pump_diagnostics.md,375,1. **Signal Generation Problems**
+circulation_pump_diagnostics.md,376,"   - Symptoms: Incorrect, unstable or no PWM output"
+circulation_pump_diagnostics.md,377,"   - Cause: Controller failure, incorrect settings, wiring issues"
+circulation_pump_diagnostics.md,378,   - Solution:
+circulation_pump_diagnostics.md,379,     * Check controller configuration
+circulation_pump_diagnostics.md,380,     * Verify output circuit functionality
+circulation_pump_diagnostics.md,381,     * Test with external PWM generator
+circulation_pump_diagnostics.md,382,     * Replace controller if output circuit failed
+circulation_pump_diagnostics.md,383,     * Check for software/firmware updates
+circulation_pump_diagnostics.md,384,
+circulation_pump_diagnostics.md,385,2. **Signal Transmission Issues**
+circulation_pump_diagnostics.md,386,"   - Symptoms: Signal deterioration, noise, intermittent control"
+circulation_pump_diagnostics.md,387,"   - Cause: Wiring problems, interference, excessive distance"
+circulation_pump_diagnostics.md,388,   - Solution:
+circulation_pump_diagnostics.md,389,     * Use shielded cable for PWM signal
+circulation_pump_diagnostics.md,390,     * Separate PWM wires from power cables
+circulation_pump_diagnostics.md,391,     * Keep cable runs under 3 meters if possible
+circulation_pump_diagnostics.md,392,     * Check connections for corrosion or looseness
+circulation_pump_diagnostics.md,393,     * Install line filter or signal conditioner if needed
+circulation_pump_diagnostics.md,394,
+circulation_pump_diagnostics.md,395,3. **Pump Interpretation Problems**
+circulation_pump_diagnostics.md,396,   - Symptoms: Unexpected response to valid signal
+circulation_pump_diagnostics.md,397,"   - Cause: Incorrect profile setting, pump electronics issue"
+circulation_pump_diagnostics.md,398,   - Solution:
+circulation_pump_diagnostics.md,399,     * Check pump DIP switches for correct PWM profile
+circulation_pump_diagnostics.md,400,     * Verify pump firmware is current
+circulation_pump_diagnostics.md,401,     * Test pump with alternative controller
+circulation_pump_diagnostics.md,402,     * Replace pump control module if possible
+circulation_pump_diagnostics.md,403,     * Consider different control method if incompatibility persists
+circulation_pump_diagnostics.md,404,
+circulation_pump_diagnostics.md,405,### Creating and Testing PWM Signals
+circulation_pump_diagnostics.md,406,
+circulation_pump_diagnostics.md,407,**Test Equipment:**
+circulation_pump_diagnostics.md,408,- PWM generator (dedicated or Arduino-based)
+circulation_pump_diagnostics.md,409,- Oscilloscope for signal verification
+circulation_pump_diagnostics.md,410,- Multimeter with frequency/duty cycle capability
+circulation_pump_diagnostics.md,411,- Signal isolation adapter for testing
+circulation_pump_diagnostics.md,412,- Pull-up resistors if needed
+circulation_pump_diagnostics.md,413,
+circulation_pump_diagnostics.md,414,**Test Procedure:**
+circulation_pump_diagnostics.md,415,1. Generate known good PWM signal (typically 490Hz)
+circulation_pump_diagnostics.md,416,2. Verify signal with oscilloscope
+circulation_pump_diagnostics.md,417,3. Disconnect pump from normal controller
+circulation_pump_diagnostics.md,418,4. Connect test PWM signal
+circulation_pump_diagnostics.md,419,5. Observe pump response at various duty cycles
+circulation_pump_diagnostics.md,420,6. Document minimum threshold for operation
+circulation_pump_diagnostics.md,421,7. Test boundaries of control range
+circulation_pump_diagnostics.md,422,
+circulation_pump_diagnostics.md,423,**Signal Adaptation Options:**
+circulation_pump_diagnostics.md,424,- PWM inverter for changing signal type
+circulation_pump_diagnostics.md,425,- Signal conditioners for noise reduction
+circulation_pump_diagnostics.md,426,- Frequency converters for incompatible systems
+circulation_pump_diagnostics.md,427,- Analog to PWM converters for 0-10V systems
+circulation_pump_diagnostics.md,428,- Galvanic isolators for ground loop issues
+circulation_pump_diagnostics.md,429,
+circulation_pump_diagnostics.md,430,## PART 5: PUMP SIZING AND SELECTION ISSUES
+circulation_pump_diagnostics.md,431,
+circulation_pump_diagnostics.md,432,### Identifying Incorrectly Sized Pumps
+circulation_pump_diagnostics.md,433,
+circulation_pump_diagnostics.md,434,**Undersized Pump Symptoms:**
+circulation_pump_diagnostics.md,435,- Insufficient flow rate
+circulation_pump_diagnostics.md,436,- Large temperature differential across system
+circulation_pump_diagnostics.md,437,- Inability to satisfy heat demand
+circulation_pump_diagnostics.md,438,- Pump running at maximum speed constantly
+circulation_pump_diagnostics.md,439,- Excessive noise from flow velocities
+circulation_pump_diagnostics.md,440,- High electricity consumption
+circulation_pump_diagnostics.md,441,- Inability to overcome system resistance
+circulation_pump_diagnostics.md,442,
+circulation_pump_diagnostics.md,443,**Oversized Pump Symptoms:**
+circulation_pump_diagnostics.md,444,- Excessive flow velocity
+circulation_pump_diagnostics.md,445,- Erosion at pipe fittings
+circulation_pump_diagnostics.md,446,- Noise from high flow rates
+circulation_pump_diagnostics.md,447,- Difficulty in controlling temperature
+circulation_pump_diagnostics.md,448,- Short cycling of heat source
+circulation_pump_diagnostics.md,449,- Higher than necessary electricity usage
+circulation_pump_diagnostics.md,450,- Reduced pump lifespan
+circulation_pump_diagnostics.md,451,
+circulation_pump_diagnostics.md,452,**Diagnostic Procedures:**
+circulation_pump_diagnostics.md,453,
+circulation_pump_diagnostics.md,454,1. **System Requirement Calculation**
+circulation_pump_diagnostics.md,455,   - Calculate total heating load (kW)
+circulation_pump_diagnostics.md,456,   - Determine required flow rate (typically 3l/min per kW)
+circulation_pump_diagnostics.md,457,   - Account for system design temperature differential
+circulation_pump_diagnostics.md,458,   - Calculate system resistance at design flow
+circulation_pump_diagnostics.md,459,   - Determine minimum and maximum flow requirements
+circulation_pump_diagnostics.md,460,
+circulation_pump_diagnostics.md,461,2. **Pump Performance Analysis**
+circulation_pump_diagnostics.md,462,   - Obtain pump performance curve
+circulation_pump_diagnostics.md,463,   - Plot system resistance curve
+circulation_pump_diagnostics.md,464,   - Identify operating point
+circulation_pump_diagnostics.md,465,   - Check if operating point is in middle third of curve
+circulation_pump_diagnostics.md,466,   - Verify pump can achieve minimum and maximum requirements
+circulation_pump_diagnostics.md,467,
+circulation_pump_diagnostics.md,468,3. **Operational Assessment**
+circulation_pump_diagnostics.md,469,   - Monitor actual flow rates if possible
+circulation_pump_diagnostics.md,470,   - Check temperature differentials under various loads
+circulation_pump_diagnostics.md,471,   - Observe pump speed modulation
+circulation_pump_diagnostics.md,472,   - Measure electrical consumption
+circulation_pump_diagnostics.md,473,   - Listen for cavitation or turbulence
+circulation_pump_diagnostics.md,474,
+circulation_pump_diagnostics.md,475,**Common Sizing Problems and Solutions:**
+circulation_pump_diagnostics.md,476,
+circulation_pump_diagnostics.md,477,1. **System Changes Affecting Pump Sizing**
+circulation_pump_diagnostics.md,478,   - Symptoms: Previously adequate pump now insufficient
+circulation_pump_diagnostics.md,479,"   - Cause: Added heat emitters, system extensions, changed controls"
+circulation_pump_diagnostics.md,480,   - Solution:
+circulation_pump_diagnostics.md,481,     * Recalculate system requirements
+circulation_pump_diagnostics.md,482,     * Adjust pump speed if within capability
+circulation_pump_diagnostics.md,483,     * Replace with correctly sized pump
+circulation_pump_diagnostics.md,484,     * Consider zoning for partial load management
+circulation_pump_diagnostics.md,485,
+circulation_pump_diagnostics.md,486,2. **Original Design Issues**
+circulation_pump_diagnostics.md,487,   - Symptoms: System never performed correctly
+circulation_pump_diagnostics.md,488,"   - Cause: Incorrect initial calculations, incorrect pump selection"
+circulation_pump_diagnostics.md,489,   - Solution:
+circulation_pump_diagnostics.md,490,     * Verify actual system requirements
+circulation_pump_diagnostics.md,491,     * Match pump to actual load
+circulation_pump_diagnostics.md,492,     * Consider variable speed replacement
+circulation_pump_diagnostics.md,493,     * Adjust system to reduce resistance if possible
+circulation_pump_diagnostics.md,494,
+circulation_pump_diagnostics.md,495,3. **Excessive System Resistance**
+circulation_pump_diagnostics.md,496,   - Symptoms: Pump struggling despite adequate rating
+circulation_pump_diagnostics.md,497,"   - Cause: Undersized pipework, too many bends, restrictive components"
+circulation_pump_diagnostics.md,498,   - Solution:
+circulation_pump_diagnostics.md,499,     * Identify and eliminate restrictions
+circulation_pump_diagnostics.md,500,     * Modify pipe configuration where possible
+circulation_pump_diagnostics.md,501,     * Consider parallel pumping for high resistance
+circulation_pump_diagnostics.md,502,     * Balance system to reduce critical circuit resistance
+circulation_pump_diagnostics.md,503,
+circulation_pump_diagnostics.md,504,### Pump Performance Curves and System Matching
+circulation_pump_diagnostics.md,505,
+circulation_pump_diagnostics.md,506,**Key Performance Parameters:**
+circulation_pump_diagnostics.md,507,- Maximum head (meters or kPa)
+circulation_pump_diagnostics.md,508,- Flow rate at various heads (m³/h or l/min)
+circulation_pump_diagnostics.md,509,- Power consumption curve
+circulation_pump_diagnostics.md,510,- NPSH requirements
+circulation_pump_diagnostics.md,511,- Efficiency islands on curve
+circulation_pump_diagnostics.md,512,- Minimum stable flow rate
+circulation_pump_diagnostics.md,513,
+circulation_pump_diagnostics.md,514,**System Matching Procedure:**
+circulation_pump_diagnostics.md,515,1. Plot system resistance curve
+circulation_pump_diagnostics.md,516,2. Overlay pump performance curves
+circulation_pump_diagnostics.md,517,3. Identify intersection points (operating points)
+circulation_pump_diagnostics.md,518,4. Check if operating point falls within efficient region
+circulation_pump_diagnostics.md,519,5. Verify performance at minimum and maximum loads
+circulation_pump_diagnostics.md,520,6. Consider variable speed curves for different scenarios
+circulation_pump_diagnostics.md,521,
+circulation_pump_diagnostics.md,522,**Optimization Strategies:**
+circulation_pump_diagnostics.md,523,- Select pump with operating point in middle third of curve
+circulation_pump_diagnostics.md,524,- Use variable speed to adapt to changing system needs
+circulation_pump_diagnostics.md,525,- Consider parallel pumping for wide load variation
+circulation_pump_diagnostics.md,526,- Implement proper control strategies for pump sequencing
+circulation_pump_diagnostics.md,527,- Size for critical period operation with reasonable efficiency
+circulation_pump_diagnostics.md,528,
+circulation_pump_diagnostics.md,529,## PART 6: ADVANCED PUMP FAULT DIAGNOSIS
+circulation_pump_diagnostics.md,530,
+circulation_pump_diagnostics.md,531,### Electrical Analysis
+circulation_pump_diagnostics.md,532,
+circulation_pump_diagnostics.md,533,**Electrical Measurement Points:**
+circulation_pump_diagnostics.md,534,- Power supply voltage under load
+circulation_pump_diagnostics.md,535,- Current draw at different speeds
+circulation_pump_diagnostics.md,536,- Winding resistance (where accessible)
+circulation_pump_diagnostics.md,537,- Insulation resistance to ground
+circulation_pump_diagnostics.md,538,- Capacitor condition
+circulation_pump_diagnostics.md,539,- Control signal integrity
+circulation_pump_diagnostics.md,540,
+circulation_pump_diagnostics.md,541,**Key Diagnostic Tests:**
+circulation_pump_diagnostics.md,542,
+circulation_pump_diagnostics.md,543,1. **Current Signature Analysis**
+circulation_pump_diagnostics.md,544,   - Measure current waveform with oscilloscope
+circulation_pump_diagnostics.md,545,   - Look for abnormal patterns indicating mechanical problems
+circulation_pump_diagnostics.md,546,   - Check for excessive start current
+circulation_pump_diagnostics.md,547,   - Monitor current stability during operation
+circulation_pump_diagnostics.md,548,   - Compare with manufacturer's specifications
+circulation_pump_diagnostics.md,549,
+circulation_pump_diagnostics.md,550,2. **Temperature Profiling**
+circulation_pump_diagnostics.md,551,   - Measure temperature at multiple points
+circulation_pump_diagnostics.md,552,   - Look for abnormal hot spots
+circulation_pump_diagnostics.md,553,   - Monitor temperature rise over time
+circulation_pump_diagnostics.md,554,   - Compare with ambient conditions
+circulation_pump_diagnostics.md,555,   - Check for proper cooling air flow around electronics
+circulation_pump_diagnostics.md,556,
+circulation_pump_diagnostics.md,557,3. **Insulation Testing**
+circulation_pump_diagnostics.md,558,   - Use megohmmeter for winding insulation
+circulation_pump_diagnostics.md,559,   - Check for breakdown at rated voltage
+circulation_pump_diagnostics.md,560,   - Test between phases if three-phase
+circulation_pump_diagnostics.md,561,   - Look for evidence of moisture ingress
+circulation_pump_diagnostics.md,562,   - Verify earthing connections
+circulation_pump_diagnostics.md,563,
+circulation_pump_diagnostics.md,564,### Hydraulic Analysis
+circulation_pump_diagnostics.md,565,
+circulation_pump_diagnostics.md,566,**Flow Path Examination:**
+circulation_pump_diagnostics.md,567,- Check for restrictions in pump housing
+circulation_pump_diagnostics.md,568,- Inspect check valves for proper operation
+circulation_pump_diagnostics.md,569,- Verify strainer/filter condition
+circulation_pump_diagnostics.md,570,- Examine for scale buildup
+circulation_pump_diagnostics.md,571,- Look for erosion at high velocity points
+circulation_pump_diagnostics.md,572,
+circulation_pump_diagnostics.md,573,**Hydraulic Tests:**
+circulation_pump_diagnostics.md,574,
+circulation_pump_diagnostics.md,575,1. **Differential Pressure Testing**
+circulation_pump_diagnostics.md,576,   - Measure pressure difference across pump
+circulation_pump_diagnostics.md,577,   - Compare with pump curve expectations
+circulation_pump_diagnostics.md,578,   - Check for inconsistencies at different speeds
+circulation_pump_diagnostics.md,579,   - Monitor stability of differential
+circulation_pump_diagnostics.md,580,   - Calculate actual pump performance from measurements
+circulation_pump_diagnostics.md,581,
+circulation_pump_diagnostics.md,582,2. **Flow Rate Verification**
+circulation_pump_diagnostics.md,583,   - Use ultrasonic flow meter if possible
+circulation_pump_diagnostics.md,584,   - Calculate flow from energy transfer if not
+circulation_pump_diagnostics.md,585,   - Check for fluctuations in flow rate
+circulation_pump_diagnostics.md,586,   - Verify consistency across operating range
+circulation_pump_diagnostics.md,587,   - Compare with expected values from pump curve
+circulation_pump_diagnostics.md,588,
+circulation_pump_diagnostics.md,589,3. **Cavitation Detection**
+circulation_pump_diagnostics.md,590,   - Listen for characteristic cavitation noise
+circulation_pump_diagnostics.md,591,   - Check NPSH available vs. required
+circulation_pump_diagnostics.md,592,   - Look for pressure fluctuations
+circulation_pump_diagnostics.md,593,   - Examine impeller for cavitation damage
+circulation_pump_diagnostics.md,594,   - Test at various system pressures
+circulation_pump_diagnostics.md,595,
+circulation_pump_diagnostics.md,596,## PART 7: REFERENCE MATERIALS
+circulation_pump_diagnostics.md,597,
+circulation_pump_diagnostics.md,598,### Pump Signal Reference
+circulation_pump_diagnostics.md,599,
+circulation_pump_diagnostics.md,600,**PWM Signal Specifications**
+circulation_pump_diagnostics.md,601,
+circulation_pump_diagnostics.md,602,| Parameter | Typical Value | Acceptable Range | Notes |
+circulation_pump_diagnostics.md,603,|-----------|---------------|------------------|-------|
+circulation_pump_diagnostics.md,604,| Frequency | 490 Hz | 100-5000 Hz | Most common for HVAC pumps |
+circulation_pump_diagnostics.md,605,| Duty Cycle | 20-100% | 0-100% | <20% often minimum threshold |
+circulation_pump_diagnostics.md,606,| Signal Voltage | 5V or 10V | 3-24V | Depends on pump model |
+circulation_pump_diagnostics.md,607,"| Profile Type | Type 1 | Type 1 or Type 2 | Type 1: 0%=min, 100%=max |"
+circulation_pump_diagnostics.md,608,| Wiring Length | <3m | <10m | Shielded cable recommended |
+circulation_pump_diagnostics.md,609,
+circulation_pump_diagnostics.md,610,**0-10V Control Specifications**
+circulation_pump_diagnostics.md,611,
+circulation_pump_diagnostics.md,612,| Parameter | Typical Value | Acceptable Range | Notes |
+circulation_pump_diagnostics.md,613,|-----------|---------------|------------------|-------|
+circulation_pump_diagnostics.md,614,| Voltage Range | 0-10V DC | 0-12V DC | >10V treated as 10V |
+circulation_pump_diagnostics.md,615,"| Control Curve | Linear | Linear or custom | 0V=min, 10V=max |"
+circulation_pump_diagnostics.md,616,| Input Impedance | >100kΩ | >10kΩ | Higher impedance preferred |
+circulation_pump_diagnostics.md,617,| Resolution | 0.1V steps | 0.01-0.1V | Finer resolution in newer pumps |
+circulation_pump_diagnostics.md,618,| Wiring Length | <50m | <100m | Shielded cable recommended |
+circulation_pump_diagnostics.md,619,
+circulation_pump_diagnostics.md,620,### Common Pump Fault Codes and Meanings
+circulation_pump_diagnostics.md,621,
+circulation_pump_diagnostics.md,622,| Manufacturer | Code | Meaning | Common Cause | Solution |
+circulation_pump_diagnostics.md,623,|--------------|------|---------|--------------|----------|
+circulation_pump_diagnostics.md,624,| Grundfos | E1 | Undervoltage | Power supply issue | Check power supply stability |
+circulation_pump_diagnostics.md,625,"| Grundfos | E2 | Overvoltage | Power surge, grid issue | Voltage regulator, check supply |"
+circulation_pump_diagnostics.md,626,"| Grundfos | E3 | Dry running | Air in system, no water | Bleed system, check pressure |"
+circulation_pump_diagnostics.md,627,| Wilo | F1 | Phase failure | Power connection issue | Check all power connections |
+circulation_pump_diagnostics.md,628,"| Wilo | F4 | Overtemperature | Pump overload, ambient temp | Check for blockage, improve ventilation |"
+circulation_pump_diagnostics.md,629,"| Wilo | F5 | Short circuit | Winding damage, wiring fault | Check wiring, replace pump if internal |"
+circulation_pump_diagnostics.md,630,"| DAB | E1 | Dry running | No water, air lock | Prime pump, check water supply |"
+circulation_pump_diagnostics.md,631,"| DAB | E8 | Overheat | Excessive temperature | Check for blockage, flow restriction |"
+circulation_pump_diagnostics.md,632,
+circulation_pump_diagnostics.md,633,### Pump Performance Quick Reference
+circulation_pump_diagnostics.md,634,
+circulation_pump_diagnostics.md,635,| System Type | Typical Flow Rate | Recommended Pump Head | Notes |
+circulation_pump_diagnostics.md,636,|-------------|-------------------|------------------------|-------|
+circulation_pump_diagnostics.md,637,| Residential radiators | 15-20 l/min | 4-6 meters | Traditional systems |
+circulation_pump_diagnostics.md,638,"| Underfloor heating | 10-15 l/min | 3-5 meters | Lower temp, higher flow |"
+circulation_pump_diagnostics.md,639,| Fan coil units | 8-12 l/min | 3-4 meters | Per unit flow rate |
+circulation_pump_diagnostics.md,640,| Heat interface units | 15-25 l/min | 5-7 meters | Communal systems |
+circulation_pump_diagnostics.md,641,| Boiler primary circuit | 20-30 l/min | 5-7 meters | Boiler protection |
+circulation_pump_diagnostics.md,642,
+circulation_pump_diagnostics.md,643,### Common Pump Errors and Solutions
+circulation_pump_diagnostics.md,644,
+circulation_pump_diagnostics.md,645,| Problem | Possible Causes | Diagnostic Checks | Solutions |
+circulation_pump_diagnostics.md,646,|---------|----------------|-------------------|-----------|
+circulation_pump_diagnostics.md,647,"| No operation | Power issue, locked rotor, control failure | Check power, manual rotation, control signals | Restore power, free shaft, replace controller |"
+circulation_pump_diagnostics.md,648,"| Runs but no flow | Air lock, closed valve, blockage | Check valves, bleed pump, inspect impeller | Open valves, remove blockage, bleed system |"
+circulation_pump_diagnostics.md,649,"| Excessive noise | Air, cavitation, bearing failure | Listen for type of noise, check NPSH, bearings | Remove air, increase pressure, replace bearings |"
+circulation_pump_diagnostics.md,650,"| Overheating | Overload, low flow, electrical issue | Check amps, flow rate, resistance | Clear blockage, reduce speed, check windings |"
+circulation_pump_diagnostics.md,651,"| Intermittent operation | Thermal cut-out, control issue | Monitor cycle pattern, check temperatures | Improve cooling, check controls, reduce load |"
+circulation_pump_diagnostics.md,652,"| Incorrect speed | Signal issue, setting error | Check control signal, verify settings | Correct signal, adjust settings, check programming |"

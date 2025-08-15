@@ -1,0 +1,688 @@
+filename,line_number,content
+gas_supply_diagnosis.md,1,# Gas Supply System Fault Finding Guide
+gas_supply_diagnosis.md,2,
+gas_supply_diagnosis.md,3,"This comprehensive guide covers diagnostic procedures for gas supply systems, addressing issues with Emergency Control Valves (ECVs), meters, governors, pipe sizing, pressure drop, leakage detection, and system testing."
+gas_supply_diagnosis.md,4,
+gas_supply_diagnosis.md,5,## PART 1: UNDERSTANDING GAS SUPPLY SYSTEMS
+gas_supply_diagnosis.md,6,
+gas_supply_diagnosis.md,7,### Gas Supply System Components
+gas_supply_diagnosis.md,8,
+gas_supply_diagnosis.md,9,**1. Customer-Side Components**
+gas_supply_diagnosis.md,10,- **Emergency Control Valve (ECV)**: Main shut-off valve at property boundary
+gas_supply_diagnosis.md,11,- **Gas Meter**: Measures gas consumption
+gas_supply_diagnosis.md,12,- **Gas Governor**: Regulates pressure (where fitted)
+gas_supply_diagnosis.md,13,- **Internal Pipework**: Distributes gas within property
+gas_supply_diagnosis.md,14,- **Appliance Isolation Valves**: Local shut-offs for each appliance
+gas_supply_diagnosis.md,15,
+gas_supply_diagnosis.md,16,**2. Supply Network Components**
+gas_supply_diagnosis.md,17,- **Mains Distribution Pipework**: Utility-owned supply infrastructure
+gas_supply_diagnosis.md,18,- **District Governor**: Reduces pressure for local distribution
+gas_supply_diagnosis.md,19,- **Service Pipe**: Connection from main to property boundary
+gas_supply_diagnosis.md,20,
+gas_supply_diagnosis.md,21,**3. Key Pressure Points**
+gas_supply_diagnosis.md,22,- **Mains Pressure**: Typically 21-75mbar medium pressure or higher
+gas_supply_diagnosis.md,23,"- **Regulated Pressure**: After governor, typically 21mbar (NG) or 37mbar (LPG)"
+gas_supply_diagnosis.md,24,"- **Working Pressure**: At appliance, typically 20mbar (NG) or 37mbar (LPG)"
+gas_supply_diagnosis.md,25,- **Standing Pressure**: System pressure when no gas flowing
+gas_supply_diagnosis.md,26,
+gas_supply_diagnosis.md,27,### Gas Types and Properties
+gas_supply_diagnosis.md,28,
+gas_supply_diagnosis.md,29,**Natural Gas (NG)**
+gas_supply_diagnosis.md,30,- Primarily methane (CH₄)
+gas_supply_diagnosis.md,31,- Supplied at 21mbar nominal pressure
+gas_supply_diagnosis.md,32,- Lower calorific value than LPG
+gas_supply_diagnosis.md,33,- Lighter than air (rises if leaked)
+gas_supply_diagnosis.md,34,
+gas_supply_diagnosis.md,35,**Liquefied Petroleum Gas (LPG)**
+gas_supply_diagnosis.md,36,"- Propane or butane, or mixture"
+gas_supply_diagnosis.md,37,- Supplied at 37mbar (propane) or 28mbar (butane) nominal pressure
+gas_supply_diagnosis.md,38,- Higher calorific value than natural gas
+gas_supply_diagnosis.md,39,- Heavier than air (collects at low points if leaked)
+gas_supply_diagnosis.md,40,
+gas_supply_diagnosis.md,41,## PART 2: EMERGENCY CONTROL VALVE (ECV) ISSUES
+gas_supply_diagnosis.md,42,
+gas_supply_diagnosis.md,43,### Common ECV Faults
+gas_supply_diagnosis.md,44,
+gas_supply_diagnosis.md,45,**Symptoms:**
+gas_supply_diagnosis.md,46,- Unable to turn valve on/off
+gas_supply_diagnosis.md,47,- Gas smell near valve
+gas_supply_diagnosis.md,48,- Partial gas flow despite open valve
+gas_supply_diagnosis.md,49,- Escaping gas noise
+gas_supply_diagnosis.md,50,- Corrosion or visible damage
+gas_supply_diagnosis.md,51,
+gas_supply_diagnosis.md,52,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,53,
+gas_supply_diagnosis.md,54,1. **Visual Inspection**
+gas_supply_diagnosis.md,55,   - Check for external damage or corrosion
+gas_supply_diagnosis.md,56,   - Verify valve handle moves freely (don't force)
+gas_supply_diagnosis.md,57,"   - Look for signs of leakage (corrosion, discoloration)"
+gas_supply_diagnosis.md,58,   - Check alignment with pipework
+gas_supply_diagnosis.md,59,   - Ensure accessibility is maintained
+gas_supply_diagnosis.md,60,
+gas_supply_diagnosis.md,61,2. **Operational Check**
+gas_supply_diagnosis.md,62,   - Test valve operation (if safe)
+gas_supply_diagnosis.md,63,   - Verify quarter-turn operation
+gas_supply_diagnosis.md,64,   - Check handle alignment with gas flow when open/closed
+gas_supply_diagnosis.md,65,   - Listen for abnormal noises during operation
+gas_supply_diagnosis.md,66,
+gas_supply_diagnosis.md,67,3. **Leak Testing**
+gas_supply_diagnosis.md,68,   - Apply leak detection fluid around valve body and connections
+gas_supply_diagnosis.md,69,   - Watch for bubbles indicating gas escape
+gas_supply_diagnosis.md,70,   - NEVER use a naked flame to test
+gas_supply_diagnosis.md,71,   - Use electronic gas detector for verification
+gas_supply_diagnosis.md,72,
+gas_supply_diagnosis.md,73,**Common Faults and Solutions:**
+gas_supply_diagnosis.md,74,
+gas_supply_diagnosis.md,75,1. **Seized Valve**
+gas_supply_diagnosis.md,76,   - Symptoms: Cannot turn valve or requires excessive force
+gas_supply_diagnosis.md,77,"   - Cause: Age, corrosion, lack of use"
+gas_supply_diagnosis.md,78,   - Solution: Do not force; requires replacement by gas supplier
+gas_supply_diagnosis.md,79,
+gas_supply_diagnosis.md,80,2. **External Leakage**
+gas_supply_diagnosis.md,81,"   - Symptoms: Gas smell, bubbles with detection fluid"
+gas_supply_diagnosis.md,82,"   - Cause: Damaged seals, loose connections, cracked valve body"
+gas_supply_diagnosis.md,83,   - Solution: Contact gas supplier immediately; do not attempt repair
+gas_supply_diagnosis.md,84,
+gas_supply_diagnosis.md,85,3. **Partially Blocked**
+gas_supply_diagnosis.md,86,"   - Symptoms: Reduced gas flow, appliance underperformance"
+gas_supply_diagnosis.md,87,"   - Cause: Internal debris, damage"
+gas_supply_diagnosis.md,88,   - Solution: Requires replacement by gas supplier
+gas_supply_diagnosis.md,89,
+gas_supply_diagnosis.md,90,### ECV Accessibility and Safety Issues
+gas_supply_diagnosis.md,91,
+gas_supply_diagnosis.md,92,**Requirements:**
+gas_supply_diagnosis.md,93,- Must be easily accessible at all times
+gas_supply_diagnosis.md,94,- Location must be known to all building occupants
+gas_supply_diagnosis.md,95,- Should be labeled clearly
+gas_supply_diagnosis.md,96,- Must be properly sized for maximum gas flow rate
+gas_supply_diagnosis.md,97,- Must be capable of being operated by persons with normal physical abilities
+gas_supply_diagnosis.md,98,
+gas_supply_diagnosis.md,99,**Common Access Problems:**
+gas_supply_diagnosis.md,100,- Blocked by furniture
+gas_supply_diagnosis.md,101,- Concealed by decorations
+gas_supply_diagnosis.md,102,- Located in locked rooms
+gas_supply_diagnosis.md,103,- Covered by material/objects
+gas_supply_diagnosis.md,104,- Physically difficult to reach
+gas_supply_diagnosis.md,105,
+gas_supply_diagnosis.md,106,**Solutions:**
+gas_supply_diagnosis.md,107,- Ensure minimum 300mm clear access
+gas_supply_diagnosis.md,108,- Keep free from obstruction
+gas_supply_diagnosis.md,109,- Never modify or tamper with valve
+gas_supply_diagnosis.md,110,- Educate all building users on location and operation
+gas_supply_diagnosis.md,111,- Clearly mark location if not obvious
+gas_supply_diagnosis.md,112,
+gas_supply_diagnosis.md,113,## PART 3: GAS METER ISSUES
+gas_supply_diagnosis.md,114,
+gas_supply_diagnosis.md,115,### Meter Types and Common Problems
+gas_supply_diagnosis.md,116,
+gas_supply_diagnosis.md,117,**Credit Meters**
+gas_supply_diagnosis.md,118,- Traditional dial or digital display
+gas_supply_diagnosis.md,119,- Read manually or via smart technology
+gas_supply_diagnosis.md,120,"- Common issues: Stuck mechanisms, damaged displays, leaking connections"
+gas_supply_diagnosis.md,121,
+gas_supply_diagnosis.md,122,**Smart Meters**
+gas_supply_diagnosis.md,123,- Digital reading with remote transmission
+gas_supply_diagnosis.md,124,"- Common issues: Display failures, communication errors, battery problems"
+gas_supply_diagnosis.md,125,
+gas_supply_diagnosis.md,126,**Prepayment Meters**
+gas_supply_diagnosis.md,127,- Pay-as-you-go system
+gas_supply_diagnosis.md,128,"- Common issues: Card/key reading problems, valve failures, credit display errors"
+gas_supply_diagnosis.md,129,
+gas_supply_diagnosis.md,130,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,131,
+gas_supply_diagnosis.md,132,1. **Meter Accuracy Check**
+gas_supply_diagnosis.md,133,   - Turn off all appliances
+gas_supply_diagnosis.md,134,   - Take a meter reading
+gas_supply_diagnosis.md,135,   - Run a single appliance for known time
+gas_supply_diagnosis.md,136,   - Take second reading
+gas_supply_diagnosis.md,137,   - Calculate expected consumption vs. actual
+gas_supply_diagnosis.md,138,
+gas_supply_diagnosis.md,139,2. **Meter Operation Check**
+gas_supply_diagnosis.md,140,   - Verify digits/dials are moving when gas is flowing
+gas_supply_diagnosis.md,141,   - Check for error codes on digital/smart meters
+gas_supply_diagnosis.md,142,   - Verify all displays are functional
+gas_supply_diagnosis.md,143,   - Check tamper-evident seals are intact
+gas_supply_diagnosis.md,144,
+gas_supply_diagnosis.md,145,3. **Connection Inspection**
+gas_supply_diagnosis.md,146,   - Check inlet and outlet connections for tightness
+gas_supply_diagnosis.md,147,   - Apply leak detection fluid to all joints
+gas_supply_diagnosis.md,148,   - Verify regulator operation (if fitted)
+gas_supply_diagnosis.md,149,   - Check for corrosion or damage
+gas_supply_diagnosis.md,150,
+gas_supply_diagnosis.md,151,**Common Faults and Solutions:**
+gas_supply_diagnosis.md,152,
+gas_supply_diagnosis.md,153,1. **Non-Recording Meter**
+gas_supply_diagnosis.md,154,   - Symptoms: Meter doesn't register gas use
+gas_supply_diagnosis.md,155,"   - Cause: Mechanical failure, damaged mechanism"
+gas_supply_diagnosis.md,156,   - Solution: Report to gas supplier for replacement
+gas_supply_diagnosis.md,157,
+gas_supply_diagnosis.md,158,2. **Leaking Connections**
+gas_supply_diagnosis.md,159,"   - Symptoms: Gas smell, positive leak detection"
+gas_supply_diagnosis.md,160,"   - Cause: Loose joints, damaged seals"
+gas_supply_diagnosis.md,161,   - Solution: Report to gas supplier immediately
+gas_supply_diagnosis.md,162,
+gas_supply_diagnosis.md,163,3. **Regulator Failure**
+gas_supply_diagnosis.md,164,"   - Symptoms: Fluctuating gas pressure, appliance issues"
+gas_supply_diagnosis.md,165,   - Cause: Damaged internal components
+gas_supply_diagnosis.md,166,   - Solution: Requires replacement by gas supplier
+gas_supply_diagnosis.md,167,
+gas_supply_diagnosis.md,168,4. **Credit Display Issues**
+gas_supply_diagnosis.md,169,   - Symptoms: Prepayment meter showing incorrect balance
+gas_supply_diagnosis.md,170,"   - Cause: Software glitch, mechanical fault"
+gas_supply_diagnosis.md,171,   - Solution: Contact supplier; may need to add emergency credit
+gas_supply_diagnosis.md,172,
+gas_supply_diagnosis.md,173,### Meter Installation Requirements
+gas_supply_diagnosis.md,174,
+gas_supply_diagnosis.md,175,**Location Requirements:**
+gas_supply_diagnosis.md,176,- Adequate ventilation
+gas_supply_diagnosis.md,177,- Protected from physical damage
+gas_supply_diagnosis.md,178,"- Not in sleeping areas (unless in sealed, ventilated compartment)"
+gas_supply_diagnosis.md,179,- Not in escape routes unless in fire-protected enclosure
+gas_supply_diagnosis.md,180,- Accessible for reading and maintenance
+gas_supply_diagnosis.md,181,- Protected from extreme temperatures
+gas_supply_diagnosis.md,182,- Minimum clearances maintained
+gas_supply_diagnosis.md,183,
+gas_supply_diagnosis.md,184,**Installation Issues:**
+gas_supply_diagnosis.md,185,- Inadequate support causing strain on connections
+gas_supply_diagnosis.md,186,- Improper sealing of ducts entering property
+gas_supply_diagnosis.md,187,- Incorrect orientation affecting reading accuracy
+gas_supply_diagnosis.md,188,- Excessive vibration from nearby equipment
+gas_supply_diagnosis.md,189,- Exposure to water or corrosive environments
+gas_supply_diagnosis.md,190,
+gas_supply_diagnosis.md,191,**Testing After Modifications:**
+gas_supply_diagnosis.md,192,- Soundness test of entire system
+gas_supply_diagnosis.md,193,- Standing pressure test (should maintain pressure for minimum 1 minute)
+gas_supply_diagnosis.md,194,- Let-by test of meter control valve
+gas_supply_diagnosis.md,195,- Purging of air from system
+gas_supply_diagnosis.md,196,
+gas_supply_diagnosis.md,197,## PART 4: GAS GOVERNOR ISSUES
+gas_supply_diagnosis.md,198,
+gas_supply_diagnosis.md,199,### Governor Types and Functions
+gas_supply_diagnosis.md,200,
+gas_supply_diagnosis.md,201,**Domestic Meter Governors**
+gas_supply_diagnosis.md,202,- Integral with meter assembly
+gas_supply_diagnosis.md,203,- Reduces incoming pressure to 21mbar (NG) or 37mbar (LPG)
+gas_supply_diagnosis.md,204,- Single-stage regulation
+gas_supply_diagnosis.md,205,
+gas_supply_diagnosis.md,206,**Industrial/Commercial Governors**
+gas_supply_diagnosis.md,207,- Separate units from meter
+gas_supply_diagnosis.md,208,- May include over-pressure shut-off protection
+gas_supply_diagnosis.md,209,- Often multi-stage regulation
+gas_supply_diagnosis.md,210,
+gas_supply_diagnosis.md,211,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,212,
+gas_supply_diagnosis.md,213,1. **Pressure Testing**
+gas_supply_diagnosis.md,214,   - Equipment needed: Manometer (U-gauge or digital)
+gas_supply_diagnosis.md,215,   - Test downstream pressure at test point
+gas_supply_diagnosis.md,216,   - Check at zero flow and at maximum flow
+gas_supply_diagnosis.md,217,   - Compare with specified working pressure
+gas_supply_diagnosis.md,218,   - Check for excessive pressure drop under load
+gas_supply_diagnosis.md,219,
+gas_supply_diagnosis.md,220,2. **Vent Inspection**
+gas_supply_diagnosis.md,221,   - Check governor vent is not blocked
+gas_supply_diagnosis.md,222,   - Verify vent is correctly positioned
+gas_supply_diagnosis.md,223,   - Ensure vent line terminates in safe location if extended
+gas_supply_diagnosis.md,224,   - Check for insect/debris blockage
+gas_supply_diagnosis.md,225,
+gas_supply_diagnosis.md,226,3. **Operational Check**
+gas_supply_diagnosis.md,227,"   - Listen for abnormal noises (hissing, whistling)"
+gas_supply_diagnosis.md,228,   - Check for vibration under varying load
+gas_supply_diagnosis.md,229,   - Verify stable pressure during appliance cycling
+gas_supply_diagnosis.md,230,   - Check for gas smell indicating diaphragm failure
+gas_supply_diagnosis.md,231,
+gas_supply_diagnosis.md,232,**Common Faults and Solutions:**
+gas_supply_diagnosis.md,233,
+gas_supply_diagnosis.md,234,1. **Incorrect Outlet Pressure**
+gas_supply_diagnosis.md,235,"   - Symptoms: Appliance performance issues, yellow flames"
+gas_supply_diagnosis.md,236,"   - Cause: Governor drift, damaged valve seat"
+gas_supply_diagnosis.md,237,"   - Solution: Adjustment if permitted, otherwise replacement"
+gas_supply_diagnosis.md,238,
+gas_supply_diagnosis.md,239,2. **Unstable Regulation**
+gas_supply_diagnosis.md,240,"   - Symptoms: Fluctuating pressure, appliance cycling"
+gas_supply_diagnosis.md,241,"   - Cause: Worn diaphragm, damaged valve"
+gas_supply_diagnosis.md,242,   - Solution: Governor replacement required
+gas_supply_diagnosis.md,243,
+gas_supply_diagnosis.md,244,3. **Internal Leakage**
+gas_supply_diagnosis.md,245,"   - Symptoms: Gas smell from vent, continuous gas flow"
+gas_supply_diagnosis.md,246,   - Cause: Damaged valve seat or diaphragm
+gas_supply_diagnosis.md,247,   - Solution: Immediate governor replacement
+gas_supply_diagnosis.md,248,
+gas_supply_diagnosis.md,249,4. **Blocked Vent**
+gas_supply_diagnosis.md,250,"   - Symptoms: Erratic pressure, governor lockup"
+gas_supply_diagnosis.md,251,"   - Cause: Insect nests, debris, ice formation"
+gas_supply_diagnosis.md,252,   - Solution: Clear blockage; replace if damaged
+gas_supply_diagnosis.md,253,
+gas_supply_diagnosis.md,254,### Governor Sizing and Selection Issues
+gas_supply_diagnosis.md,255,
+gas_supply_diagnosis.md,256,**Undersized Governors**
+gas_supply_diagnosis.md,257,"- Symptoms: Significant pressure drop under load, appliance starvation"
+gas_supply_diagnosis.md,258,- Cause: Insufficient capacity for connected load
+gas_supply_diagnosis.md,259,- Solution: Replace with correctly sized unit
+gas_supply_diagnosis.md,260,
+gas_supply_diagnosis.md,261,**Oversized Governors**
+gas_supply_diagnosis.md,262,"- Symptoms: Poor regulation at low flow, hunting (pressure oscillation)"
+gas_supply_diagnosis.md,263,- Cause: Operating below minimum design flow
+gas_supply_diagnosis.md,264,- Solution: Replace with correctly sized unit or modify system
+gas_supply_diagnosis.md,265,
+gas_supply_diagnosis.md,266,**Environmental Factors**
+gas_supply_diagnosis.md,267,- Temperature affects regulation accuracy
+gas_supply_diagnosis.md,268,- Vibration can cause premature wear
+gas_supply_diagnosis.md,269,- Contamination can block small orifices
+gas_supply_diagnosis.md,270,- Corrosive atmospheres reduce service life
+gas_supply_diagnosis.md,271,
+gas_supply_diagnosis.md,272,**Testing After Replacement:**
+gas_supply_diagnosis.md,273,- Verify outlet pressure at zero flow
+gas_supply_diagnosis.md,274,- Test pressure stability under varying load
+gas_supply_diagnosis.md,275,- Check all connections for leaks
+gas_supply_diagnosis.md,276,- Verify vent operation and positioning
+gas_supply_diagnosis.md,277,
+gas_supply_diagnosis.md,278,## PART 5: PIPE SIZING AND BLOCKAGE ISSUES
+gas_supply_diagnosis.md,279,
+gas_supply_diagnosis.md,280,### Undersized Pipework Problems
+gas_supply_diagnosis.md,281,
+gas_supply_diagnosis.md,282,**Symptoms:**
+gas_supply_diagnosis.md,283,- Pressure drop when multiple appliances operate
+gas_supply_diagnosis.md,284,- Appliance starvation during peak demand
+gas_supply_diagnosis.md,285,- Sequential appliance failure (furthest first)
+gas_supply_diagnosis.md,286,- Delayed ignition
+gas_supply_diagnosis.md,287,- Yellow flames under high demand
+gas_supply_diagnosis.md,288,
+gas_supply_diagnosis.md,289,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,290,
+gas_supply_diagnosis.md,291,1. **Load Calculation Check**
+gas_supply_diagnosis.md,292,   - Calculate total maximum gas load (kW)
+gas_supply_diagnosis.md,293,   - Measure pipe lengths and identify restrictions
+gas_supply_diagnosis.md,294,   - Use pipe sizing tables to verify adequacy
+gas_supply_diagnosis.md,295,   - Compare existing pipe sizes with requirements
+gas_supply_diagnosis.md,296,
+gas_supply_diagnosis.md,297,2. **Pressure Drop Testing**
+gas_supply_diagnosis.md,298,   - Measure pressure at meter outlet
+gas_supply_diagnosis.md,299,   - Measure pressure at furthest appliance
+gas_supply_diagnosis.md,300,   - Calculate pressure drop per meter of pipe
+gas_supply_diagnosis.md,301,   - Check against maximum allowed (typically 1mbar for entire system)
+gas_supply_diagnosis.md,302,
+gas_supply_diagnosis.md,303,3. **Sequential Load Testing**
+gas_supply_diagnosis.md,304,"   - Run appliances one at a time, starting with closest to meter"
+gas_supply_diagnosis.md,305,   - Monitor pressure at furthest point
+gas_supply_diagnosis.md,306,   - Note pressure drop with each additional load
+gas_supply_diagnosis.md,307,   - Excessive drop indicates inadequate sizing
+gas_supply_diagnosis.md,308,
+gas_supply_diagnosis.md,309,**Common Issues and Solutions:**
+gas_supply_diagnosis.md,310,
+gas_supply_diagnosis.md,311,1. **Historical System Modifications**
+gas_supply_diagnosis.md,312,   - Symptoms: System once adequate now fails
+gas_supply_diagnosis.md,313,   - Cause: Added appliances without upgrading pipework
+gas_supply_diagnosis.md,314,   - Solution: Recalculate system and upgrade pipework as needed
+gas_supply_diagnosis.md,315,
+gas_supply_diagnosis.md,316,2. **Partial Restrictions**
+gas_supply_diagnosis.md,317,   - Symptoms: Similar to undersizing but in specific sections
+gas_supply_diagnosis.md,318,"   - Cause: Debris, pipe damage, improper fittings"
+gas_supply_diagnosis.md,319,   - Solution: Locate restriction and repair/replace section
+gas_supply_diagnosis.md,320,
+gas_supply_diagnosis.md,321,3. **Critical Sections**
+gas_supply_diagnosis.md,322,   - Symptoms: System mostly works but fails at peak demand
+gas_supply_diagnosis.md,323,   - Cause: One undersize section creating bottleneck
+gas_supply_diagnosis.md,324,   - Solution: Identify and upgrade critical section
+gas_supply_diagnosis.md,325,
+gas_supply_diagnosis.md,326,### Blockage Detection and Resolution
+gas_supply_diagnosis.md,327,
+gas_supply_diagnosis.md,328,**Types of Blockages:**
+gas_supply_diagnosis.md,329,"- Debris from installation (jointing compound, filings)"
+gas_supply_diagnosis.md,330,- Corrosion products (especially in older steel pipes)
+gas_supply_diagnosis.md,331,- Water ingress (condensation or external)
+gas_supply_diagnosis.md,332,- Foreign objects
+gas_supply_diagnosis.md,333,- Collapsed flexible connectors
+gas_supply_diagnosis.md,334,
+gas_supply_diagnosis.md,335,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,336,
+gas_supply_diagnosis.md,337,1. **Systematic Pressure Testing**
+gas_supply_diagnosis.md,338,   - Test pressure before and after suspected blockage
+gas_supply_diagnosis.md,339,   - Significant difference indicates blockage
+gas_supply_diagnosis.md,340,   - Work methodically through system to pinpoint
+gas_supply_diagnosis.md,341,
+gas_supply_diagnosis.md,342,2. **Flow Testing**
+gas_supply_diagnosis.md,343,   - Measure time to pass known volume of gas
+gas_supply_diagnosis.md,344,   - Compare with theoretical flow rate
+gas_supply_diagnosis.md,345,   - Significantly lower flow indicates restriction
+gas_supply_diagnosis.md,346,
+gas_supply_diagnosis.md,347,3. **Isolation Testing**
+gas_supply_diagnosis.md,348,   - Isolate sections of pipework
+gas_supply_diagnosis.md,349,   - Test each section individually
+gas_supply_diagnosis.md,350,   - Process of elimination to identify blocked section
+gas_supply_diagnosis.md,351,
+gas_supply_diagnosis.md,352,**Resolution Options:**
+gas_supply_diagnosis.md,353,
+gas_supply_diagnosis.md,354,1. **Rodding/Flushing**
+gas_supply_diagnosis.md,355,"   - Only suitable for minor, loose debris"
+gas_supply_diagnosis.md,356,   - Must be performed by qualified person
+gas_supply_diagnosis.md,357,   - Requires proper purging afterward
+gas_supply_diagnosis.md,358,
+gas_supply_diagnosis.md,359,2. **Section Replacement**
+gas_supply_diagnosis.md,360,   - Required for severe blockages
+gas_supply_diagnosis.md,361,   - Complete removal of affected section
+gas_supply_diagnosis.md,362,   - New pipe installed to current standards
+gas_supply_diagnosis.md,363,
+gas_supply_diagnosis.md,364,3. **System Redesign**
+gas_supply_diagnosis.md,365,   - For repeated blockage issues
+gas_supply_diagnosis.md,366,   - May involve rerouting pipework
+gas_supply_diagnosis.md,367,   - Installation of dirt traps at strategic points
+gas_supply_diagnosis.md,368,   - Elimination of low points where condensate collects
+gas_supply_diagnosis.md,369,
+gas_supply_diagnosis.md,370,## PART 6: PRESSURE DROP ANALYSIS
+gas_supply_diagnosis.md,371,
+gas_supply_diagnosis.md,372,### Understanding Pressure Drop
+gas_supply_diagnosis.md,373,
+gas_supply_diagnosis.md,374,**Normal vs. Excessive Drop:**
+gas_supply_diagnosis.md,375,- Some pressure drop is unavoidable in any flowing system
+gas_supply_diagnosis.md,376,- Normal drop: Less than 1mbar across entire system
+gas_supply_diagnosis.md,377,- Excessive: More than 2mbar or causing appliance malfunction
+gas_supply_diagnosis.md,378,- Critical: Any drop causing appliance safety device activation
+gas_supply_diagnosis.md,379,
+gas_supply_diagnosis.md,380,**Causes of Excessive Pressure Drop:**
+gas_supply_diagnosis.md,381,- Undersized pipework
+gas_supply_diagnosis.md,382,- Excessive pipe length
+gas_supply_diagnosis.md,383,- Too many bends/fittings
+gas_supply_diagnosis.md,384,- Partially blocked pipes
+gas_supply_diagnosis.md,385,- Damaged regulators
+gas_supply_diagnosis.md,386,- Restricted appliance valves
+gas_supply_diagnosis.md,387,- Filter blockages
+gas_supply_diagnosis.md,388,
+gas_supply_diagnosis.md,389,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,390,
+gas_supply_diagnosis.md,391,1. **Standing Pressure Test**
+gas_supply_diagnosis.md,392,"   - With all appliances off, measure pressure at meter outlet"
+gas_supply_diagnosis.md,393,"   - Should equal regulator outlet pressure (21mbar NG, 37mbar LPG)"
+gas_supply_diagnosis.md,394,   - Lower pressure indicates upstream issue
+gas_supply_diagnosis.md,395,
+gas_supply_diagnosis.md,396,2. **Working Pressure Test**
+gas_supply_diagnosis.md,397,   - Measure pressure at appliance with all appliances running
+gas_supply_diagnosis.md,398,   - Compare with minimum required for appliance
+gas_supply_diagnosis.md,399,   - Calculate total system drop (standing minus working)
+gas_supply_diagnosis.md,400,
+gas_supply_diagnosis.md,401,3. **Drop-Per-Meter Calculation**
+gas_supply_diagnosis.md,402,   - Measure pressure at two points of known pipe distance
+gas_supply_diagnosis.md,403,   - Calculate drop per meter of pipe
+gas_supply_diagnosis.md,404,   - Compare with theoretical values based on flow rate
+gas_supply_diagnosis.md,405,
+gas_supply_diagnosis.md,406,4. **Dynamic Testing**
+gas_supply_diagnosis.md,407,   - Monitor pressure while cycling appliances on/off
+gas_supply_diagnosis.md,408,   - Note recovery time after appliances shut down
+gas_supply_diagnosis.md,409,   - Observe pattern of pressure fluctuations
+gas_supply_diagnosis.md,410,
+gas_supply_diagnosis.md,411,**Common Scenarios and Solutions:**
+gas_supply_diagnosis.md,412,
+gas_supply_diagnosis.md,413,1. **Gradual Deterioration**
+gas_supply_diagnosis.md,414,"   - Symptoms: System once adequate, gradually worsening"
+gas_supply_diagnosis.md,415,"   - Cause: Progressive corrosion, scale buildup"
+gas_supply_diagnosis.md,416,   - Solution: Systematic testing to identify affected sections
+gas_supply_diagnosis.md,417,
+gas_supply_diagnosis.md,418,2. **Seasonal Issues**
+gas_supply_diagnosis.md,419,   - Symptoms: Problems worse in winter
+gas_supply_diagnosis.md,420,"   - Cause: Higher demand, possible condensate freezing"
+gas_supply_diagnosis.md,421,"   - Solution: Insulation, capacity upgrade, condensate traps"
+gas_supply_diagnosis.md,422,
+gas_supply_diagnosis.md,423,3. **Intermittent Problems**
+gas_supply_diagnosis.md,424,   - Symptoms: Inconsistent pressure issues
+gas_supply_diagnosis.md,425,   - Cause: Often regulator problems or variable upstream supply
+gas_supply_diagnosis.md,426,   - Solution: Extended monitoring to identify pattern
+gas_supply_diagnosis.md,427,
+gas_supply_diagnosis.md,428,## PART 7: LEAK DETECTION AND RESOLUTION
+gas_supply_diagnosis.md,429,
+gas_supply_diagnosis.md,430,### Identifying Gas Leaks
+gas_supply_diagnosis.md,431,
+gas_supply_diagnosis.md,432,**Warning Signs:**
+gas_supply_diagnosis.md,433,- Gas smell (added odorant)
+gas_supply_diagnosis.md,434,- Hissing sound near pipework
+gas_supply_diagnosis.md,435,- Bubbling in standing water near pipes
+gas_supply_diagnosis.md,436,- Dead vegetation over buried pipes
+gas_supply_diagnosis.md,437,- Abnormal meter movement when no appliances running
+gas_supply_diagnosis.md,438,- Unexplained high gas bills
+gas_supply_diagnosis.md,439,
+gas_supply_diagnosis.md,440,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,441,
+gas_supply_diagnosis.md,442,1. **Visual and Auditory Inspection**
+gas_supply_diagnosis.md,443,   - Systematic visual check of all accessible pipework
+gas_supply_diagnosis.md,444,"   - Listen for hissing, particularly at joints"
+gas_supply_diagnosis.md,445,   - Look for corrosion or damage
+gas_supply_diagnosis.md,446,   - Check flexible connectors for cracks
+gas_supply_diagnosis.md,447,
+gas_supply_diagnosis.md,448,2. **Leak Detection Fluid Testing**
+gas_supply_diagnosis.md,449,   - Apply approved leak detection fluid to all joints
+gas_supply_diagnosis.md,450,   - Watch for bubble formation
+gas_supply_diagnosis.md,451,   - Pay particular attention to threaded connections
+gas_supply_diagnosis.md,452,   - Check valve packings and stems
+gas_supply_diagnosis.md,453,
+gas_supply_diagnosis.md,454,3. **Electronic Gas Detector Testing**
+gas_supply_diagnosis.md,455,   - Use calibrated electronic detector
+gas_supply_diagnosis.md,456,   - Work methodically through system
+gas_supply_diagnosis.md,457,   - Pay attention to confined spaces
+gas_supply_diagnosis.md,458,"   - Test at multiple heights (NG rises, LPG falls)"
+gas_supply_diagnosis.md,459,
+gas_supply_diagnosis.md,460,4. **Pressure Drop Test**
+gas_supply_diagnosis.md,461,   - Isolate system and pressurize slightly above working pressure
+gas_supply_diagnosis.md,462,   - Monitor for pressure drop over time (10 minutes minimum)
+gas_supply_diagnosis.md,463,   - Any drop indicates leakage
+gas_supply_diagnosis.md,464,   - Smaller sections can be tested to pinpoint location
+gas_supply_diagnosis.md,465,
+gas_supply_diagnosis.md,466,**Common Leak Points:**
+gas_supply_diagnosis.md,467,
+gas_supply_diagnosis.md,468,1. **Threaded Joints**
+gas_supply_diagnosis.md,469,   - Most common leak location
+gas_supply_diagnosis.md,470,   - Check for proper thread compound
+gas_supply_diagnosis.md,471,   - Look for overtightened joints (cracked fittings)
+gas_supply_diagnosis.md,472,   - Verify compatible thread types
+gas_supply_diagnosis.md,473,
+gas_supply_diagnosis.md,474,2. **Compression Fittings**
+gas_supply_diagnosis.md,475,   - Check for proper insertion depth
+gas_supply_diagnosis.md,476,   - Verify olives are not deformed
+gas_supply_diagnosis.md,477,   - Ensure nuts are correctly tightened
+gas_supply_diagnosis.md,478,   - Look for pipe damage at compression point
+gas_supply_diagnosis.md,479,
+gas_supply_diagnosis.md,480,3. **Flexible Connectors**
+gas_supply_diagnosis.md,481,"   - Check for cracking, particularly near fittings"
+gas_supply_diagnosis.md,482,   - Verify not kinked or overstretched
+gas_supply_diagnosis.md,483,"   - Check for correct type (cooker, boiler, etc.)"
+gas_supply_diagnosis.md,484,   - Confirm within expiration date (if applicable)
+gas_supply_diagnosis.md,485,
+gas_supply_diagnosis.md,486,4. **Valve Packings**
+gas_supply_diagnosis.md,487,   - Test around valve stems
+gas_supply_diagnosis.md,488,   - Look for leakage when valve operated
+gas_supply_diagnosis.md,489,   - Check for damage to handles/stems
+gas_supply_diagnosis.md,490,   - Verify proper valve type for application
+gas_supply_diagnosis.md,491,
+gas_supply_diagnosis.md,492,### Leak Classification and Resolution
+gas_supply_diagnosis.md,493,
+gas_supply_diagnosis.md,494,**Minor Leaks:**
+gas_supply_diagnosis.md,495,- Small bubble formation over several seconds
+gas_supply_diagnosis.md,496,- No detectable gas smell unless very close
+gas_supply_diagnosis.md,497,- Usually fixable by tightening or resealing
+gas_supply_diagnosis.md,498,
+gas_supply_diagnosis.md,499,**Significant Leaks:**
+gas_supply_diagnosis.md,500,- Immediate bubble formation
+gas_supply_diagnosis.md,501,- Audible or detectable with electronic device
+gas_supply_diagnosis.md,502,- Requires immediate attention and repair
+gas_supply_diagnosis.md,503,
+gas_supply_diagnosis.md,504,**Major Leaks:**
+gas_supply_diagnosis.md,505,"- Audible hissing, strong gas smell"
+gas_supply_diagnosis.md,506,- Immediate bubble stream with detection fluid
+gas_supply_diagnosis.md,507,- Requires emergency isolation and professional repair
+gas_supply_diagnosis.md,508,
+gas_supply_diagnosis.md,509,**Resolution Procedures:**
+gas_supply_diagnosis.md,510,
+gas_supply_diagnosis.md,511,1. **Emergency Response (Major Leaks)**
+gas_supply_diagnosis.md,512,   - Turn off gas at ECV
+gas_supply_diagnosis.md,513,   - Ventilate area (open doors/windows)
+gas_supply_diagnosis.md,514,   - Evacuate if necessary
+gas_supply_diagnosis.md,515,   - Call gas emergency service
+gas_supply_diagnosis.md,516,   - Do not operate electrical switches or create ignition sources
+gas_supply_diagnosis.md,517,
+gas_supply_diagnosis.md,518,2. **Repair Options (Minor/Significant)**
+gas_supply_diagnosis.md,519,   - Tightening existing joints (within safety limits)
+gas_supply_diagnosis.md,520,   - Replacement of faulty components
+gas_supply_diagnosis.md,521,   - Application of approved jointing compounds
+gas_supply_diagnosis.md,522,   - Replacement of section of pipework
+gas_supply_diagnosis.md,523,   - Installation of alternative routing
+gas_supply_diagnosis.md,524,
+gas_supply_diagnosis.md,525,3. **Post-Repair Testing**
+gas_supply_diagnosis.md,526,   - Full soundness test of system
+gas_supply_diagnosis.md,527,   - Let-by test of all valves
+gas_supply_diagnosis.md,528,   - Purging if system opened
+gas_supply_diagnosis.md,529,   - Operational test of all appliances
+gas_supply_diagnosis.md,530,
+gas_supply_diagnosis.md,531,## PART 8: WORKING PRESSURE ISSUES
+gas_supply_diagnosis.md,532,
+gas_supply_diagnosis.md,533,### Optimal Working Pressure
+gas_supply_diagnosis.md,534,
+gas_supply_diagnosis.md,535,**Standard Working Pressures:**
+gas_supply_diagnosis.md,536,- Natural Gas: 20mbar at appliance
+gas_supply_diagnosis.md,537,- LPG (Propane): 37mbar at appliance
+gas_supply_diagnosis.md,538,- LPG (Butane): 28mbar at appliance
+gas_supply_diagnosis.md,539,- Commercial applications may use higher pressures
+gas_supply_diagnosis.md,540,
+gas_supply_diagnosis.md,541,**Tolerance Ranges:**
+gas_supply_diagnosis.md,542,- Natural Gas: 19-23mbar acceptable
+gas_supply_diagnosis.md,543,- LPG: ±2mbar from nominal
+gas_supply_diagnosis.md,544,"- Outside these ranges, appliance performance and safety affected"
+gas_supply_diagnosis.md,545,
+gas_supply_diagnosis.md,546,**Impact of Incorrect Pressure:**
+gas_supply_diagnosis.md,547,
+gas_supply_diagnosis.md,548,1. **Low Pressure Effects**
+gas_supply_diagnosis.md,549,   - Incomplete combustion
+gas_supply_diagnosis.md,550,   - Yellow flames
+gas_supply_diagnosis.md,551,   - Sooting
+gas_supply_diagnosis.md,552,   - Appliance cycling on limit controls
+gas_supply_diagnosis.md,553,   - Flame failure during operation
+gas_supply_diagnosis.md,554,   - Pilot outage
+gas_supply_diagnosis.md,555,   - Delayed ignition (dangerous)
+gas_supply_diagnosis.md,556,
+gas_supply_diagnosis.md,557,2. **High Pressure Effects**
+gas_supply_diagnosis.md,558,   - Excessive gas flow
+gas_supply_diagnosis.md,559,   - Noisy combustion
+gas_supply_diagnosis.md,560,   - Flame lifting from burner
+gas_supply_diagnosis.md,561,   - Overheating
+gas_supply_diagnosis.md,562,   - Increased NOx emissions
+gas_supply_diagnosis.md,563,   - Premature component failure
+gas_supply_diagnosis.md,564,   - Pressure switch activation
+gas_supply_diagnosis.md,565,
+gas_supply_diagnosis.md,566,**Diagnostic Procedures:**
+gas_supply_diagnosis.md,567,
+gas_supply_diagnosis.md,568,1. **Static Pressure Testing**
+gas_supply_diagnosis.md,569,   - Measure pressure with appliance off
+gas_supply_diagnosis.md,570,   - Should equal regulated pressure
+gas_supply_diagnosis.md,571,   - Lower indicates supply issue
+gas_supply_diagnosis.md,572,
+gas_supply_diagnosis.md,573,2. **Dynamic Pressure Testing**
+gas_supply_diagnosis.md,574,   - Measure at appliance test point while running
+gas_supply_diagnosis.md,575,   - Compare with manufacturer's requirements
+gas_supply_diagnosis.md,576,   - Test at both minimum and maximum firing rates
+gas_supply_diagnosis.md,577,   - Record under various load conditions
+gas_supply_diagnosis.md,578,
+gas_supply_diagnosis.md,579,3. **Inlet vs. Burner Pressure**
+gas_supply_diagnosis.md,580,   - Measure at both inlet to appliance and burner manifold
+gas_supply_diagnosis.md,581,   - Significant difference indicates appliance regulator issue
+gas_supply_diagnosis.md,582,   - Compare with manufacturer's specifications
+gas_supply_diagnosis.md,583,
+gas_supply_diagnosis.md,584,**Common Causes of Pressure Issues:**
+gas_supply_diagnosis.md,585,
+gas_supply_diagnosis.md,586,1. **Low Inlet Pressure**
+gas_supply_diagnosis.md,587,   - Undersized pipework
+gas_supply_diagnosis.md,588,   - Partially blocked filter
+gas_supply_diagnosis.md,589,   - Regulator failure
+gas_supply_diagnosis.md,590,   - Excessive demand on system
+gas_supply_diagnosis.md,591,   - Utility supply issue
+gas_supply_diagnosis.md,592,
+gas_supply_diagnosis.md,593,2. **High Inlet Pressure**
+gas_supply_diagnosis.md,594,   - Regulator failure
+gas_supply_diagnosis.md,595,   - Incorrect regulator setting
+gas_supply_diagnosis.md,596,   - Wrong gas type (LPG vs. NG)
+gas_supply_diagnosis.md,597,   - Governor vent blockage
+gas_supply_diagnosis.md,598,
+gas_supply_diagnosis.md,599,"3. **Correct Inlet, Wrong Burner Pressure**"
+gas_supply_diagnosis.md,600,   - Appliance regulator failure
+gas_supply_diagnosis.md,601,   - Incorrect adjustment
+gas_supply_diagnosis.md,602,   - Blocked injectors
+gas_supply_diagnosis.md,603,   - Faulty gas valve
+gas_supply_diagnosis.md,604,
+gas_supply_diagnosis.md,605,## PART 9: REFERENCE TABLES
+gas_supply_diagnosis.md,606,
+gas_supply_diagnosis.md,607,### Normal Operating Values
+gas_supply_diagnosis.md,608,
+gas_supply_diagnosis.md,609,| Component | Parameter | Natural Gas | LPG (Propane) | LPG (Butane) |
+gas_supply_diagnosis.md,610,|-----------|-----------|-------------|---------------|--------------|
+gas_supply_diagnosis.md,611,| ECV | Max Pressure Drop | <0.5mbar | <0.5mbar | <0.5mbar |
+gas_supply_diagnosis.md,612,| Meter | Allowable Leakage | Zero | Zero | Zero |
+gas_supply_diagnosis.md,613,| Governor | Outlet Pressure | 21mbar ±2mbar | 37mbar ±2mbar | 28mbar ±2mbar |
+gas_supply_diagnosis.md,614,| Pipework | Max System Drop | <1mbar | <1mbar | <1mbar |
+gas_supply_diagnosis.md,615,| Appliance | Inlet Pressure | 20mbar ±1mbar | 37mbar ±2mbar | 28mbar ±2mbar |
+gas_supply_diagnosis.md,616,| System | Standing Pressure Loss | <0.5mbar/10min | <0.5mbar/10min | <0.5mbar/10min |
+gas_supply_diagnosis.md,617,
+gas_supply_diagnosis.md,618,### Pipe Sizing Quick Reference
+gas_supply_diagnosis.md,619,
+gas_supply_diagnosis.md,620,| Maximum Gas Load (kW) | Maximum Run (m) | Mild Steel Pipe Size | Copper Pipe Size |
+gas_supply_diagnosis.md,621,|----------------------|-----------------|----------------------|------------------|
+gas_supply_diagnosis.md,622,| 11 | 15 | 15mm | 15mm |
+gas_supply_diagnosis.md,623,| 18 | 15 | 15mm | 15mm |
+gas_supply_diagnosis.md,624,| 36 | 20 | 22mm | 22mm |
+gas_supply_diagnosis.md,625,| 70 | 20 | 28mm | 28mm |
+gas_supply_diagnosis.md,626,| 110 | 20 | 35mm | 35mm |
+gas_supply_diagnosis.md,627,| 180 | 20 | 42mm | 42mm |
+gas_supply_diagnosis.md,628,
+gas_supply_diagnosis.md,629,*Note: This is simplified; actual sizing depends on specific installation details*
+gas_supply_diagnosis.md,630,
+gas_supply_diagnosis.md,631,### Common Test Points and Pressure Readings
+gas_supply_diagnosis.md,632,
+gas_supply_diagnosis.md,633,| Test Location | Expected Reading (NG) | Common Issues if Abnormal |
+gas_supply_diagnosis.md,634,|---------------|------------------------|---------------------------|
+gas_supply_diagnosis.md,635,"| Meter Outlet | 21mbar | Regulator failure, utility issue |"
+gas_supply_diagnosis.md,636,"| After ECV | 21mbar | ECV restriction, utility issue |"
+gas_supply_diagnosis.md,637,"| Before Appliance Isolation | 20-21mbar | Pipe sizing, blockage |"
+gas_supply_diagnosis.md,638,"| Appliance Test Point | 20mbar | Appliance regulator, valve issue |"
+gas_supply_diagnosis.md,639,"| Burner Manifold | Model-specific | Injector blockage, valve issue |"
+gas_supply_diagnosis.md,640,
+gas_supply_diagnosis.md,641,## PART 10: SAFETY CONSIDERATIONS
+gas_supply_diagnosis.md,642,
+gas_supply_diagnosis.md,643,### Gas Work Safety
+gas_supply_diagnosis.md,644,
+gas_supply_diagnosis.md,645,1. **Legal Requirements**
+gas_supply_diagnosis.md,646,   - Work must be performed by Gas Safe registered engineer
+gas_supply_diagnosis.md,647,   - Appropriate qualification for specific work
+gas_supply_diagnosis.md,648,   - Proper notification and documentation
+gas_supply_diagnosis.md,649,   - Compliance with Gas Safety Regulations
+gas_supply_diagnosis.md,650,
+gas_supply_diagnosis.md,651,2. **Personal Safety**
+gas_supply_diagnosis.md,652,   - Proper ventilation during testing
+gas_supply_diagnosis.md,653,   - No smoking or ignition sources
+gas_supply_diagnosis.md,654,   - Use of appropriate PPE
+gas_supply_diagnosis.md,655,   - Gas detection equipment available
+gas_supply_diagnosis.md,656,
+gas_supply_diagnosis.md,657,3. **Emergency Procedures**
+gas_supply_diagnosis.md,658,   - Know location of all isolation points
+gas_supply_diagnosis.md,659,   - Emergency contact numbers readily available
+gas_supply_diagnosis.md,660,   - Clear evacuation routes
+gas_supply_diagnosis.md,661,   - Understanding of escalation procedures
+gas_supply_diagnosis.md,662,
+gas_supply_diagnosis.md,663,4. **Test Equipment Safety**
+gas_supply_diagnosis.md,664,   - Regular calibration of test instruments
+gas_supply_diagnosis.md,665,   - Use of intrinsically safe equipment where required
+gas_supply_diagnosis.md,666,   - Proper connection methods
+gas_supply_diagnosis.md,667,   - Understanding of measurement limitations
+gas_supply_diagnosis.md,668,
+gas_supply_diagnosis.md,669,### Customer Communication
+gas_supply_diagnosis.md,670,
+gas_supply_diagnosis.md,671,1. **System Limitations**
+gas_supply_diagnosis.md,672,   - Educate customers on maximum demand
+gas_supply_diagnosis.md,673,   - Explain consequences of unauthorized modifications
+gas_supply_diagnosis.md,674,   - Clarify maintenance responsibilities
+gas_supply_diagnosis.md,675,   - Document adviser actions and recommendations
+gas_supply_diagnosis.md,676,
+gas_supply_diagnosis.md,677,2. **Warning Signs**
+gas_supply_diagnosis.md,678,   - Gas smell response procedures
+gas_supply_diagnosis.md,679,   - Signs of incomplete combustion
+gas_supply_diagnosis.md,680,   - Appliance danger signals
+gas_supply_diagnosis.md,681,   - When to call emergency services
+gas_supply_diagnosis.md,682,
+gas_supply_diagnosis.md,683,3. **Maintenance Requirements**
+gas_supply_diagnosis.md,684,   - Regular safety checks
+gas_supply_diagnosis.md,685,   - Recommended inspection intervals
+gas_supply_diagnosis.md,686,   - Record keeping requirements
+gas_supply_diagnosis.md,687,   - Professional vs. DIY maintenance boundaries

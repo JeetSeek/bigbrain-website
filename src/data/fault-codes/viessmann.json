@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "manufacturer": "Viessmann",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Viessmann Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "F0",
+      "description": "External sensor fault",
+      "troubleshooting_steps": "Check external sensor. Check wiring connections. Check for damage to sensor.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["external sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F1",
+      "description": "Flow temperature sensor fault",
+      "troubleshooting_steps": "Check flow temperature sensor. Check wiring connections. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F2",
+      "description": "Return temperature sensor fault",
+      "troubleshooting_steps": "Check return temperature sensor. Check wiring connections. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["return sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F3",
+      "description": "Flue gas temperature sensor fault",
+      "troubleshooting_steps": "Check flue gas temperature sensor. Check wiring connections. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flue sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F4",
+      "description": "Ignition fault",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and cable. Check flue for blockages. Reset boiler.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["ignition electrode", "gas valve", "flue", "PCB"]
+    },
+    {
+      "code": "F5",
+      "description": "Burner fault",
+      "troubleshooting_steps": "Check burner. Check flame sensor. Check gas valve. Check ignition system.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["burner", "flame sensor", "gas valve", "ignition system"]
+    },
+    {
+      "code": "F7",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "pressure relief valve"]
+    },
+    {
+      "code": "F8",
+      "description": "Fan fault",
+      "troubleshooting_steps": "Check fan electrical connection. Check PCB. Check fan for blockage or damage.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "FA",
+      "description": "No flame detected during ignition",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and cable. Check flue system. Check gas valve.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas supply", "ignition electrode", "gas valve", "flue system"]
+    },
+    {
+      "code": "FC",
+      "description": "Communication error",
+      "troubleshooting_steps": "Check wiring between components. Check PCB. Reset controller.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["wiring", "PCB", "controller"]
+    },
+    {
+      "code": "FD",
+      "description": "Burner control unit fault",
+      "troubleshooting_steps": "Check connections to burner control unit. Reset boiler. If fault persists, replace unit.",
+      "safety_warning": "Disconnect power before replacing components.",
+      "components": ["burner control unit", "wiring", "PCB"]
+    },
+    {
+      "code": "FE",
+      "description": "Power supply issue",
+      "troubleshooting_steps": "Check electrical supply to boiler. Check for fluctuating supply. Check fuses.",
+      "safety_warning": "Electrical issues should be addressed by a qualified electrician.",
+      "components": ["electrical supply", "fuses", "PCB"]
+    }
+  ]
+}

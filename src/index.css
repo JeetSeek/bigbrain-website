@@ -1,0 +1,432 @@
+/**
+ * BoilerBrain Application Styles
+ * Mobile-first design system aligned with Apple Human Interface Guidelines
+ * Optimized for iOS devices and App Store compliance
+ */
+
+/**
+ * Typography: SF Pro Display/Text fallback to Inter
+ * Apple's system fonts for optimal iOS integration, with Inter as fallback
+ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 
+ * Tailwind CSS directives
+ * Note: These custom directives are processed by the Tailwind CSS compiler
+ * and may show as unknown directives in standard CSS linters, which is expected.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Apple HIG Design System: CSS Variables
+ * Colors, spacing, and typography aligned with iOS design principles
+ */
+:root {
+  /* iOS System Colors - Light Mode */
+  --ios-blue: #007AFF;
+  --ios-blue-dark: #0056CC;
+  --ios-green: #34C759;
+  --ios-green-dark: #248A3D;
+  --ios-red: #FF3B30;
+  --ios-orange: #FF9500;
+  --ios-yellow: #FFCC00;
+  --ios-purple: #AF52DE;
+  --ios-pink: #FF2D92;
+  --ios-teal: #5AC8FA;
+  --ios-indigo: #5856D6;
+  
+  /* iOS System Grays */
+  --ios-gray: #8E8E93;
+  --ios-gray2: #AEAEB2;
+  --ios-gray3: #C7C7CC;
+  --ios-gray4: #D1D1D6;
+  --ios-gray5: #E5E5EA;
+  --ios-gray6: #F2F2F7;
+  
+  /* iOS System Backgrounds */
+  --ios-bg-primary: #FFFFFF;
+  --ios-bg-secondary: #F2F2F7;
+  --ios-bg-tertiary: #FFFFFF;
+  --ios-bg-grouped-primary: #F2F2F7;
+  --ios-bg-grouped-secondary: #FFFFFF;
+  
+  /* iOS Labels */
+  --ios-label-primary: #000000;
+  --ios-label-secondary: rgba(60, 60, 67, 0.6);
+  --ios-label-tertiary: rgba(60, 60, 67, 0.3);
+  --ios-label-quaternary: rgba(60, 60, 67, 0.18);
+  
+  /* iOS Separators */
+  --ios-separator-opaque: #C6C6C8;
+  --ios-separator-non-opaque: rgba(60, 60, 67, 0.36);
+  
+  /* Touch Target Sizes (Apple HIG minimum 44pt) */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 48px;
+  --touch-target-large: 56px;
+  
+  /* iOS Spacing System */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* iOS Corner Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* iOS Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/**
+ * Apple HIG Typography System
+ * iOS-native typography hierarchy with Dynamic Type support
+ * Uses SF Pro Display/Text with Inter fallback
+ */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--ios-bg-grouped-primary);
+  color: var(--ios-label-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for iOS Dynamic Type */
+  font-size: 17px; /* iOS body text size */
+  line-height: 1.41176; /* iOS body line height */
+}
+
+/* iOS Typography Scale */
+.ios-large-title {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: 0.37px;
+}
+
+.ios-title1 {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: 0.36px;
+}
+
+.ios-title2 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.27;
+  letter-spacing: 0.35px;
+}
+
+.ios-title3 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.38px;
+}
+
+.ios-headline {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.29;
+  letter-spacing: -0.43px;
+}
+
+.ios-body {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.29;
+  letter-spacing: -0.43px;
+}
+
+.ios-callout {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.31;
+  letter-spacing: -0.32px;
+}
+
+.ios-subhead {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: -0.24px;
+}
+
+.ios-footnote {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: -0.08px;
+}
+
+.ios-caption1 {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.33;
+  letter-spacing: 0px;
+}
+
+.ios-caption2 {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.36;
+  letter-spacing: 0.07px;
+}
+
+/* Legacy class mappings for backward compatibility */
+.body-md { @apply ios-body; }
+.body-sm { @apply ios-subhead; }
+.heading-xl { @apply ios-title1; }
+.heading-sm { @apply ios-title3; }
+.btn-label { @apply ios-headline; }
+
+/**
+ * Apple HIG Layout Components
+ * Mobile-first layout patterns following iOS design principles
+ */
+.ios-content-card {
+  background-color: var(--ios-bg-grouped-secondary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin: var(--spacing-md);
+  overflow: hidden;
+}
+
+.ios-safe-area {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.ios-navigation-bar {
+  height: 44px;
+  background-color: var(--ios-bg-primary);
+  border-bottom: 0.5px solid var(--ios-separator-opaque);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.ios-tab-bar {
+  height: 49px;
+  background-color: var(--ios-bg-primary);
+  border-top: 0.5px solid var(--ios-separator-opaque);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/**
+ * Apple HIG Interactive Components
+ * Touch-optimized controls following iOS design patterns
+ */
+.ios-button {
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  background-color: var(--ios-blue);
+  color: white;
+  border: none;
+  font-weight: 600;
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.ios-button:hover {
+  background-color: var(--ios-blue-dark);
+  transform: scale(0.98);
+}
+
+.ios-button:active {
+  transform: scale(0.95);
+}
+
+.ios-button-secondary {
+  background-color: var(--ios-bg-secondary);
+  color: var(--ios-blue);
+  border: 1px solid var(--ios-separator-opaque);
+}
+
+.ios-button-destructive {
+  background-color: var(--ios-red);
+  color: white;
+}
+
+.ios-list-item {
+  background-color: var(--ios-bg-grouped-secondary);
+  border-bottom: 0.5px solid var(--ios-separator-non-opaque);
+  padding: var(--spacing-md);
+  min-height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.ios-list-item:hover {
+  background-color: var(--ios-gray6);
+}
+
+.ios-list-item:active {
+  background-color: var(--ios-gray5);
+}
+
+.ios-input {
+  min-height: var(--touch-target-min);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--ios-separator-opaque);
+  border-radius: var(--radius-md);
+  background-color: var(--ios-bg-primary);
+  color: var(--ios-label-primary);
+  font-size: 17px;
+  font-family: inherit;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.ios-input:focus {
+  outline: none;
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.ios-input::placeholder {
+  color: var(--ios-label-tertiary);
+}
+
+/**
+ * Apple HIG Dark Mode Support
+ * Automatic dark mode adaptation using CSS custom properties
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* iOS System Colors - Dark Mode */
+    --ios-blue: #0A84FF;
+    --ios-blue-dark: #0056CC;
+    --ios-green: #30D158;
+    --ios-red: #FF453A;
+    --ios-orange: #FF9F0A;
+    --ios-yellow: #FFD60A;
+    --ios-purple: #BF5AF2;
+    --ios-pink: #FF375F;
+    --ios-teal: #64D2FF;
+    --ios-indigo: #5E5CE6;
+    
+    /* iOS System Grays - Dark Mode */
+    --ios-gray: #8E8E93;
+    --ios-gray2: #636366;
+    --ios-gray3: #48484A;
+    --ios-gray4: #3A3A3C;
+    --ios-gray5: #2C2C2E;
+    --ios-gray6: #1C1C1E;
+    
+    /* iOS System Backgrounds - Dark Mode */
+    --ios-bg-primary: #000000;
+    --ios-bg-secondary: #1C1C1E;
+    --ios-bg-tertiary: #2C2C2E;
+    --ios-bg-grouped-primary: #000000;
+    --ios-bg-grouped-secondary: #1C1C1E;
+    
+    /* iOS Labels - Dark Mode */
+    --ios-label-primary: #FFFFFF;
+    --ios-label-secondary: rgba(235, 235, 245, 0.6);
+    --ios-label-tertiary: rgba(235, 235, 245, 0.3);
+    --ios-label-quaternary: rgba(235, 235, 245, 0.18);
+    
+    /* iOS Separators - Dark Mode */
+    --ios-separator-opaque: #38383A;
+    --ios-separator-non-opaque: rgba(84, 84, 88, 0.65);
+  }
+}
+
+/**
+ * Legacy Component Styles (Updated for iOS)
+ * Backward compatibility with enhanced mobile-first design
+ */
+.content-card {
+  @apply ios-content-card;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.result-card {
+  background-color: var(--ios-bg-grouped-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 0.5px solid var(--ios-separator-non-opaque);
+}
+
+.download-btn {
+  background-color: var(--color-slate);
+  color: var(--color-off-white);
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.search-input {
+  border: 1px solid var(--color-gray-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.5;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(35, 136, 255, 0.2);
+}
+
+/* Loading skeleton */
+.skeleton {
+  animation: pulse 1.5s infinite;
+  background: linear-gradient(90deg, var(--color-gray-200) 0%, var(--color-gray-100) 50%, var(--color-gray-200) 100%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% { background-position: 0% 0%; }
+  100% { background-position: -200% 0%; }
+}
+
+body {
+  background: linear-gradient(135deg, #0a0a23 0%, #3751FF 50%, #7B61FF 100%);
+  min-height: 100vh;
+}

@@ -1,0 +1,378 @@
+filename,line_number,content
+motorized_valve_diagnosis.md,1,# Motorized Valve Fault Finding Guide
+motorized_valve_diagnosis.md,2,
+motorized_valve_diagnosis.md,3,"This comprehensive guide covers diagnostic procedures for external motorized valves in multi-zone heating systems and cylinders, including testing control circuits."
+motorized_valve_diagnosis.md,4,
+motorized_valve_diagnosis.md,5,## PART 1: TYPES AND OPERATION OF MOTORIZED VALVES
+motorized_valve_diagnosis.md,6,
+motorized_valve_diagnosis.md,7,### Common Motorized Valve Types
+motorized_valve_diagnosis.md,8,
+motorized_valve_diagnosis.md,9,**Two-Port (Zone) Valves**
+motorized_valve_diagnosis.md,10,- Used to control flow to a single circuit (either ON or OFF)
+motorized_valve_diagnosis.md,11,"- Common models: Honeywell V4043H series, Drayton 22mm/28mm zone valves"
+motorized_valve_diagnosis.md,12,"- Typically 5-wire configuration (Earth, Neutral, Live, plus 2 end switch wires)"
+motorized_valve_diagnosis.md,13,- Some 28mm models have a 6th wire (often white) which may be unused
+motorized_valve_diagnosis.md,14,
+motorized_valve_diagnosis.md,15,**Three-Port (Mid-Position) Valves**
+motorized_valve_diagnosis.md,16,- Controls flow to two separate circuits (heating and hot water)
+motorized_valve_diagnosis.md,17,- Can direct flow to either circuit or both simultaneously
+motorized_valve_diagnosis.md,18,- Common models: Honeywell V4073A series
+motorized_valve_diagnosis.md,19,- Typically 5-wire configuration (but wired differently from 2-port valves)
+motorized_valve_diagnosis.md,20,
+motorized_valve_diagnosis.md,21,**Control Systems**
+motorized_valve_diagnosis.md,22,"- **S Plan**: Uses multiple 2-port valves (one for heating, one for hot water)"
+motorized_valve_diagnosis.md,23,- **Y Plan**: Uses a single 3-port mid-position valve
+motorized_valve_diagnosis.md,24,- **W Plan**: Uses a 3-port diverter valve (different from mid-position)
+motorized_valve_diagnosis.md,25,- **Zoned Systems**: Multiple 2-port valves for different heating zones
+motorized_valve_diagnosis.md,26,
+motorized_valve_diagnosis.md,27,## PART 2: DIAGNOSTIC APPROACH
+motorized_valve_diagnosis.md,28,
+motorized_valve_diagnosis.md,29,### Initial Assessment
+motorized_valve_diagnosis.md,30,
+motorized_valve_diagnosis.md,31,1. **Visual Inspection**
+motorized_valve_diagnosis.md,32,   - Check for physical damage to valve bodies or actuator heads
+motorized_valve_diagnosis.md,33,   - Look for water leaks around valves
+motorized_valve_diagnosis.md,34,   - Check wiring for signs of overheating or damage
+motorized_valve_diagnosis.md,35,   - Verify correct wiring colors at valve connections
+motorized_valve_diagnosis.md,36,
+motorized_valve_diagnosis.md,37,2. **Operational Check**
+motorized_valve_diagnosis.md,38,   - Set programmer to call for each zone separately
+motorized_valve_diagnosis.md,39,   - Listen for motor operation when zone is called for
+motorized_valve_diagnosis.md,40,   - Feel pipes for correct temperature changes
+motorized_valve_diagnosis.md,41,   - Verify zone responds to thermostat adjustments
+motorized_valve_diagnosis.md,42,
+motorized_valve_diagnosis.md,43,3. **System Behavior Analysis**
+motorized_valve_diagnosis.md,44,   - Wrong zones heating up
+motorized_valve_diagnosis.md,45,   - Zones not heating when called for
+motorized_valve_diagnosis.md,46,   - All zones heating when only one is called for
+motorized_valve_diagnosis.md,47,   - Hot water but no heating (or vice versa)
+motorized_valve_diagnosis.md,48,   - Intermittent operation
+motorized_valve_diagnosis.md,49,   - Valve motor running continuously
+motorized_valve_diagnosis.md,50,
+motorized_valve_diagnosis.md,51,## PART 3: SPECIFIC TEST PROCEDURES
+motorized_valve_diagnosis.md,52,
+motorized_valve_diagnosis.md,53,### Testing Two-Port Zone Valves
+motorized_valve_diagnosis.md,54,
+motorized_valve_diagnosis.md,55,**Manual Operation Test**
+motorized_valve_diagnosis.md,56,1. Switch off power to heating system
+motorized_valve_diagnosis.md,57,2. Locate manual lever on valve actuator
+motorized_valve_diagnosis.md,58,"3. Move lever from ""Auto"" to ""MAN"" position"
+motorized_valve_diagnosis.md,59,   - Should feel spring resistance when moving lever
+motorized_valve_diagnosis.md,60,"   - If no resistance, valve spindle may be seized or broken"
+motorized_valve_diagnosis.md,61,"   - If lever won't stay in MAN position, spring is likely broken"
+motorized_valve_diagnosis.md,62,"4. With lever in ""MAN"" position, check flow through valve"
+motorized_valve_diagnosis.md,63,   - Feel downstream pipe for heat when boiler runs
+motorized_valve_diagnosis.md,64,"   - Return lever to ""AUTO"" before restoring power"
+motorized_valve_diagnosis.md,65,
+motorized_valve_diagnosis.md,66,**Motor Operation Test**
+motorized_valve_diagnosis.md,67,"1. With system powered, call for heat to relevant zone"
+motorized_valve_diagnosis.md,68,2. Listen for motor operation (should run briefly when zone called)
+motorized_valve_diagnosis.md,69,3. Feel valve head - should become warm when activated
+motorized_valve_diagnosis.md,70,4. Valve should move from closed to open position
+motorized_valve_diagnosis.md,71,"5. After 2-3 minutes, valve head should remain warm if powered"
+motorized_valve_diagnosis.md,72,
+motorized_valve_diagnosis.md,73,**End Switch Testing with Multimeter**
+motorized_valve_diagnosis.md,74,1. Switch off power to heating system
+motorized_valve_diagnosis.md,75,2. Remove cover from valve actuator
+motorized_valve_diagnosis.md,76,3. Set multimeter to continuity or resistance setting
+motorized_valve_diagnosis.md,77,4. Test between end switch terminals (typically orange and grey wires)
+motorized_valve_diagnosis.md,78,   - With valve in closed position: No continuity (open circuit)
+motorized_valve_diagnosis.md,79,   - With valve manually opened: Continuity (closed circuit)
+motorized_valve_diagnosis.md,80,"5. If no change in continuity when valve position changes, end switch is faulty"
+motorized_valve_diagnosis.md,81,
+motorized_valve_diagnosis.md,82,**Motor Circuit Testing**
+motorized_valve_diagnosis.md,83,1. Switch off power to heating system
+motorized_valve_diagnosis.md,84,2. Set multimeter to resistance (Ohms)
+motorized_valve_diagnosis.md,85,3. Disconnect motor wires from control circuit
+motorized_valve_diagnosis.md,86,4. Test resistance across motor terminals:
+motorized_valve_diagnosis.md,87,   - For Synchron motors: 2000-2500 Ohms (2.0-2.5 kΩ) is normal
+motorized_valve_diagnosis.md,88,   - Open circuit or very high resistance indicates failed motor
+motorized_valve_diagnosis.md,89,   - Very low resistance may indicate shorted winding
+motorized_valve_diagnosis.md,90,
+motorized_valve_diagnosis.md,91,### Testing Three-Port Mid-Position Valves
+motorized_valve_diagnosis.md,92,
+motorized_valve_diagnosis.md,93,**Manual Lever Test**
+motorized_valve_diagnosis.md,94,1. Switch off power to heating system
+motorized_valve_diagnosis.md,95,2. Move manual lever to MAN position and release
+motorized_valve_diagnosis.md,96,   - Should feel spring tension
+motorized_valve_diagnosis.md,97,   - Lever should return to AUTO position when released
+motorized_valve_diagnosis.md,98,"   - If no spring tension, spring or mechanism may be broken"
+motorized_valve_diagnosis.md,99,
+motorized_valve_diagnosis.md,100,**Port Position Verification**
+motorized_valve_diagnosis.md,101,"1. With system powered down, valve defaults to hot water position (port A closed, port B open)"
+motorized_valve_diagnosis.md,102,"2. When heating called, valve should move to mid-position (both ports open)"
+motorized_valve_diagnosis.md,103,"3. When only heating required (hot water satisfied), valve moves to heating position (port A open, port B closed)"
+motorized_valve_diagnosis.md,104,
+motorized_valve_diagnosis.md,105,**Electrical Testing of Three-Port Valve**
+motorized_valve_diagnosis.md,106,1. Switch off power to heating system
+motorized_valve_diagnosis.md,107,2. Identify wires:
+motorized_valve_diagnosis.md,108,   - Blue: Neutral
+motorized_valve_diagnosis.md,109,   - Green/Yellow: Earth
+motorized_valve_diagnosis.md,110,   - White: Heating call
+motorized_valve_diagnosis.md,111,   - Grey: Used to drive valve to heating-only position
+motorized_valve_diagnosis.md,112,   - Orange: Switched live to boiler/pump
+motorized_valve_diagnosis.md,113,"3. With system powered for different modes, check:"
+motorized_valve_diagnosis.md,114,   - Hot water only: Grey and white wires de-energized
+motorized_valve_diagnosis.md,115,"   - Heating and hot water: White wire energized (~230V AC), grey de-energized"
+motorized_valve_diagnosis.md,116,   - Heating only: Both white and grey wires energized (~230V AC)
+motorized_valve_diagnosis.md,117,
+motorized_valve_diagnosis.md,118,**Checking for Jammed Valve**
+motorized_valve_diagnosis.md,119,1. Switch off power to heating system
+motorized_valve_diagnosis.md,120,2. Remove valve actuator (powerhead) from valve body
+motorized_valve_diagnosis.md,121,3. Check if valve spindle moves freely manually
+motorized_valve_diagnosis.md,122,"4. If spindle is stuck, check for:"
+motorized_valve_diagnosis.md,123,   - Scale buildup inside valve
+motorized_valve_diagnosis.md,124,   - Debris blocking valve movement
+motorized_valve_diagnosis.md,125,   - Warped valve components
+motorized_valve_diagnosis.md,126,
+motorized_valve_diagnosis.md,127,## PART 4: CONTROLLER AND WIRING DIAGNOSTICS
+motorized_valve_diagnosis.md,128,
+motorized_valve_diagnosis.md,129,### Programmer/Timer Testing
+motorized_valve_diagnosis.md,130,
+motorized_valve_diagnosis.md,131,1. **Basic Function Check**
+motorized_valve_diagnosis.md,132,   - Verify display is working correctly
+motorized_valve_diagnosis.md,133,   - Check time and program settings
+motorized_valve_diagnosis.md,134,   - Manually override each zone (ON/OFF)
+motorized_valve_diagnosis.md,135,   - Listen for relay clicks when changing modes
+motorized_valve_diagnosis.md,136,
+motorized_valve_diagnosis.md,137,2. **Output Testing with Multimeter**
+motorized_valve_diagnosis.md,138,   - Switch off power to heating system
+motorized_valve_diagnosis.md,139,   - Set multimeter to AC voltage
+motorized_valve_diagnosis.md,140,   - Restore power and measure at programmer terminals:
+motorized_valve_diagnosis.md,141,     - Hot water ON: 230V AC at hot water output terminal
+motorized_valve_diagnosis.md,142,     - Heating ON: 230V AC at heating output terminal
+motorized_valve_diagnosis.md,143,     - Both OFF: 0V at output terminals
+motorized_valve_diagnosis.md,144,
+motorized_valve_diagnosis.md,145,### Thermostat Testing
+motorized_valve_diagnosis.md,146,
+motorized_valve_diagnosis.md,147,1. **Room Thermostat Check**
+motorized_valve_diagnosis.md,148,   - Set to maximum temperature
+motorized_valve_diagnosis.md,149,   - Should hear click as contacts close
+motorized_valve_diagnosis.md,150,"   - With multimeter, check for continuity when calling for heat"
+motorized_valve_diagnosis.md,151,   - Verify voltage passes through when contacts closed
+motorized_valve_diagnosis.md,152,
+motorized_valve_diagnosis.md,153,2. **Cylinder Thermostat Check**
+motorized_valve_diagnosis.md,154,   - Set to maximum temperature
+motorized_valve_diagnosis.md,155,"   - If hot water is below set temperature, should have continuity"
+motorized_valve_diagnosis.md,156,"   - As cylinder heats up, continuity should break at set point"
+motorized_valve_diagnosis.md,157,   - Check sensor is securely attached to cylinder
+motorized_valve_diagnosis.md,158,
+motorized_valve_diagnosis.md,159,### Wiring Centre Diagnostics
+motorized_valve_diagnosis.md,160,
+motorized_valve_diagnosis.md,161,1. **Visual Inspection**
+motorized_valve_diagnosis.md,162,   - Check for burned or loose terminals
+motorized_valve_diagnosis.md,163,   - Verify wires are correctly seated
+motorized_valve_diagnosis.md,164,   - Look for signs of overheating
+motorized_valve_diagnosis.md,165,
+motorized_valve_diagnosis.md,166,2. **Junction Testing**
+motorized_valve_diagnosis.md,167,   - Trace wires from programmer to valves
+motorized_valve_diagnosis.md,168,   - Verify continuity of each connection
+motorized_valve_diagnosis.md,169,   - Check for short circuits between terminals
+motorized_valve_diagnosis.md,170,   - Verify voltage transmission through wiring center
+motorized_valve_diagnosis.md,171,
+motorized_valve_diagnosis.md,172,3. **Relay Testing (if present)**
+motorized_valve_diagnosis.md,173,   - Listen for audible clicking when zones are switched
+motorized_valve_diagnosis.md,174,   - Check for voltage at relay outputs when activated
+motorized_valve_diagnosis.md,175,   - Verify relay coil resistance (typically 2-5 kΩ)
+motorized_valve_diagnosis.md,176,
+motorized_valve_diagnosis.md,177,## PART 5: COMMON FAULT SCENARIOS AND SOLUTIONS
+motorized_valve_diagnosis.md,178,
+motorized_valve_diagnosis.md,179,### Valve Motor Runs Continuously
+motorized_valve_diagnosis.md,180,
+motorized_valve_diagnosis.md,181,**Possible Causes:**
+motorized_valve_diagnosis.md,182,1. Faulty room thermostat or cylinder thermostat
+motorized_valve_diagnosis.md,183,2. Damaged or stuck microswitch inside valve
+motorized_valve_diagnosis.md,184,3. Incorrect wiring at valve or controller
+motorized_valve_diagnosis.md,185,"4. Valve jammed, preventing end position being reached"
+motorized_valve_diagnosis.md,186,
+motorized_valve_diagnosis.md,187,**Diagnostic Steps:**
+motorized_valve_diagnosis.md,188,"1. Disconnect thermostat wires - if motor stops, thermostat or wiring is faulty"
+motorized_valve_diagnosis.md,189,2. Check for debris or damage in valve mechanism
+motorized_valve_diagnosis.md,190,3. Verify correct wiring configuration for valve type
+motorized_valve_diagnosis.md,191,4. Test motor resistance when disconnected from circuit
+motorized_valve_diagnosis.md,192,
+motorized_valve_diagnosis.md,193,### Valve Not Opening When Called
+motorized_valve_diagnosis.md,194,
+motorized_valve_diagnosis.md,195,**Possible Causes:**
+motorized_valve_diagnosis.md,196,1. No power to valve motor
+motorized_valve_diagnosis.md,197,2. Failed motor
+motorized_valve_diagnosis.md,198,3. Seized valve mechanism
+motorized_valve_diagnosis.md,199,4. Broken linkage between motor and valve
+motorized_valve_diagnosis.md,200,
+motorized_valve_diagnosis.md,201,**Diagnostic Steps:**
+motorized_valve_diagnosis.md,202,1. Check for 230V AC at motor terminals when zone called
+motorized_valve_diagnosis.md,203,2. Test motor resistance (should be 2.0-2.5 kΩ)
+motorized_valve_diagnosis.md,204,3. Try manual operation to check for seized mechanism
+motorized_valve_diagnosis.md,205,4. Remove actuator to inspect linkage
+motorized_valve_diagnosis.md,206,
+motorized_valve_diagnosis.md,207,### Wrong Zone Heating
+motorized_valve_diagnosis.md,208,
+motorized_valve_diagnosis.md,209,**Possible Causes:**
+motorized_valve_diagnosis.md,210,1. Valve installed in wrong pipe
+motorized_valve_diagnosis.md,211,2. Cross-wired valves at controller
+motorized_valve_diagnosis.md,212,3. Programmer channel settings incorrect
+motorized_valve_diagnosis.md,213,4. Faulty 3-port valve (for Y-plan)
+motorized_valve_diagnosis.md,214,
+motorized_valve_diagnosis.md,215,**Diagnostic Steps:**
+motorized_valve_diagnosis.md,216,1. Trace pipes to confirm correct valve installation
+motorized_valve_diagnosis.md,217,2. Verify wiring matches system diagram
+motorized_valve_diagnosis.md,218,3. Check programmer settings
+motorized_valve_diagnosis.md,219,4. Test valve operation manually
+motorized_valve_diagnosis.md,220,
+motorized_valve_diagnosis.md,221,### Multiple Zones Heating When Only One Called
+motorized_valve_diagnosis.md,222,
+motorized_valve_diagnosis.md,223,**Possible Causes:**
+motorized_valve_diagnosis.md,224,1. Incorrect wiring at controller
+motorized_valve_diagnosis.md,225,2. Failed valve (stuck open)
+motorized_valve_diagnosis.md,226,3. Wiring fault creating feedback between zones
+motorized_valve_diagnosis.md,227,4. Controller relay failure
+motorized_valve_diagnosis.md,228,
+motorized_valve_diagnosis.md,229,**Diagnostic Steps:**
+motorized_valve_diagnosis.md,230,1. Check each valve manually - should close when not called
+motorized_valve_diagnosis.md,231,2. Test for voltage feedback between zones
+motorized_valve_diagnosis.md,232,3. Isolate zones by disconnecting at controller
+motorized_valve_diagnosis.md,233,
+motorized_valve_diagnosis.md,234,### No Boiler Firing When Zones Called
+motorized_valve_diagnosis.md,235,
+motorized_valve_diagnosis.md,236,**Possible Causes:**
+motorized_valve_diagnosis.md,237,1. Failed end switch in valve
+motorized_valve_diagnosis.md,238,2. Break in the boiler enable circuit
+motorized_valve_diagnosis.md,239,3. Faulty wiring from valve to boiler
+motorized_valve_diagnosis.md,240,4. Boiler internal fault
+motorized_valve_diagnosis.md,241,
+motorized_valve_diagnosis.md,242,**Diagnostic Steps:**
+motorized_valve_diagnosis.md,243,1. Check for 230V at boiler live terminal when zone active
+motorized_valve_diagnosis.md,244,2. Test end switch continuity when valve open
+motorized_valve_diagnosis.md,245,3. Verify complete circuit from controller through valve to boiler
+motorized_valve_diagnosis.md,246,4. Temporarily bypass valve switch to test boiler directly
+motorized_valve_diagnosis.md,247,
+motorized_valve_diagnosis.md,248,## PART 6: ADVANCED TROUBLESHOOTING TECHNIQUES
+motorized_valve_diagnosis.md,249,
+motorized_valve_diagnosis.md,250,### Isolating Individual Components
+motorized_valve_diagnosis.md,251,
+motorized_valve_diagnosis.md,252,Creating a systematic approach to eliminate variables:
+motorized_valve_diagnosis.md,253,
+motorized_valve_diagnosis.md,254,1. **Controller Bypass Test**
+motorized_valve_diagnosis.md,255,   - Wire temporary live feed directly to valve
+motorized_valve_diagnosis.md,256,   - Verifies valve operation independent of control system
+motorized_valve_diagnosis.md,257,
+motorized_valve_diagnosis.md,258,2. **Valve End Switch Testing with Test Lamp**
+motorized_valve_diagnosis.md,259,   - Connect test lamp across end switch terminals
+motorized_valve_diagnosis.md,260,   - Manually operate valve
+motorized_valve_diagnosis.md,261,   - Lamp should illuminate when valve reaches open position
+motorized_valve_diagnosis.md,262,
+motorized_valve_diagnosis.md,263,3. **System Separation**
+motorized_valve_diagnosis.md,264,   - Test heating and hot water circuits independently
+motorized_valve_diagnosis.md,265,   - Isolate each zone valve to pinpoint problematic component
+motorized_valve_diagnosis.md,266,
+motorized_valve_diagnosis.md,267,### Using Logic Probes for Control Circuits
+motorized_valve_diagnosis.md,268,
+motorized_valve_diagnosis.md,269,For advanced diagnostics with electronic controls:
+motorized_valve_diagnosis.md,270,
+motorized_valve_diagnosis.md,271,1. Connect logic probe to control circuit
+motorized_valve_diagnosis.md,272,2. Monitor signal patterns during operation
+motorized_valve_diagnosis.md,273,3. Compare against expected signal timing
+motorized_valve_diagnosis.md,274,4. Identify irregular signals or missing pulses
+motorized_valve_diagnosis.md,275,
+motorized_valve_diagnosis.md,276,## PART 7: REPLACEMENT PROCEDURES
+motorized_valve_diagnosis.md,277,
+motorized_valve_diagnosis.md,278,### Replacing Valve Actuator Head Only
+motorized_valve_diagnosis.md,279,
+motorized_valve_diagnosis.md,280,1. Turn off power to heating system
+motorized_valve_diagnosis.md,281,2. Remove retaining screw from actuator
+motorized_valve_diagnosis.md,282,3. Pull actuator straight up from valve body
+motorized_valve_diagnosis.md,283,4. Before fitting new actuator:
+motorized_valve_diagnosis.md,284,   - Verify compatibility with valve body
+motorized_valve_diagnosis.md,285,   - Check spindle alignment
+motorized_valve_diagnosis.md,286,   - Ensure manual lever works correctly
+motorized_valve_diagnosis.md,287,5. Align new actuator with valve body
+motorized_valve_diagnosis.md,288,6. Secure with retaining screw
+motorized_valve_diagnosis.md,289,7. Reconnect wiring (note wire colors and positions)
+motorized_valve_diagnosis.md,290,8. Test operation before reassembling covers
+motorized_valve_diagnosis.md,291,
+motorized_valve_diagnosis.md,292,### Complete Valve Replacement
+motorized_valve_diagnosis.md,293,
+motorized_valve_diagnosis.md,294,1. Turn off power to heating system
+motorized_valve_diagnosis.md,295,2. Isolate and drain affected heating circuit
+motorized_valve_diagnosis.md,296,3. Remove old valve:
+motorized_valve_diagnosis.md,297,   - Disconnect electrical connections (label wires)
+motorized_valve_diagnosis.md,298,   - Loosen pipe connections
+motorized_valve_diagnosis.md,299,   - Remove valve from pipework
+motorized_valve_diagnosis.md,300,4. Install new valve:
+motorized_valve_diagnosis.md,301,   - Verify flow direction arrow matches system flow
+motorized_valve_diagnosis.md,302,   - Ensure correct orientation of ports (for 3-port valves)
+motorized_valve_diagnosis.md,303,   - Make pipe connections (use appropriate jointing compound)
+motorized_valve_diagnosis.md,304,   - Connect wiring according to manufacturer's diagram
+motorized_valve_diagnosis.md,305,5. Refill system and test for leaks
+motorized_valve_diagnosis.md,306,6. Vent air from system
+motorized_valve_diagnosis.md,307,7. Power up and test operation
+motorized_valve_diagnosis.md,308,
+motorized_valve_diagnosis.md,309,## PART 8: PREVENTATIVE MAINTENANCE
+motorized_valve_diagnosis.md,310,
+motorized_valve_diagnosis.md,311,### Regular Checks
+motorized_valve_diagnosis.md,312,
+motorized_valve_diagnosis.md,313,1. **Annual Visual Inspection**
+motorized_valve_diagnosis.md,314,   - Look for signs of water leakage
+motorized_valve_diagnosis.md,315,   - Check for discoloration of wiring
+motorized_valve_diagnosis.md,316,   - Verify secure mounting
+motorized_valve_diagnosis.md,317,
+motorized_valve_diagnosis.md,318,2. **Operational Verification**
+motorized_valve_diagnosis.md,319,   - Manually exercise each valve twice yearly
+motorized_valve_diagnosis.md,320,   - Verify smooth operation of manual lever
+motorized_valve_diagnosis.md,321,   - Check for unusual noises during operation
+motorized_valve_diagnosis.md,322,
+motorized_valve_diagnosis.md,323,3. **System Pressure Management**
+motorized_valve_diagnosis.md,324,   - Maintain correct system pressure
+motorized_valve_diagnosis.md,325,   - High pressure can damage valve seals
+motorized_valve_diagnosis.md,326,
+motorized_valve_diagnosis.md,327,### System Protection
+motorized_valve_diagnosis.md,328,
+motorized_valve_diagnosis.md,329,1. **Water Treatment**
+motorized_valve_diagnosis.md,330,   - Use appropriate inhibitor to prevent scale
+motorized_valve_diagnosis.md,331,   - Maintain correct pH level
+motorized_valve_diagnosis.md,332,   - Consider magnetic filter to protect valves from debris
+motorized_valve_diagnosis.md,333,
+motorized_valve_diagnosis.md,334,2. **Electrical Protection**
+motorized_valve_diagnosis.md,335,   - Verify correct fuse ratings
+motorized_valve_diagnosis.md,336,   - Consider surge protection for control circuits
+motorized_valve_diagnosis.md,337,   - Ensure proper grounding
+motorized_valve_diagnosis.md,338,
+motorized_valve_diagnosis.md,339,## PART 9: REFERENCE TABLES
+motorized_valve_diagnosis.md,340,
+motorized_valve_diagnosis.md,341,### Common Valve Wiring Configurations
+motorized_valve_diagnosis.md,342,
+motorized_valve_diagnosis.md,343,**Honeywell V4043H (2-port) Wiring:**
+motorized_valve_diagnosis.md,344,- Green/Yellow: Earth
+motorized_valve_diagnosis.md,345,- Blue: Neutral
+motorized_valve_diagnosis.md,346,- Brown: Live (opens valve)
+motorized_valve_diagnosis.md,347,- Grey: End switch (common)
+motorized_valve_diagnosis.md,348,- Orange: End switch (switched live)
+motorized_valve_diagnosis.md,349,- White: (28mm models only) Often not used
+motorized_valve_diagnosis.md,350,
+motorized_valve_diagnosis.md,351,**Honeywell V4073A (3-port) Wiring:**
+motorized_valve_diagnosis.md,352,- Green/Yellow: Earth
+motorized_valve_diagnosis.md,353,- Blue: Neutral
+motorized_valve_diagnosis.md,354,- White: Heating call
+motorized_valve_diagnosis.md,355,- Grey: Drives to heating-only position
+motorized_valve_diagnosis.md,356,- Orange: Switched live to boiler/pump
+motorized_valve_diagnosis.md,357,
+motorized_valve_diagnosis.md,358,### Normal Resistance Values
+motorized_valve_diagnosis.md,359,
+motorized_valve_diagnosis.md,360,| Component | Normal Resistance | Notes |
+motorized_valve_diagnosis.md,361,|-----------|-------------------|-------|
+motorized_valve_diagnosis.md,362,| Synchron Motor | 2000-2500 Ω | Measured across motor terminals |
+motorized_valve_diagnosis.md,363,| End Switch (open) | Infinite | No continuity |
+motorized_valve_diagnosis.md,364,| End Switch (closed) | 0-0.5 Ω | Good continuity |
+motorized_valve_diagnosis.md,365,| Room Thermostat (calling) | 0-0.5 Ω | Contacts closed |
+motorized_valve_diagnosis.md,366,| Room Thermostat (satisfied) | Infinite | Contacts open |
+motorized_valve_diagnosis.md,367,
+motorized_valve_diagnosis.md,368,### Expected Voltage Measurements
+motorized_valve_diagnosis.md,369,
+motorized_valve_diagnosis.md,370,| Test Point | Condition | Expected Voltage |
+motorized_valve_diagnosis.md,371,|------------|-----------|------------------|
+motorized_valve_diagnosis.md,372,| Valve Motor Live | Zone called | 230V AC |
+motorized_valve_diagnosis.md,373,| Valve Motor Live | Zone satisfied | 0V AC |
+motorized_valve_diagnosis.md,374,| End Switch Output | Valve open | 230V AC |
+motorized_valve_diagnosis.md,375,| End Switch Output | Valve closed | 0V AC |
+motorized_valve_diagnosis.md,376,| 3-Port White Wire | Heating called | 230V AC |
+motorized_valve_diagnosis.md,377,| 3-Port Grey Wire | Heating only (no HW) | 230V AC |

@@ -1,0 +1,457 @@
+filename,line_number,content
+hot_water_cylinder_diagnosis.md,1,# Hot Water Cylinder Fault Finding Guide
+hot_water_cylinder_diagnosis.md,2,
+hot_water_cylinder_diagnosis.md,3,"This guide provides comprehensive diagnostic procedures for both vented and unvented hot water cylinders, covering common faults, testing methods, and remedial actions."
+hot_water_cylinder_diagnosis.md,4,
+hot_water_cylinder_diagnosis.md,5,## PART 1: IDENTIFYING YOUR CYLINDER TYPE
+hot_water_cylinder_diagnosis.md,6,
+hot_water_cylinder_diagnosis.md,7,### Vented Hot Water Cylinders
+hot_water_cylinder_diagnosis.md,8,
+hot_water_cylinder_diagnosis.md,9,**Key Characteristics:**
+hot_water_cylinder_diagnosis.md,10,- Fed from a cold water storage tank in the loft
+hot_water_cylinder_diagnosis.md,11,- Typically copper cylinder with minimal controls
+hot_water_cylinder_diagnosis.md,12,- Open vent pipe running to the cold water tank
+hot_water_cylinder_diagnosis.md,13,- Often found in older properties with conventional heating systems
+hot_water_cylinder_diagnosis.md,14,- Low to medium water pressure at hot taps
+hot_water_cylinder_diagnosis.md,15,
+hot_water_cylinder_diagnosis.md,16,**Key Components:**
+hot_water_cylinder_diagnosis.md,17,- Cold water storage tank (in loft)
+hot_water_cylinder_diagnosis.md,18,- Open vent pipe (safety overflow)
+hot_water_cylinder_diagnosis.md,19,- Feed pipe from tank to cylinder
+hot_water_cylinder_diagnosis.md,20,- Cylinder thermostat (if connected to boiler)
+hot_water_cylinder_diagnosis.md,21,- Immersion heater(s) with thermostat
+hot_water_cylinder_diagnosis.md,22,- Indirect coil (if heated by boiler)
+hot_water_cylinder_diagnosis.md,23,
+hot_water_cylinder_diagnosis.md,24,### Unvented Hot Water Cylinders
+hot_water_cylinder_diagnosis.md,25,
+hot_water_cylinder_diagnosis.md,26,**Key Characteristics:**
+hot_water_cylinder_diagnosis.md,27,- Connected directly to mains water supply (no tank required)
+hot_water_cylinder_diagnosis.md,28,- Multiple safety devices visible on cylinder
+hot_water_cylinder_diagnosis.md,29,- Expansion vessel nearby (typically wall-mounted)
+hot_water_cylinder_diagnosis.md,30,- High pressure water at hot taps
+hot_water_cylinder_diagnosis.md,31,- More modern installation (post-1990s)
+hot_water_cylinder_diagnosis.md,32,
+hot_water_cylinder_diagnosis.md,33,**Key Components:**
+hot_water_cylinder_diagnosis.md,34,- Pressure reducing valve (PRV)
+hot_water_cylinder_diagnosis.md,35,- Expansion vessel
+hot_water_cylinder_diagnosis.md,36,- Temperature and pressure relief valve (T&P valve)
+hot_water_cylinder_diagnosis.md,37,- Expansion relief valve
+hot_water_cylinder_diagnosis.md,38,- Tundish (visible discharge unit)
+hot_water_cylinder_diagnosis.md,39,- Cylinder thermostat
+hot_water_cylinder_diagnosis.md,40,- Immersion heater(s) with thermostat
+hot_water_cylinder_diagnosis.md,41,- Two-port motorized valve (if part of heating system)
+hot_water_cylinder_diagnosis.md,42,
+hot_water_cylinder_diagnosis.md,43,## PART 2: COMMON ISSUES WITH VENTED CYLINDERS
+hot_water_cylinder_diagnosis.md,44,
+hot_water_cylinder_diagnosis.md,45,### No Hot Water
+hot_water_cylinder_diagnosis.md,46,
+hot_water_cylinder_diagnosis.md,47,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,48,1. **Immersion Heater Failure**
+hot_water_cylinder_diagnosis.md,49,   - Thermostat failure
+hot_water_cylinder_diagnosis.md,50,   - Heating element failure
+hot_water_cylinder_diagnosis.md,51,   - Power supply issue
+hot_water_cylinder_diagnosis.md,52,
+hot_water_cylinder_diagnosis.md,53,2. **Boiler-Related Issues** (for indirect cylinders)
+hot_water_cylinder_diagnosis.md,54,   - Boiler not firing
+hot_water_cylinder_diagnosis.md,55,   - Programmer/timer settings incorrect
+hot_water_cylinder_diagnosis.md,56,   - Cylinder thermostat failure
+hot_water_cylinder_diagnosis.md,57,   - 2-port valve failure
+hot_water_cylinder_diagnosis.md,58,   - Pump not operating
+hot_water_cylinder_diagnosis.md,59,
+hot_water_cylinder_diagnosis.md,60,3. **Water Supply Issues**
+hot_water_cylinder_diagnosis.md,61,   - Cold water tank empty
+hot_water_cylinder_diagnosis.md,62,   - Blockage in feed pipe
+hot_water_cylinder_diagnosis.md,63,   - Air lock in system
+hot_water_cylinder_diagnosis.md,64,
+hot_water_cylinder_diagnosis.md,65,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,66,1. Check for power to immersion heater
+hot_water_cylinder_diagnosis.md,67,   - Test socket with another appliance
+hot_water_cylinder_diagnosis.md,68,   - Check consumer unit for tripped breaker
+hot_water_cylinder_diagnosis.md,69,
+hot_water_cylinder_diagnosis.md,70,2. Test immersion heater
+hot_water_cylinder_diagnosis.md,71,   - Power off system
+hot_water_cylinder_diagnosis.md,72,   - Use multimeter to check continuity of element (normal reading: 12-30 Ohms)
+hot_water_cylinder_diagnosis.md,73,   - Check thermostat condition and settings
+hot_water_cylinder_diagnosis.md,74,
+hot_water_cylinder_diagnosis.md,75,3. For indirect systems:
+hot_water_cylinder_diagnosis.md,76,   - Verify boiler is operating
+hot_water_cylinder_diagnosis.md,77,   - Check cylinder thermostat is calling for heat
+hot_water_cylinder_diagnosis.md,78,   - Confirm pump is running when hot water is called for
+hot_water_cylinder_diagnosis.md,79,   - Check motorized valve operation
+hot_water_cylinder_diagnosis.md,80,
+hot_water_cylinder_diagnosis.md,81,4. Check cold water tank level and feed pipe
+hot_water_cylinder_diagnosis.md,82,   - Inspect cold water tank for sufficient water level
+hot_water_cylinder_diagnosis.md,83,   - Verify float valve operation
+hot_water_cylinder_diagnosis.md,84,   - Check for blockages or kinks in feed pipe
+hot_water_cylinder_diagnosis.md,85,
+hot_water_cylinder_diagnosis.md,86,### Poor Hot Water Flow
+hot_water_cylinder_diagnosis.md,87,
+hot_water_cylinder_diagnosis.md,88,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,89,1. Scale deposits in pipework
+hot_water_cylinder_diagnosis.md,90,2. Partially blocked immersion heater
+hot_water_cylinder_diagnosis.md,91,3. Restriction in cold feed
+hot_water_cylinder_diagnosis.md,92,4. Float valve issue in cold water tank
+hot_water_cylinder_diagnosis.md,93,5. Air lock in system
+hot_water_cylinder_diagnosis.md,94,
+hot_water_cylinder_diagnosis.md,95,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,96,1. Check flow at different outlets
+hot_water_cylinder_diagnosis.md,97,"   - If only affecting one tap, issue is likely local to that outlet"
+hot_water_cylinder_diagnosis.md,98,"   - If affecting all outlets, issue is with the cylinder or feed"
+hot_water_cylinder_diagnosis.md,99,
+hot_water_cylinder_diagnosis.md,100,2. Inspect cold water tank (if accessible)
+hot_water_cylinder_diagnosis.md,101,   - Check water level
+hot_water_cylinder_diagnosis.md,102,   - Verify float valve is fully opening
+hot_water_cylinder_diagnosis.md,103,   - Look for debris that could be entering system
+hot_water_cylinder_diagnosis.md,104,
+hot_water_cylinder_diagnosis.md,105,3. Check for scale buildup
+hot_water_cylinder_diagnosis.md,106,   - Symptoms include gradual reduction in flow over time
+hot_water_cylinder_diagnosis.md,107,   - More common in hard water areas
+hot_water_cylinder_diagnosis.md,108,
+hot_water_cylinder_diagnosis.md,109,### Water Discoloration or Odor
+hot_water_cylinder_diagnosis.md,110,
+hot_water_cylinder_diagnosis.md,111,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,112,1. Corrosion inside cylinder or pipes
+hot_water_cylinder_diagnosis.md,113,2. Bacterial growth in cylinder
+hot_water_cylinder_diagnosis.md,114,3. Sediment buildup at bottom of cylinder
+hot_water_cylinder_diagnosis.md,115,4. Anode rod degradation (if fitted)
+hot_water_cylinder_diagnosis.md,116,
+hot_water_cylinder_diagnosis.md,117,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,118,1. Determine color and odor characteristics
+hot_water_cylinder_diagnosis.md,119,   - Brown/rusty water indicates corrosion
+hot_water_cylinder_diagnosis.md,120,"   - Sulfur smell (""rotten eggs"") indicates bacterial growth"
+hot_water_cylinder_diagnosis.md,121,   - Cloudy water may indicate air in system or sediment
+hot_water_cylinder_diagnosis.md,122,
+hot_water_cylinder_diagnosis.md,123,2. Check how quickly issue clears
+hot_water_cylinder_diagnosis.md,124,"   - If clears after running water briefly, likely localized issue"
+hot_water_cylinder_diagnosis.md,125,"   - If persistent, may indicate significant cylinder corrosion"
+hot_water_cylinder_diagnosis.md,126,
+hot_water_cylinder_diagnosis.md,127,3. Consider water sample testing
+hot_water_cylinder_diagnosis.md,128,   - Can identify bacterial contamination
+hot_water_cylinder_diagnosis.md,129,   - Will confirm mineral content issues
+hot_water_cylinder_diagnosis.md,130,
+hot_water_cylinder_diagnosis.md,131,### Noise from Cylinder
+hot_water_cylinder_diagnosis.md,132,
+hot_water_cylinder_diagnosis.md,133,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,134,1. Kettling (scale buildup on immersion heater)
+hot_water_cylinder_diagnosis.md,135,2. Expansion and contraction of pipes
+hot_water_cylinder_diagnosis.md,136,3. Air in system
+hot_water_cylinder_diagnosis.md,137,4. Loose immersion heater
+hot_water_cylinder_diagnosis.md,138,5. Water hammer
+hot_water_cylinder_diagnosis.md,139,
+hot_water_cylinder_diagnosis.md,140,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,141,1. Identify type and timing of noise
+hot_water_cylinder_diagnosis.md,142,   - Rumbling/kettling typically occurs during heating
+hot_water_cylinder_diagnosis.md,143,   - Hammering occurs when taps are closed quickly
+hot_water_cylinder_diagnosis.md,144,   - Ticking often relates to thermal expansion/contraction
+hot_water_cylinder_diagnosis.md,145,
+hot_water_cylinder_diagnosis.md,146,2. For kettling:
+hot_water_cylinder_diagnosis.md,147,   - Check for scale buildup on immersion heater
+hot_water_cylinder_diagnosis.md,148,   - Test if temperature setting affects noise level
+hot_water_cylinder_diagnosis.md,149,
+hot_water_cylinder_diagnosis.md,150,3. For water hammer:
+hot_water_cylinder_diagnosis.md,151,   - Check pipe clips and supports
+hot_water_cylinder_diagnosis.md,152,   - Consider installing water hammer arrestors
+hot_water_cylinder_diagnosis.md,153,
+hot_water_cylinder_diagnosis.md,154,## PART 3: COMMON ISSUES WITH UNVENTED CYLINDERS
+hot_water_cylinder_diagnosis.md,155,
+hot_water_cylinder_diagnosis.md,156,### Pressure Loss
+hot_water_cylinder_diagnosis.md,157,
+hot_water_cylinder_diagnosis.md,158,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,159,1. Expansion vessel failure
+hot_water_cylinder_diagnosis.md,160,2. Pressure reducing valve (PRV) failure
+hot_water_cylinder_diagnosis.md,161,3. Safety valve discharge
+hot_water_cylinder_diagnosis.md,162,4. Internal leaks
+hot_water_cylinder_diagnosis.md,163,5. External leaks from connections
+hot_water_cylinder_diagnosis.md,164,
+hot_water_cylinder_diagnosis.md,165,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,166,1. Check expansion vessel
+hot_water_cylinder_diagnosis.md,167,   - Switch off electricity to cylinder
+hot_water_cylinder_diagnosis.md,168,   - Turn off water supply
+hot_water_cylinder_diagnosis.md,169,   - Release pressure through drain valve
+hot_water_cylinder_diagnosis.md,170,   - Check expansion vessel pressure with tire gauge (should be 0.1-0.2 bar below PRV setting)
+hot_water_cylinder_diagnosis.md,171,"   - If water comes out of air valve, diaphragm has failed"
+hot_water_cylinder_diagnosis.md,172,
+hot_water_cylinder_diagnosis.md,173,2. Inspect pressure reducing valve
+hot_water_cylinder_diagnosis.md,174,   - Incorrect pressure setting
+hot_water_cylinder_diagnosis.md,175,   - Debris trapped in valve
+hot_water_cylinder_diagnosis.md,176,   - Worn components
+hot_water_cylinder_diagnosis.md,177,
+hot_water_cylinder_diagnosis.md,178,3. Check for leaks
+hot_water_cylinder_diagnosis.md,179,   - Inspect all visible connections
+hot_water_cylinder_diagnosis.md,180,   - Look for signs of water/dampness
+hot_water_cylinder_diagnosis.md,181,   - Check discharge pipe for evidence of pressure relief valve operation
+hot_water_cylinder_diagnosis.md,182,
+hot_water_cylinder_diagnosis.md,183,### Water Discharge from Tundish or Relief Pipes
+hot_water_cylinder_diagnosis.md,184,
+hot_water_cylinder_diagnosis.md,185,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,186,1. **Minor Dripping:**
+hot_water_cylinder_diagnosis.md,187,   - Normal expansion during heating
+hot_water_cylinder_diagnosis.md,188,   - Debris in pressure relief valve
+hot_water_cylinder_diagnosis.md,189,   - Failed check valve in cold supply
+hot_water_cylinder_diagnosis.md,190,
+hot_water_cylinder_diagnosis.md,191,2. **Continuous Discharge:**
+hot_water_cylinder_diagnosis.md,192,   - Expansion vessel failure
+hot_water_cylinder_diagnosis.md,193,   - Pressure reducing valve failure
+hot_water_cylinder_diagnosis.md,194,   - Thermostat failure causing overheating
+hot_water_cylinder_diagnosis.md,195,   - Temperature and pressure relief valve failure
+hot_water_cylinder_diagnosis.md,196,
+hot_water_cylinder_diagnosis.md,197,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,198,1. Check discharge volume
+hot_water_cylinder_diagnosis.md,199,   - Occasional drips during heating may be normal
+hot_water_cylinder_diagnosis.md,200,   - Continuous flow indicates a significant problem
+hot_water_cylinder_diagnosis.md,201,
+hot_water_cylinder_diagnosis.md,202,2. Check water temperature
+hot_water_cylinder_diagnosis.md,203,"   - If water is excessively hot, thermostat may have failed"
+hot_water_cylinder_diagnosis.md,204,   - Normal cylinder temperature should be 60-65°C
+hot_water_cylinder_diagnosis.md,205,
+hot_water_cylinder_diagnosis.md,206,3. Test expansion vessel
+hot_water_cylinder_diagnosis.md,207,   - Follow procedure above for checking expansion vessel
+hot_water_cylinder_diagnosis.md,208,
+hot_water_cylinder_diagnosis.md,209,4. Check pressure reducing valve
+hot_water_cylinder_diagnosis.md,210,   - Verify inlet pressure is not excessive
+hot_water_cylinder_diagnosis.md,211,   - Test outlet pressure with gauge (typically 3 bar)
+hot_water_cylinder_diagnosis.md,212,
+hot_water_cylinder_diagnosis.md,213,"**IMPORTANT: If substantial water is discharging through the temperature and pressure relief valve, this indicates a serious safety issue that requires immediate professional attention.**"
+hot_water_cylinder_diagnosis.md,214,
+hot_water_cylinder_diagnosis.md,215,### No or Poor Hot Water Flow
+hot_water_cylinder_diagnosis.md,216,
+hot_water_cylinder_diagnosis.md,217,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,218,1. Strainer/filter blockage in pressure reducing valve
+hot_water_cylinder_diagnosis.md,219,2. Scale buildup in pipes or heat exchanger
+hot_water_cylinder_diagnosis.md,220,3. Pressure reducing valve failure
+hot_water_cylinder_diagnosis.md,221,4. Mains water supply issue
+hot_water_cylinder_diagnosis.md,222,5. Air lock in system
+hot_water_cylinder_diagnosis.md,223,
+hot_water_cylinder_diagnosis.md,224,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,225,1. Check cold water flow
+hot_water_cylinder_diagnosis.md,226,"   - If cold flow is also poor, issue is likely before the cylinder"
+hot_water_cylinder_diagnosis.md,227,"   - If cold flow is good, issue is specific to hot water system"
+hot_water_cylinder_diagnosis.md,228,
+hot_water_cylinder_diagnosis.md,229,2. Check inlet strainer
+hot_water_cylinder_diagnosis.md,230,   - Turn off water supply
+hot_water_cylinder_diagnosis.md,231,   - Remove pressure reducing valve housing
+hot_water_cylinder_diagnosis.md,232,   - Inspect and clean mesh filter
+hot_water_cylinder_diagnosis.md,233,
+hot_water_cylinder_diagnosis.md,234,3. Check operating pressure
+hot_water_cylinder_diagnosis.md,235,   - Use pressure gauge to measure static pressure
+hot_water_cylinder_diagnosis.md,236,   - Normal pressure should be consistent with PRV setting (typically 3 bar)
+hot_water_cylinder_diagnosis.md,237,
+hot_water_cylinder_diagnosis.md,238,### Overheating
+hot_water_cylinder_diagnosis.md,239,
+hot_water_cylinder_diagnosis.md,240,**Possible Causes:**
+hot_water_cylinder_diagnosis.md,241,1. Thermostat failure
+hot_water_cylinder_diagnosis.md,242,2. Control system malfunction
+hot_water_cylinder_diagnosis.md,243,3. Scale buildup on temperature sensors
+hot_water_cylinder_diagnosis.md,244,4. Thermal cut-out failure
+hot_water_cylinder_diagnosis.md,245,
+hot_water_cylinder_diagnosis.md,246,**Diagnostic Steps:**
+hot_water_cylinder_diagnosis.md,247,1. Check thermostat setting
+hot_water_cylinder_diagnosis.md,248,   - Should be set to 60-65°C
+hot_water_cylinder_diagnosis.md,249,   - Higher temperatures increase risk of scalding and scale formation
+hot_water_cylinder_diagnosis.md,250,
+hot_water_cylinder_diagnosis.md,251,2. Verify correct operation of thermal cut-out
+hot_water_cylinder_diagnosis.md,252,   - This is a safety device that should stop heating if temperature exceeds safe limit
+hot_water_cylinder_diagnosis.md,253,   - Usually requires manual reset if tripped
+hot_water_cylinder_diagnosis.md,254,
+hot_water_cylinder_diagnosis.md,255,3. Test water temperature at outlets
+hot_water_cylinder_diagnosis.md,256,   - Use thermometer to measure hot water temperature
+hot_water_cylinder_diagnosis.md,257,   - Consistently excessive temperatures indicate control failure
+hot_water_cylinder_diagnosis.md,258,
+hot_water_cylinder_diagnosis.md,259,**WARNING: Overheating in an unvented cylinder is a serious safety concern that can lead to scalding injuries or system failure. Professional assistance should be sought immediately.**
+hot_water_cylinder_diagnosis.md,260,
+hot_water_cylinder_diagnosis.md,261,## PART 4: SPECIALIZED TESTING PROCEDURES
+hot_water_cylinder_diagnosis.md,262,
+hot_water_cylinder_diagnosis.md,263,### Testing Immersion Heaters
+hot_water_cylinder_diagnosis.md,264,
+hot_water_cylinder_diagnosis.md,265,**Equipment Needed:**
+hot_water_cylinder_diagnosis.md,266,- Multimeter
+hot_water_cylinder_diagnosis.md,267,- Screwdriver
+hot_water_cylinder_diagnosis.md,268,- Electrical insulation tape
+hot_water_cylinder_diagnosis.md,269,
+hot_water_cylinder_diagnosis.md,270,**Procedure:**
+hot_water_cylinder_diagnosis.md,271,1. Switch off power to immersion heater at consumer unit
+hot_water_cylinder_diagnosis.md,272,2. Remove cover from immersion heater
+hot_water_cylinder_diagnosis.md,273,3. Test for resistance:
+hot_water_cylinder_diagnosis.md,274,   - Disconnect wiring from thermostat
+hot_water_cylinder_diagnosis.md,275,   - Measure resistance across element terminals
+hot_water_cylinder_diagnosis.md,276,   - Typical reading: 12-30 Ohms
+hot_water_cylinder_diagnosis.md,277,   - Open circuit (infinite resistance) indicates failed element
+hot_water_cylinder_diagnosis.md,278,4. Test thermostat:
+hot_water_cylinder_diagnosis.md,279,"   - With power off, check continuity across thermostat contacts"
+hot_water_cylinder_diagnosis.md,280,   - Should have continuity when thermostat is calling for heat
+hot_water_cylinder_diagnosis.md,281,   - No continuity when temperature is satisfied
+hot_water_cylinder_diagnosis.md,282,
+hot_water_cylinder_diagnosis.md,283,### Testing Expansion Vessels
+hot_water_cylinder_diagnosis.md,284,
+hot_water_cylinder_diagnosis.md,285,**Equipment Needed:**
+hot_water_cylinder_diagnosis.md,286,- Tire pressure gauge with Schrader valve attachment
+hot_water_cylinder_diagnosis.md,287,- Bicycle pump or compressor
+hot_water_cylinder_diagnosis.md,288,- Adjustable spanner
+hot_water_cylinder_diagnosis.md,289,
+hot_water_cylinder_diagnosis.md,290,**Procedure:**
+hot_water_cylinder_diagnosis.md,291,1. Switch off power to system
+hot_water_cylinder_diagnosis.md,292,2. Isolate water supply
+hot_water_cylinder_diagnosis.md,293,3. Drain system to zero pressure
+hot_water_cylinder_diagnosis.md,294,4. Remove cap from Schrader valve on expansion vessel
+hot_water_cylinder_diagnosis.md,295,5. Press valve pin briefly:
+hot_water_cylinder_diagnosis.md,296,"   - If water comes out, diaphragm has failed"
+hot_water_cylinder_diagnosis.md,297,"   - If air comes out, check pressure"
+hot_water_cylinder_diagnosis.md,298,6. Test pressure using gauge:
+hot_water_cylinder_diagnosis.md,299,   - Should be 0.1-0.2 bar below PRV setting
+hot_water_cylinder_diagnosis.md,300,   - Typically 2.8 bar for 3 bar system
+hot_water_cylinder_diagnosis.md,301,"7. If pressure is low, recharge using pump to correct pressure"
+hot_water_cylinder_diagnosis.md,302,
+hot_water_cylinder_diagnosis.md,303,### Testing Temperature and Pressure Relief Valves
+hot_water_cylinder_diagnosis.md,304,
+hot_water_cylinder_diagnosis.md,305,**Equipment Needed:**
+hot_water_cylinder_diagnosis.md,306,- Container to catch water
+hot_water_cylinder_diagnosis.md,307,- Towels for spillage
+hot_water_cylinder_diagnosis.md,308,- Heat-resistant gloves
+hot_water_cylinder_diagnosis.md,309,
+hot_water_cylinder_diagnosis.md,310,**Procedure:**
+hot_water_cylinder_diagnosis.md,311,1. Locate T&P valve (usually at top of cylinder)
+hot_water_cylinder_diagnosis.md,312,2. Place container to catch discharge
+hot_water_cylinder_diagnosis.md,313,3. Manually operate test lever:
+hot_water_cylinder_diagnosis.md,314,   - Valve should discharge water freely
+hot_water_cylinder_diagnosis.md,315,   - Valve should re-seat properly when lever is released
+hot_water_cylinder_diagnosis.md,316,   - Continuous discharge after testing indicates valve needs replacement
+hot_water_cylinder_diagnosis.md,317,
+hot_water_cylinder_diagnosis.md,318,"**Note: This test will discharge hot water, take appropriate precautions.**"
+hot_water_cylinder_diagnosis.md,319,
+hot_water_cylinder_diagnosis.md,320,### Testing Cold Water Tank Float Valves (Vented Systems)
+hot_water_cylinder_diagnosis.md,321,
+hot_water_cylinder_diagnosis.md,322,**Equipment Needed:**
+hot_water_cylinder_diagnosis.md,323,- Adjustable spanner
+hot_water_cylinder_diagnosis.md,324,- Replacement washers (if needed)
+hot_water_cylinder_diagnosis.md,325,
+hot_water_cylinder_diagnosis.md,326,**Procedure:**
+hot_water_cylinder_diagnosis.md,327,1. Inspect float and arm:
+hot_water_cylinder_diagnosis.md,328,   - Check for cracks or water ingress in float
+hot_water_cylinder_diagnosis.md,329,   - Verify arm moves freely and is not bent
+hot_water_cylinder_diagnosis.md,330,2. Check water level:
+hot_water_cylinder_diagnosis.md,331,   - Should be 25mm (1 inch) below overflow
+hot_water_cylinder_diagnosis.md,332,"   - If too high, adjust float arm"
+hot_water_cylinder_diagnosis.md,333,3. Test operation:
+hot_water_cylinder_diagnosis.md,334,   - Manually lift float to close valve
+hot_water_cylinder_diagnosis.md,335,   - Release slowly to check smooth operation
+hot_water_cylinder_diagnosis.md,336,   - Listen for hissing which indicates leak past washer
+hot_water_cylinder_diagnosis.md,337,
+hot_water_cylinder_diagnosis.md,338,## PART 5: REMEDIAL ACTIONS AND MAINTENANCE
+hot_water_cylinder_diagnosis.md,339,
+hot_water_cylinder_diagnosis.md,340,### Vented Cylinder Maintenance
+hot_water_cylinder_diagnosis.md,341,
+hot_water_cylinder_diagnosis.md,342,**Annual Checks:**
+hot_water_cylinder_diagnosis.md,343,1. Inspect cold water tank:
+hot_water_cylinder_diagnosis.md,344,   - Clean debris from tank
+hot_water_cylinder_diagnosis.md,345,   - Check and adjust float valve
+hot_water_cylinder_diagnosis.md,346,   - Verify overflow pipe is clear
+hot_water_cylinder_diagnosis.md,347,   - Ensure tank is properly insulated
+hot_water_cylinder_diagnosis.md,348,
+hot_water_cylinder_diagnosis.md,349,2. Examine cylinder and pipework:
+hot_water_cylinder_diagnosis.md,350,   - Check insulation condition
+hot_water_cylinder_diagnosis.md,351,   - Look for signs of leaks or corrosion
+hot_water_cylinder_diagnosis.md,352,   - Test immersion heater operation
+hot_water_cylinder_diagnosis.md,353,
+hot_water_cylinder_diagnosis.md,354,3. System performance:
+hot_water_cylinder_diagnosis.md,355,   - Verify adequate hot water temperature
+hot_water_cylinder_diagnosis.md,356,   - Check recovery time after depletion
+hot_water_cylinder_diagnosis.md,357,   - Listen for unusual noises
+hot_water_cylinder_diagnosis.md,358,
+hot_water_cylinder_diagnosis.md,359,**Periodic Maintenance (3-5 years):**
+hot_water_cylinder_diagnosis.md,360,1. Consider descaling if in hard water area
+hot_water_cylinder_diagnosis.md,361,2. Check/replace immersion heater if efficiency declining
+hot_water_cylinder_diagnosis.md,362,3. Inspect sacrificial anode (if fitted)
+hot_water_cylinder_diagnosis.md,363,
+hot_water_cylinder_diagnosis.md,364,### Unvented Cylinder Maintenance
+hot_water_cylinder_diagnosis.md,365,
+hot_water_cylinder_diagnosis.md,366,**Annual Service (Legally Required):**
+hot_water_cylinder_diagnosis.md,367,1. Visual inspection:
+hot_water_cylinder_diagnosis.md,368,   - Check all valves and connections
+hot_water_cylinder_diagnosis.md,369,   - Inspect tundish and discharge pipes
+hot_water_cylinder_diagnosis.md,370,   - Look for signs of leaks or corrosion
+hot_water_cylinder_diagnosis.md,371,
+hot_water_cylinder_diagnosis.md,372,2. Test safety devices:
+hot_water_cylinder_diagnosis.md,373,   - Operate T&P valve manually
+hot_water_cylinder_diagnosis.md,374,   - Verify expansion relief valve operation
+hot_water_cylinder_diagnosis.md,375,   - Check expansion vessel pressure
+hot_water_cylinder_diagnosis.md,376,
+hot_water_cylinder_diagnosis.md,377,3. Check system pressure:
+hot_water_cylinder_diagnosis.md,378,   - Verify pressure reducing valve setting
+hot_water_cylinder_diagnosis.md,379,   - Check pressure gauge reading
+hot_water_cylinder_diagnosis.md,380,   - Test for pressure creep (indication of check valve failure)
+hot_water_cylinder_diagnosis.md,381,
+hot_water_cylinder_diagnosis.md,382,4. Documentation:
+hot_water_cylinder_diagnosis.md,383,   - Service should be documented and certified
+hot_water_cylinder_diagnosis.md,384,   - Only G3 qualified engineers can legally service unvented cylinders
+hot_water_cylinder_diagnosis.md,385,
+hot_water_cylinder_diagnosis.md,386,**WARNING: Unvented cylinders are pressurized systems that can be dangerous if not properly maintained. Annual servicing by a qualified engineer is not only recommended but is required to maintain safety and warranty coverage.**
+hot_water_cylinder_diagnosis.md,387,
+hot_water_cylinder_diagnosis.md,388,## PART 6: REFERENCE TABLES
+hot_water_cylinder_diagnosis.md,389,
+hot_water_cylinder_diagnosis.md,390,### Normal Operating Values
+hot_water_cylinder_diagnosis.md,391,
+hot_water_cylinder_diagnosis.md,392,| Component | Normal Value | Warning Signs |
+hot_water_cylinder_diagnosis.md,393,|-----------|--------------|--------------|
+hot_water_cylinder_diagnosis.md,394,| Cylinder Temperature | 60-65°C | >68°C or <50°C |
+hot_water_cylinder_diagnosis.md,395,| System Pressure (Unvented) | 3 bar (cold) | >4 bar or <1 bar |
+hot_water_cylinder_diagnosis.md,396,| Expansion Vessel Pressure | 2.8 bar | <2 bar or water from valve |
+hot_water_cylinder_diagnosis.md,397,| Immersion Element Resistance | 12-30 Ohms | Infinite (open circuit) |
+hot_water_cylinder_diagnosis.md,398,| PRV Outlet Pressure | 3 bar | Fluctuating or >3.5 bar |
+hot_water_cylinder_diagnosis.md,399,
+hot_water_cylinder_diagnosis.md,400,### Safety Valve Operation Thresholds
+hot_water_cylinder_diagnosis.md,401,
+hot_water_cylinder_diagnosis.md,402,| Valve Type | Activation Threshold | Comments |
+hot_water_cylinder_diagnosis.md,403,|------------|----------------------|----------|
+hot_water_cylinder_diagnosis.md,404,| Expansion Relief | 6 bar | Protects against excessive pressure |
+hot_water_cylinder_diagnosis.md,405,| T&P Relief | 90-95°C or 7 bar | Protects against overheating and pressure |
+hot_water_cylinder_diagnosis.md,406,| P&T Relief | 90-95°C or 10 bar | Used in some older systems |
+hot_water_cylinder_diagnosis.md,407,
+hot_water_cylinder_diagnosis.md,408,### Water Discharge Diagnosis
+hot_water_cylinder_diagnosis.md,409,
+hot_water_cylinder_diagnosis.md,410,| Discharge Point | Flow Rate | Likely Cause |
+hot_water_cylinder_diagnosis.md,411,|-----------------|-----------|--------------|
+hot_water_cylinder_diagnosis.md,412,| Tundish | Few drops | Normal expansion |
+hot_water_cylinder_diagnosis.md,413,| Tundish | Constant trickle | PRV failure or expansion vessel issue |
+hot_water_cylinder_diagnosis.md,414,| Tundish | Strong flow | Serious fault - thermal cut-out or T&P valve |
+hot_water_cylinder_diagnosis.md,415,| Cold tank overflow | Constant flow | Float valve failure |
+hot_water_cylinder_diagnosis.md,416,| Vent pipe (vented system) | Occasional when heating | Normal expansion |
+hot_water_cylinder_diagnosis.md,417,| Vent pipe (vented system) | Constant/heavy | Blockage in return path or excessive heating |
+hot_water_cylinder_diagnosis.md,418,
+hot_water_cylinder_diagnosis.md,419,## PART 7: LEGAL AND SAFETY REQUIREMENTS
+hot_water_cylinder_diagnosis.md,420,
+hot_water_cylinder_diagnosis.md,421,### Unvented Cylinder Regulations
+hot_water_cylinder_diagnosis.md,422,
+hot_water_cylinder_diagnosis.md,423,1. **Installation Requirements:**
+hot_water_cylinder_diagnosis.md,424,   - Must be installed by G3 qualified engineer
+hot_water_cylinder_diagnosis.md,425,   - Building regulations approval required
+hot_water_cylinder_diagnosis.md,426,   - Must include all specified safety devices
+hot_water_cylinder_diagnosis.md,427,
+hot_water_cylinder_diagnosis.md,428,2. **Servicing Requirements:**
+hot_water_cylinder_diagnosis.md,429,   - Annual service by G3 qualified engineer
+hot_water_cylinder_diagnosis.md,430,   - Documentation must be maintained
+hot_water_cylinder_diagnosis.md,431,   - Failure to service may invalidate insurance and warranty
+hot_water_cylinder_diagnosis.md,432,
+hot_water_cylinder_diagnosis.md,433,3. **Safety Devices Required:**
+hot_water_cylinder_diagnosis.md,434,   - Temperature and pressure relief valve
+hot_water_cylinder_diagnosis.md,435,   - Expansion relief valve
+hot_water_cylinder_diagnosis.md,436,   - Pressure reducing valve
+hot_water_cylinder_diagnosis.md,437,   - Check valve
+hot_water_cylinder_diagnosis.md,438,   - Expansion vessel
+hot_water_cylinder_diagnosis.md,439,   - Tundish and proper discharge arrangement
+hot_water_cylinder_diagnosis.md,440,
+hot_water_cylinder_diagnosis.md,441,### Important Safety Warnings
+hot_water_cylinder_diagnosis.md,442,
+hot_water_cylinder_diagnosis.md,443,1. **Never Disable Safety Devices:**
+hot_water_cylinder_diagnosis.md,444,   - Safety valves must not be capped or blocked
+hot_water_cylinder_diagnosis.md,445,   - Discharge pipes must not be obstructed
+hot_water_cylinder_diagnosis.md,446,   - Original parts must be used for replacements
+hot_water_cylinder_diagnosis.md,447,
+hot_water_cylinder_diagnosis.md,448,2. **Scalding Risks:**
+hot_water_cylinder_diagnosis.md,449,   - Water above 60°C can cause serious burns within seconds
+hot_water_cylinder_diagnosis.md,450,   - Consider thermostatic mixing valves for vulnerable users
+hot_water_cylinder_diagnosis.md,451,   - Regularly check water temperature at outlets
+hot_water_cylinder_diagnosis.md,452,
+hot_water_cylinder_diagnosis.md,453,3. **Legionella Risks:**
+hot_water_cylinder_diagnosis.md,454,   - Cylinder temperature should not be set below 55°C
+hot_water_cylinder_diagnosis.md,455,   - Regular usage of all outlets helps prevent stagnation
+hot_water_cylinder_diagnosis.md,456,   - Consider periodic thermal disinfection (heating to >60°C)

@@ -1,0 +1,208 @@
+filename,line_number,content
+expansion_vessel_diagnosis.md,1,# Expansion Vessel Failure: Diagnosis and Solutions
+expansion_vessel_diagnosis.md,2,
+expansion_vessel_diagnosis.md,3,"This guide addresses the specific scenario where boiler pressure rapidly increases during operation until the pressure relief valve (PRV) activates, a classic symptom of expansion vessel failure."
+expansion_vessel_diagnosis.md,4,
+expansion_vessel_diagnosis.md,5,## Understanding the Problem
+expansion_vessel_diagnosis.md,6,
+expansion_vessel_diagnosis.md,7,### Normal Operation vs. Failure Mode
+expansion_vessel_diagnosis.md,8,
+expansion_vessel_diagnosis.md,9,**Normal Expansion Vessel Function:**
+expansion_vessel_diagnosis.md,10,- The expansion vessel contains a rubber diaphragm separating an air chamber from the water side
+expansion_vessel_diagnosis.md,11,"- When water heats and expands, it compresses the air cushion"
+expansion_vessel_diagnosis.md,12,- Pressure increases are gradual and typically limited to 0.2-0.5 bar above cold fill pressure
+expansion_vessel_diagnosis.md,13,- System maintains stable pressure within safe operating range (typically 1-2 bar)
+expansion_vessel_diagnosis.md,14,
+expansion_vessel_diagnosis.md,15,**Failure Mode:**
+expansion_vessel_diagnosis.md,16,"- When the expansion vessel fails, there is no air cushion to absorb expansion"
+expansion_vessel_diagnosis.md,17,"- As water heats, pressure rises rapidly and dramatically"
+expansion_vessel_diagnosis.md,18,"- Pressure quickly reaches 3 bar, triggering the pressure relief valve"
+expansion_vessel_diagnosis.md,19,- Water is discharged through the PRV outside the property
+expansion_vessel_diagnosis.md,20,"- When system cools, pressure drops significantly, potentially causing boiler lockout"
+expansion_vessel_diagnosis.md,21,
+expansion_vessel_diagnosis.md,22,## Key Symptoms of Expansion Vessel Failure
+expansion_vessel_diagnosis.md,23,
+expansion_vessel_diagnosis.md,24,1. **Rapid Pressure Increase**
+expansion_vessel_diagnosis.md,25,   - Pressure gauge shows quick rise to 3+ bar shortly after boiler starts
+expansion_vessel_diagnosis.md,26,   - Rise is much faster than in normal operation (minutes rather than hours)
+expansion_vessel_diagnosis.md,27,
+expansion_vessel_diagnosis.md,28,2. **Pressure Relief Valve Activation**
+expansion_vessel_diagnosis.md,29,   - Water discharging from external PRV pipe
+expansion_vessel_diagnosis.md,30,   - Often accompanied by audible release of pressure
+expansion_vessel_diagnosis.md,31,   - Repeated discharge cycles with boiler use
+expansion_vessel_diagnosis.md,32,
+expansion_vessel_diagnosis.md,33,3. **Pressure Cycling**
+expansion_vessel_diagnosis.md,34,"   - High pressure during operation, followed by significant drops when cooled"
+expansion_vessel_diagnosis.md,35,   - Need to frequently top up system pressure
+expansion_vessel_diagnosis.md,36,   - Boiler may lock out on low pressure after cooling
+expansion_vessel_diagnosis.md,37,
+expansion_vessel_diagnosis.md,38,4. **Supporting Symptoms**
+expansion_vessel_diagnosis.md,39,   - Expansion vessel makes dull sound when tapped (should sound hollow)
+expansion_vessel_diagnosis.md,40,   - System may be several years old (diaphragms typically last 5-8 years)
+expansion_vessel_diagnosis.md,41,   - History of inhibitor loss or previous pressure issues
+expansion_vessel_diagnosis.md,42,
+expansion_vessel_diagnosis.md,43,## Diagnostic Procedure
+expansion_vessel_diagnosis.md,44,
+expansion_vessel_diagnosis.md,45,### 1. Initial Assessment
+expansion_vessel_diagnosis.md,46,
+expansion_vessel_diagnosis.md,47,**Visual Inspection:**
+expansion_vessel_diagnosis.md,48,- Check the pressure gauge reading with system cold (should be 1-1.5 bar)
+expansion_vessel_diagnosis.md,49,- Look for water stains or dampness around PRV discharge pipe
+expansion_vessel_diagnosis.md,50,- Inspect expansion vessel for external damage or corrosion
+expansion_vessel_diagnosis.md,51,
+expansion_vessel_diagnosis.md,52,**Operational Test:**
+expansion_vessel_diagnosis.md,53,- Monitor pressure gauge as system heats up
+expansion_vessel_diagnosis.md,54,- Time how quickly pressure rises to 3 bar
+expansion_vessel_diagnosis.md,55,- Normal: Slow rise of 0.2-0.5 bar over extended period
+expansion_vessel_diagnosis.md,56,- Failed vessel: Rapid rise to 3+ bar within minutes
+expansion_vessel_diagnosis.md,57,
+expansion_vessel_diagnosis.md,58,### 2. Expansion Vessel Testing
+expansion_vessel_diagnosis.md,59,
+expansion_vessel_diagnosis.md,60,**Preliminary Sound Test:**
+expansion_vessel_diagnosis.md,61,- With system cold and at normal pressure
+expansion_vessel_diagnosis.md,62,- Tap the side of the expansion vessel
+expansion_vessel_diagnosis.md,63,"- A properly functioning vessel makes a hollow, resonant sound"
+expansion_vessel_diagnosis.md,64,"- A failed vessel makes a dull, solid sound (""plunk"" rather than ""ping"")"
+expansion_vessel_diagnosis.md,65,
+expansion_vessel_diagnosis.md,66,**Valve Test:**
+expansion_vessel_diagnosis.md,67,1. Turn off boiler and electrical supply
+expansion_vessel_diagnosis.md,68,2. Allow system to cool completely
+expansion_vessel_diagnosis.md,69,3. Ensure system pressure is above 1 bar
+expansion_vessel_diagnosis.md,70,4. Locate the Schrader valve on expansion vessel (similar to car tire valve)
+expansion_vessel_diagnosis.md,71,5. Remove protective cap
+expansion_vessel_diagnosis.md,72,6. Use a small tool to briefly depress the valve pin
+expansion_vessel_diagnosis.md,73,7. Observe what comes out:
+expansion_vessel_diagnosis.md,74,   - **Air only:** Vessel may be functional but undercharged
+expansion_vessel_diagnosis.md,75,   - **Water:** Diaphragm has definitely failed - vessel needs replacement
+expansion_vessel_diagnosis.md,76,   - **Nothing:** Air charge is depleted - may be recoverable or may indicate failure
+expansion_vessel_diagnosis.md,77,
+expansion_vessel_diagnosis.md,78,### 3. Pressure Charge Test
+expansion_vessel_diagnosis.md,79,
+expansion_vessel_diagnosis.md,80,**Equipment needed:**
+expansion_vessel_diagnosis.md,81,- Tire pressure gauge
+expansion_vessel_diagnosis.md,82,- Bicycle pump or compressor with Schrader valve attachment
+expansion_vessel_diagnosis.md,83,- Drain key or valve
+expansion_vessel_diagnosis.md,84,
+expansion_vessel_diagnosis.md,85,**Procedure:**
+expansion_vessel_diagnosis.md,86,1. Turn off and electrically isolate the boiler
+expansion_vessel_diagnosis.md,87,2. Connect a pressure gauge to the Schrader valve
+expansion_vessel_diagnosis.md,88,3. Record the reading - should be approximately 0.1-0.3 bar below cold fill pressure
+expansion_vessel_diagnosis.md,89,"   - Example: If cold fill pressure is 1.2 bar, vessel charge should be around 0.9-1.1 bar"
+expansion_vessel_diagnosis.md,90,"4. If reading is much lower, vessel may need recharging"
+expansion_vessel_diagnosis.md,91,"5. If reading fluctuates or won't register, diaphragm has likely failed"
+expansion_vessel_diagnosis.md,92,
+expansion_vessel_diagnosis.md,93,### 4. Definitive Charge Test (Professional)
+expansion_vessel_diagnosis.md,94,
+expansion_vessel_diagnosis.md,95,This test definitively determines vessel condition:
+expansion_vessel_diagnosis.md,96,
+expansion_vessel_diagnosis.md,97,1. Turn off and isolate boiler
+expansion_vessel_diagnosis.md,98,2. Drain down system to zero pressure (use drain valve)
+expansion_vessel_diagnosis.md,99,3. **Keep drain valve open** during test
+expansion_vessel_diagnosis.md,100,4. Connect pump to expansion vessel valve
+expansion_vessel_diagnosis.md,101,5. Pump up to 0.75-1 bar (or manufacturer's specification)
+expansion_vessel_diagnosis.md,102,6. Observe:
+expansion_vessel_diagnosis.md,103,   - **Holds pressure:** Vessel diaphragm is intact and may be recoverable
+expansion_vessel_diagnosis.md,104,   - **Can't reach target pressure or air bubbles into system:** Diaphragm has failed
+expansion_vessel_diagnosis.md,105,
+expansion_vessel_diagnosis.md,106,## Solutions
+expansion_vessel_diagnosis.md,107,
+expansion_vessel_diagnosis.md,108,### 1. Recharging the Expansion Vessel
+expansion_vessel_diagnosis.md,109,
+expansion_vessel_diagnosis.md,110,**When appropriate:**
+expansion_vessel_diagnosis.md,111,- Vessel passes the pressure charge test
+expansion_vessel_diagnosis.md,112,- No water from Schrader valve
+expansion_vessel_diagnosis.md,113,- Vessel can hold pressure
+expansion_vessel_diagnosis.md,114,
+expansion_vessel_diagnosis.md,115,**Procedure:**
+expansion_vessel_diagnosis.md,116,1. Drain system to zero pressure
+expansion_vessel_diagnosis.md,117,2. Keep drain valve open during charging
+expansion_vessel_diagnosis.md,118,3. Remove cap from Schrader valve
+expansion_vessel_diagnosis.md,119,4. Connect bicycle pump or compressor
+expansion_vessel_diagnosis.md,120,5. Inflate to manufacturer's specification (typically 0.75-1 bar)
+expansion_vessel_diagnosis.md,121,6. Replace valve cap
+expansion_vessel_diagnosis.md,122,7. Close drain valve
+expansion_vessel_diagnosis.md,123,8. Refill system to normal cold pressure (typically 1-1.5 bar)
+expansion_vessel_diagnosis.md,124,9. Bleed radiators to remove air
+expansion_vessel_diagnosis.md,125,10. Top up pressure if needed
+expansion_vessel_diagnosis.md,126,11. Test system operation
+expansion_vessel_diagnosis.md,127,
+expansion_vessel_diagnosis.md,128,### 2. Replacing the Expansion Vessel
+expansion_vessel_diagnosis.md,129,
+expansion_vessel_diagnosis.md,130,**When necessary:**
+expansion_vessel_diagnosis.md,131,- Water discharges from Schrader valve
+expansion_vessel_diagnosis.md,132,- Vessel cannot hold pressure
+expansion_vessel_diagnosis.md,133,- Diaphragm has failed
+expansion_vessel_diagnosis.md,134,
+expansion_vessel_diagnosis.md,135,**Internal Vessel Replacement:**
+expansion_vessel_diagnosis.md,136,1. Turn off and isolate boiler
+expansion_vessel_diagnosis.md,137,2. Drain system completely
+expansion_vessel_diagnosis.md,138,3. Refer to manufacturer's instructions for access
+expansion_vessel_diagnosis.md,139,4. Remove faulty vessel
+expansion_vessel_diagnosis.md,140,5. Install new vessel with same capacity
+expansion_vessel_diagnosis.md,141,6. Recharge to specified pressure
+expansion_vessel_diagnosis.md,142,7. Reconnect to system
+expansion_vessel_diagnosis.md,143,8. Refill and test
+expansion_vessel_diagnosis.md,144,
+expansion_vessel_diagnosis.md,145,**External Vessel Installation:**
+expansion_vessel_diagnosis.md,146,1. Turn off and isolate boiler
+expansion_vessel_diagnosis.md,147,2. Determine appropriate size (usually 8-12L for average system)
+expansion_vessel_diagnosis.md,148,3. Install new vessel in accessible location
+expansion_vessel_diagnosis.md,149,4. Connect to return side of heating system
+expansion_vessel_diagnosis.md,150,5. If replacing internal vessel: Cap off or isolate original vessel connections
+expansion_vessel_diagnosis.md,151,6. Charge new vessel (0.75-1 bar typical)
+expansion_vessel_diagnosis.md,152,7. Refill system and test
+expansion_vessel_diagnosis.md,153,
+expansion_vessel_diagnosis.md,154,### 3. Temporary Emergency Measures
+expansion_vessel_diagnosis.md,155,
+expansion_vessel_diagnosis.md,156,**Note:** These are short-term fixes only until proper repair can be made
+expansion_vessel_diagnosis.md,157,
+expansion_vessel_diagnosis.md,158,**Option 1: Reduced fill pressure method**
+expansion_vessel_diagnosis.md,159,1. Fill system to minimum operational pressure (usually 0.8-1 bar cold)
+expansion_vessel_diagnosis.md,160,2. This provides maximum expansion capacity before PRV activation
+expansion_vessel_diagnosis.md,161,3. Monitor system closely and be prepared for low pressure lockouts
+expansion_vessel_diagnosis.md,162,
+expansion_vessel_diagnosis.md,163,**Option 2: Controlled pressure release**
+expansion_vessel_diagnosis.md,164,"1. When pressure reaches 2.5 bar, manually release small amounts via drain valve"
+expansion_vessel_diagnosis.md,165,2. This prevents PRV activation and water loss
+expansion_vessel_diagnosis.md,166,3. Extremely temporary measure - proper repair needed urgently
+expansion_vessel_diagnosis.md,167,
+expansion_vessel_diagnosis.md,168,## Preventative Measures
+expansion_vessel_diagnosis.md,169,
+expansion_vessel_diagnosis.md,170,### 1. Regular Maintenance
+expansion_vessel_diagnosis.md,171,- Check expansion vessel pressure annually
+expansion_vessel_diagnosis.md,172,- Recharge vessel as needed during annual service
+expansion_vessel_diagnosis.md,173,- Listen for unusual pressure fluctuations
+expansion_vessel_diagnosis.md,174,
+expansion_vessel_diagnosis.md,175,### 2. System Protection
+expansion_vessel_diagnosis.md,176,- Maintain proper inhibitor levels in system
+expansion_vessel_diagnosis.md,177,- Install magnetic filter to reduce sludge buildup
+expansion_vessel_diagnosis.md,178,- Avoid frequent draining/refilling which introduces oxygen
+expansion_vessel_diagnosis.md,179,
+expansion_vessel_diagnosis.md,180,### 3. Installation Best Practices
+expansion_vessel_diagnosis.md,181,- Size vessel appropriately for system volume
+expansion_vessel_diagnosis.md,182,- Consider larger vessel in hard water areas
+expansion_vessel_diagnosis.md,183,- Ensure vessel is accessible for maintenance
+expansion_vessel_diagnosis.md,184,- Consider additional expansion capacity for larger systems
+expansion_vessel_diagnosis.md,185,
+expansion_vessel_diagnosis.md,186,## Common Questions and Problems
+expansion_vessel_diagnosis.md,187,
+expansion_vessel_diagnosis.md,188,### What if pressure still rises after recharging?
+expansion_vessel_diagnosis.md,189,- Vessel may be undersized for system
+expansion_vessel_diagnosis.md,190,"- Check for other sources of pressure increase (filling loop, leaking coil)"
+expansion_vessel_diagnosis.md,191,- Consider adding additional expansion capacity
+expansion_vessel_diagnosis.md,192,
+expansion_vessel_diagnosis.md,193,### Can you recharge without draining?
+expansion_vessel_diagnosis.md,194,- No - this results in incorrect pressure settings
+expansion_vessel_diagnosis.md,195,- System must be at zero pressure during charging
+expansion_vessel_diagnosis.md,196,- Shortcuts lead to continued problems
+expansion_vessel_diagnosis.md,197,
+expansion_vessel_diagnosis.md,198,### How long do expansion vessels typically last?
+expansion_vessel_diagnosis.md,199,- 5-8 years is typical lifespan
+expansion_vessel_diagnosis.md,200,- Hard water areas may see earlier failure
+expansion_vessel_diagnosis.md,201,- Systems with proper water treatment last longer
+expansion_vessel_diagnosis.md,202,
+expansion_vessel_diagnosis.md,203,### Signs that replacement is better than recharging:
+expansion_vessel_diagnosis.md,204,- Vessel is more than 5 years old
+expansion_vessel_diagnosis.md,205,- Multiple previous recharges
+expansion_vessel_diagnosis.md,206,- External corrosion visible
+expansion_vessel_diagnosis.md,207,- System has experienced multiple overheating events

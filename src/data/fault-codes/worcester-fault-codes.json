@@ -1,0 +1,118 @@
+{
+  "manufacturer": "Worcester Bosch",
+  "fault_codes": [
+    {
+      "fault_code": "E207",
+      "description": "Ignition Failure",
+      "models": ["Greenstar i", "Greenstar CDi", "Greenstar Si"],
+      "severity": "major",
+      "symptoms": [
+        "Boiler fails to ignite",
+        "Error code E207 displayed on screen",
+        "Reset button may be illuminated",
+        "No heating or hot water"
+      ],
+      "causes": [
+        "Insufficient gas supply pressure",
+        "Faulty ignition electrode",
+        "Damaged ignition lead",
+        "Blocked burner",
+        "Gas valve issue",
+        "Faulty PCB"
+      ],
+      "diagnostics": [
+        "Check the gas supply is on and pressure is correct (19-20mbar)",
+        "Inspect the ignition electrode for damage or carbon buildup",
+        "Check the electrode gap is 3.5-4.5mm",
+        "Inspect the ignition lead for damage",
+        "Check resistance of ignition lead (should be 1-5kΩ)",
+        "Test gas valve operation",
+        "Check for blockages in the burner"
+      ],
+      "solutions": [
+        "If ignition electrode is damaged: Replace ignition electrode and gasket",
+        "If ignition lead is faulty: Replace ignition lead",
+        "If gas pressure is insufficient: Check gas meter and supply",
+        "If gas valve is faulty: Replace gas valve",
+        "Reset boiler and confirm normal ignition"
+      ],
+      "parts": [
+        {"name": "Ignition electrode kit", "part_no": "8-716-142-100-0"},
+        {"name": "Ignition lead", "part_no": "8-716-142-101-0"},
+        {"name": "Gas valve", "part_no": "8-716-142-412-0"}
+      ]
+    },
+    {
+      "fault_code": "E438",
+      "description": "Flow Sensor Fault",
+      "models": ["Greenstar i", "Greenstar CDi", "Greenstar Si", "Greenstar Compact"],
+      "severity": "major",
+      "symptoms": [
+        "Intermittent operation",
+        "Boiler shuts down during operation",
+        "Error code E438 on display",
+        "Unstable temperature readings"
+      ],
+      "causes": [
+        "Flow sensor electrical connection issue",
+        "Scale buildup on sensor",
+        "Damaged flow sensor",
+        "Water circulation problems",
+        "Faulty PCB"
+      ],
+      "diagnostics": [
+        "Check electrical connections to the flow sensor",
+        "Measure resistance across flow sensor terminals (should be 10kΩ at 25°C)",
+        "Check for limescale buildup in the heat exchanger",
+        "Verify water pressure is between 1-2 bar",
+        "Check pump is operating correctly",
+        "Test PCB outputs to flow sensor"
+      ],
+      "solutions": [
+        "If connections are loose: Clean and secure connections",
+        "If sensor is faulty: Replace flow temperature sensor",
+        "If limescale present: Flush system with descaler",
+        "If PCB is faulty: Replace PCB",
+        "Reset boiler fault code and monitor temperature readings"
+      ],
+      "parts": [
+        {"name": "NTC flow sensor", "part_no": "8-716-142-301-0"},
+        {"name": "Control PCB", "part_no": "8-748-300-556"}
+      ]
+    },
+    {
+      "fault_code": "E441",
+      "description": "External Controls Communication Fault",
+      "models": ["Greenstar CDi", "Greenstar Si", "Greenstar Compact"],
+      "severity": "minor",
+      "symptoms": [
+        "Erratic heating control",
+        "No response to programmer/timer",
+        "Error code E441 displayed",
+        "System running on default settings"
+      ],
+      "causes": [
+        "Wiring issue between boiler and external controls",
+        "Faulty external control device",
+        "Incorrect DIP switch settings",
+        "EMS bus communication error",
+        "Power supply interference"
+      ],
+      "diagnostics": [
+        "Check all wiring connections between boiler and controls",
+        "Verify power supply to external controls",
+        "Check DIP switch settings match the installed controller type",
+        "Test for continuity in control cables",
+        "Test voltage across EMS terminals (should be 12-24V DC)"
+      ],
+      "solutions": [
+        "If wiring is damaged: Replace control cables",
+        "If external control is faulty: Replace external controller",
+        "If DIP switches are incorrect: Set to correct configuration",
+        "If interference is detected: Install ferrite cores on cables",
+        "Reset boiler and external controls and test heating functions"
+      ],
+      "parts": []
+    }
+  ]
+}

@@ -1,0 +1,833 @@
+filename,line_number,content
+non_condensing_boiler_components.md,1,# Non-Condensing Boiler Components: Fault Finding Guide
+non_condensing_boiler_components.md,2,
+non_condensing_boiler_components.md,3,"This comprehensive guide covers diagnostic procedures for components specific to non-condensing boilers, including pilot assemblies, thermocouples, gas valves, and other traditional components not typically found in modern condensing systems."
+non_condensing_boiler_components.md,4,
+non_condensing_boiler_components.md,5,## PART 1: UNDERSTANDING NON-CONDENSING BOILER COMPONENTS
+non_condensing_boiler_components.md,6,
+non_condensing_boiler_components.md,7,### Key Components Overview
+non_condensing_boiler_components.md,8,
+non_condensing_boiler_components.md,9,**1. Pilot Assembly and Ignition**
+non_condensing_boiler_components.md,10,- **Permanent Pilot**: Small flame that stays lit continuously
+non_condensing_boiler_components.md,11,- **Intermittent Pilot**: Lights only when heat is called for
+non_condensing_boiler_components.md,12,"- **Direct Spark Ignition**: No pilot, uses spark to light main burner"
+non_condensing_boiler_components.md,13,
+non_condensing_boiler_components.md,14,**2. Gas Train Components**
+non_condensing_boiler_components.md,15,- **Gas Valve**: Controls gas flow to burners
+non_condensing_boiler_components.md,16,- **Thermocouple/Thermopile**: Flame proving device for standing pilot
+non_condensing_boiler_components.md,17,- **Solenoid Valves**: Electromagnetic gas control
+non_condensing_boiler_components.md,18,- **Pilot Gas Line**: Supplies gas to pilot burner
+non_condensing_boiler_components.md,19,
+non_condensing_boiler_components.md,20,**3. Heat Exchange System**
+non_condensing_boiler_components.md,21,- **Primary Heat Exchanger**: Typically cast iron or copper
+non_condensing_boiler_components.md,22,- **Heat Exchanger Baffles**: Direct flue gas flow
+non_condensing_boiler_components.md,23,- **Headers and Waterways**: Water circulation paths
+non_condensing_boiler_components.md,24,- **Return Connections**: Where cooler water re-enters
+non_condensing_boiler_components.md,25,
+non_condensing_boiler_components.md,26,**4. Air Supply and Venting**
+non_condensing_boiler_components.md,27,- **Draft Hood**: Dilutes and directs flue gases
+non_condensing_boiler_components.md,28,- **Diverter**: Prevents backdrafting
+non_condensing_boiler_components.md,29,- **Fan/Draft Inducer**: Forces combustion products out (fan-assisted models)
+non_condensing_boiler_components.md,30,- **Air Inlet**: Where combustion air enters
+non_condensing_boiler_components.md,31,
+non_condensing_boiler_components.md,32,**5. Control Systems**
+non_condensing_boiler_components.md,33,- **Thermostat Connection**: Signal input
+non_condensing_boiler_components.md,34,- **Primary Control Board (PCB)**: Main electronic controller
+non_condensing_boiler_components.md,35,- **High Limit Control**: Overheat protection
+non_condensing_boiler_components.md,36,- **Fan Pressure Switch**: Ensures proper venting (fan-assisted models)
+non_condensing_boiler_components.md,37,
+non_condensing_boiler_components.md,38,**6. Hydraulic Components**
+non_condensing_boiler_components.md,39,- **Pump/Circulator**: Moves water through system
+non_condensing_boiler_components.md,40,- **Pressure Relief Valve**: Safety device
+non_condensing_boiler_components.md,41,- **Air Vent**: Removes trapped air
+non_condensing_boiler_components.md,42,- **Expansion Vessel**: Accommodates water expansion
+non_condensing_boiler_components.md,43,
+non_condensing_boiler_components.md,44,## PART 2: PILOT ASSEMBLY AND IGNITION SYSTEM FAULTS
+non_condensing_boiler_components.md,45,
+non_condensing_boiler_components.md,46,### Standing Pilot Light Issues
+non_condensing_boiler_components.md,47,
+non_condensing_boiler_components.md,48,**Symptoms:**
+non_condensing_boiler_components.md,49,- Pilot won't light
+non_condensing_boiler_components.md,50,- Pilot lights but goes out when button released
+non_condensing_boiler_components.md,51,- Pilot flame yellow/weak
+non_condensing_boiler_components.md,52,- Pilot lights but main burner won't ignite
+non_condensing_boiler_components.md,53,
+non_condensing_boiler_components.md,54,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,55,
+non_condensing_boiler_components.md,56,1. **Visual Inspection of Pilot Flame**
+non_condensing_boiler_components.md,57,"   - Correct flame: Strong, blue, engulfs thermocouple tip"
+non_condensing_boiler_components.md,58,"   - Incorrect flame: Yellow, weak, or not touching thermocouple"
+non_condensing_boiler_components.md,59,
+non_condensing_boiler_components.md,60,2. **Thermocouple Testing**
+non_condensing_boiler_components.md,61,   - Equipment needed: Multimeter with millivolt setting
+non_condensing_boiler_components.md,62,   - Procedure:
+non_condensing_boiler_components.md,63,     1. Light pilot and keep it lit for 2-3 minutes
+non_condensing_boiler_components.md,64,     2. Measure millivolt output at gas valve connection
+non_condensing_boiler_components.md,65,     3. Normal reading: 25-30 millivolts
+non_condensing_boiler_components.md,66,     4. Low reading (<20mV): Faulty thermocouple or poor positioning
+non_condensing_boiler_components.md,67,
+non_condensing_boiler_components.md,68,3. **Pilot Gas Supply Check**
+non_condensing_boiler_components.md,69,   - Check pilot gas line for blockages
+non_condensing_boiler_components.md,70,   - Verify pilot orifice is clean
+non_condensing_boiler_components.md,71,   - Confirm gas pressure at test point (typically 8-10 mbar)
+non_condensing_boiler_components.md,72,
+non_condensing_boiler_components.md,73,4. **Air in Gas Line Testing**
+non_condensing_boiler_components.md,74,   - Bleed air from gas line if newly installed/serviced
+non_condensing_boiler_components.md,75,   - Hold pilot button longer (1-2 minutes) to purge air
+non_condensing_boiler_components.md,76,
+non_condensing_boiler_components.md,77,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,78,
+non_condensing_boiler_components.md,79,1. **Dirty Pilot Assembly**
+non_condensing_boiler_components.md,80,"   - Symptoms: Weak, yellow flame"
+non_condensing_boiler_components.md,81,   - Cause: Carbon or debris buildup
+non_condensing_boiler_components.md,82,   - Solution: Clean pilot assembly with soft brush and compressed air
+non_condensing_boiler_components.md,83,
+non_condensing_boiler_components.md,84,2. **Faulty Thermocouple**
+non_condensing_boiler_components.md,85,   - Symptoms: Pilot goes out when button released
+non_condensing_boiler_components.md,86,   - Cause: Worn thermocouple generating insufficient millivolts
+non_condensing_boiler_components.md,87,"   - Solution: Replace thermocouple, ensure proper positioning in flame"
+non_condensing_boiler_components.md,88,
+non_condensing_boiler_components.md,89,3. **Bent or Misaligned Pilot Tube**
+non_condensing_boiler_components.md,90,   - Symptoms: Flame not hitting thermocouple
+non_condensing_boiler_components.md,91,   - Cause: Physical damage or misalignment
+non_condensing_boiler_components.md,92,   - Solution: Carefully adjust pilot tube to direct flame at thermocouple
+non_condensing_boiler_components.md,93,
+non_condensing_boiler_components.md,94,4. **Moisture in Pilot Line**
+non_condensing_boiler_components.md,95,"   - Symptoms: Sputtering flame, intermittent operation"
+non_condensing_boiler_components.md,96,   - Cause: Condensation in gas line
+non_condensing_boiler_components.md,97,"   - Solution: Purge line, check for low points where moisture collects"
+non_condensing_boiler_components.md,98,
+non_condensing_boiler_components.md,99,### Intermittent Pilot Ignition Issues
+non_condensing_boiler_components.md,100,
+non_condensing_boiler_components.md,101,**Symptoms:**
+non_condensing_boiler_components.md,102,- No spark at pilot
+non_condensing_boiler_components.md,103,- Spark but no pilot ignition
+non_condensing_boiler_components.md,104,- Pilot lights then goes out
+non_condensing_boiler_components.md,105,- Repeated ignition attempts
+non_condensing_boiler_components.md,106,
+non_condensing_boiler_components.md,107,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,108,
+non_condensing_boiler_components.md,109,1. **Spark Generator Testing**
+non_condensing_boiler_components.md,110,   - Verify ignition control receives 24V power
+non_condensing_boiler_components.md,111,   - Listen for clicking during ignition attempt
+non_condensing_boiler_components.md,112,   - Observe spark (safely) during ignition sequence
+non_condensing_boiler_components.md,113,   - Check spark gap (typically 3-4mm)
+non_condensing_boiler_components.md,114,
+non_condensing_boiler_components.md,115,2. **Pilot Gas Supply Check**
+non_condensing_boiler_components.md,116,   - Verify gas reaches pilot during ignition attempt
+non_condensing_boiler_components.md,117,   - Check pilot line and orifice for blockages
+non_condensing_boiler_components.md,118,   - Test gas valve function
+non_condensing_boiler_components.md,119,
+non_condensing_boiler_components.md,120,3. **Flame Rod/Sensor Testing**
+non_condensing_boiler_components.md,121,   - Clean flame rod with fine sandpaper
+non_condensing_boiler_components.md,122,   - Check for cracks in ceramic insulator
+non_condensing_boiler_components.md,123,   - Measure microamp signal during operation (should be >0.7μA)
+non_condensing_boiler_components.md,124,
+non_condensing_boiler_components.md,125,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,126,
+non_condensing_boiler_components.md,127,1. **Defective Ignition Module**
+non_condensing_boiler_components.md,128,"   - Symptoms: No spark, no ignition attempt"
+non_condensing_boiler_components.md,129,   - Cause: Electronic failure
+non_condensing_boiler_components.md,130,   - Solution: Replace ignition module
+non_condensing_boiler_components.md,131,
+non_condensing_boiler_components.md,132,2. **Cracked Ignition Lead**
+non_condensing_boiler_components.md,133,   - Symptoms: Weak or intermittent spark
+non_condensing_boiler_components.md,134,   - Cause: Insulation breakdown
+non_condensing_boiler_components.md,135,   - Solution: Replace ignition lead
+non_condensing_boiler_components.md,136,
+non_condensing_boiler_components.md,137,3. **Grounding Issues**
+non_condensing_boiler_components.md,138,"   - Symptoms: Weak spark, intermittent operation"
+non_condensing_boiler_components.md,139,   - Cause: Poor ground connection
+non_condensing_boiler_components.md,140,"   - Solution: Clean connections, verify proper grounding"
+non_condensing_boiler_components.md,141,
+non_condensing_boiler_components.md,142,## PART 3: GAS VALVE DIAGNOSIS
+non_condensing_boiler_components.md,143,
+non_condensing_boiler_components.md,144,### Gas Valve Operation Issues
+non_condensing_boiler_components.md,145,
+non_condensing_boiler_components.md,146,**Symptoms:**
+non_condensing_boiler_components.md,147,- No gas flow to main burner
+non_condensing_boiler_components.md,148,- Partial gas flow (low flame)
+non_condensing_boiler_components.md,149,- Gas valve hums or buzzes
+non_condensing_boiler_components.md,150,- Delayed ignition
+non_condensing_boiler_components.md,151,- Valve won't shut off completely
+non_condensing_boiler_components.md,152,
+non_condensing_boiler_components.md,153,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,154,
+non_condensing_boiler_components.md,155,1. **Valve Power Check**
+non_condensing_boiler_components.md,156,   - Measure voltage to valve during call for heat
+non_condensing_boiler_components.md,157,   - Standing pilot systems: Verify millivolt power (500-750mV)
+non_condensing_boiler_components.md,158,   - Electronic systems: Verify 24V AC power
+non_condensing_boiler_components.md,159,
+non_condensing_boiler_components.md,160,2. **Valve Resistance Testing**
+non_condensing_boiler_components.md,161,   - Disconnect power
+non_condensing_boiler_components.md,162,   - Measure resistance across valve coil terminals
+non_condensing_boiler_components.md,163,   - Compare to manufacturer specifications
+non_condensing_boiler_components.md,164,
+non_condensing_boiler_components.md,165,3. **Gas Pressure Testing**
+non_condensing_boiler_components.md,166,   - Equipment needed: Manometer
+non_condensing_boiler_components.md,167,   - Procedure:
+non_condensing_boiler_components.md,168,     1. Connect manometer to inlet pressure test point
+non_condensing_boiler_components.md,169,     2. Normal reading: 20mbar (natural gas) or 37mbar (LPG)
+non_condensing_boiler_components.md,170,     3. Test outlet pressure during operation
+non_condensing_boiler_components.md,171,     4. Compare with manufacturer specifications
+non_condensing_boiler_components.md,172,
+non_condensing_boiler_components.md,173,4. **Mechanical Function Check**
+non_condensing_boiler_components.md,174,   - Listen for audible click when valve should open
+non_condensing_boiler_components.md,175,   - Check for free movement of internal components (when safe)
+non_condensing_boiler_components.md,176,   - Verify gas flow when manually operated (if applicable)
+non_condensing_boiler_components.md,177,
+non_condensing_boiler_components.md,178,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,179,
+non_condensing_boiler_components.md,180,1. **Blocked Gas Valve Filter**
+non_condensing_boiler_components.md,181,"   - Symptoms: Reduced gas flow, low flame"
+non_condensing_boiler_components.md,182,   - Cause: Debris in filter screen
+non_condensing_boiler_components.md,183,   - Solution: Clean or replace filter
+non_condensing_boiler_components.md,184,
+non_condensing_boiler_components.md,185,2. **Faulty Solenoid Coil**
+non_condensing_boiler_components.md,186,"   - Symptoms: Valve won't open, buzzing sound"
+non_condensing_boiler_components.md,187,   - Cause: Burned out coil or partial short
+non_condensing_boiler_components.md,188,   - Solution: Replace gas valve
+non_condensing_boiler_components.md,189,
+non_condensing_boiler_components.md,190,3. **Sticking Valve Mechanism**
+non_condensing_boiler_components.md,191,"   - Symptoms: Delayed opening/closing, partial flow"
+non_condensing_boiler_components.md,192,   - Cause: Internal corrosion or debris
+non_condensing_boiler_components.md,193,   - Solution: Replace gas valve
+non_condensing_boiler_components.md,194,
+non_condensing_boiler_components.md,195,4. **Incorrect Gas Pressure**
+non_condensing_boiler_components.md,196,"   - Symptoms: Poor combustion, yellow flames, sooting"
+non_condensing_boiler_components.md,197,   - Cause: Wrongly adjusted or faulty regulator
+non_condensing_boiler_components.md,198,   - Solution: Adjust pressure or replace regulator/valve
+non_condensing_boiler_components.md,199,
+non_condensing_boiler_components.md,200,### Gas Valve Wiring and Control Problems
+non_condensing_boiler_components.md,201,
+non_condensing_boiler_components.md,202,**Symptoms:**
+non_condensing_boiler_components.md,203,- Intermittent operation
+non_condensing_boiler_components.md,204,- Valve opens but closes prematurely
+non_condensing_boiler_components.md,205,- No response to thermostat
+non_condensing_boiler_components.md,206,
+non_condensing_boiler_components.md,207,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,208,
+non_condensing_boiler_components.md,209,1. **Control Voltage Testing**
+non_condensing_boiler_components.md,210,   - Measure voltage to valve during each stage of operation
+non_condensing_boiler_components.md,211,   - Check for voltage drop in wiring
+non_condensing_boiler_components.md,212,   - Verify correct sequence timing
+non_condensing_boiler_components.md,213,
+non_condensing_boiler_components.md,214,2. **Wiring Inspection**
+non_condensing_boiler_components.md,215,   - Check for loose connections
+non_condensing_boiler_components.md,216,   - Look for heat damage near terminals
+non_condensing_boiler_components.md,217,   - Test continuity of wiring harness
+non_condensing_boiler_components.md,218,
+non_condensing_boiler_components.md,219,3. **Control Circuit Testing**
+non_condensing_boiler_components.md,220,   - Bypass thermostat to test valve directly
+non_condensing_boiler_components.md,221,   - Check for interference from other controls
+non_condensing_boiler_components.md,222,   - Verify high limit controls are not interrupting
+non_condensing_boiler_components.md,223,
+non_condensing_boiler_components.md,224,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,225,
+non_condensing_boiler_components.md,226,1. **Loose Connections**
+non_condensing_boiler_components.md,227,   - Symptoms: Intermittent operation
+non_condensing_boiler_components.md,228,"   - Cause: Vibration, thermal cycling"
+non_condensing_boiler_components.md,229,"   - Solution: Secure all connections, replace damaged terminals"
+non_condensing_boiler_components.md,230,
+non_condensing_boiler_components.md,231,2. **Control Board Relay Failure**
+non_condensing_boiler_components.md,232,   - Symptoms: Erratic valve operation
+non_condensing_boiler_components.md,233,   - Cause: Worn relay contacts
+non_condensing_boiler_components.md,234,   - Solution: Replace control board
+non_condensing_boiler_components.md,235,
+non_condensing_boiler_components.md,236,3. **Low Voltage**
+non_condensing_boiler_components.md,237,   - Symptoms: Valve clicks but won't open fully
+non_condensing_boiler_components.md,238,   - Cause: Voltage drop in wiring
+non_condensing_boiler_components.md,239,"   - Solution: Correct wiring issues, replace transformer if needed"
+non_condensing_boiler_components.md,240,
+non_condensing_boiler_components.md,241,## PART 4: HEAT EXCHANGER DIAGNOSIS
+non_condensing_boiler_components.md,242,
+non_condensing_boiler_components.md,243,### Heat Exchanger Integrity Issues
+non_condensing_boiler_components.md,244,
+non_condensing_boiler_components.md,245,**Symptoms:**
+non_condensing_boiler_components.md,246,- Water leaks
+non_condensing_boiler_components.md,247,- Excessive corrosion
+non_condensing_boiler_components.md,248,- Rumbling or kettling noises
+non_condensing_boiler_components.md,249,- Poor heat transfer
+non_condensing_boiler_components.md,250,- Flue gas smell in room
+non_condensing_boiler_components.md,251,
+non_condensing_boiler_components.md,252,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,253,
+non_condensing_boiler_components.md,254,1. **Visual Inspection**
+non_condensing_boiler_components.md,255,   - Look for external signs of water leakage
+non_condensing_boiler_components.md,256,   - Check for rust or corrosion at joints
+non_condensing_boiler_components.md,257,   - Inspect for sooting or discoloration
+non_condensing_boiler_components.md,258,
+non_condensing_boiler_components.md,259,2. **Pressure Testing**
+non_condensing_boiler_components.md,260,   - Procedure:
+non_condensing_boiler_components.md,261,     1. Isolate heat exchanger
+non_condensing_boiler_components.md,262,     2. Pressurize to 1.5 times working pressure
+non_condensing_boiler_components.md,263,     3. Monitor for pressure drop
+non_condensing_boiler_components.md,264,     4. Look for water leakage points
+non_condensing_boiler_components.md,265,
+non_condensing_boiler_components.md,266,3. **Combustion Analysis**
+non_condensing_boiler_components.md,267,   - Test CO levels in flue gas
+non_condensing_boiler_components.md,268,   - High CO (>150ppm) may indicate exchanger issues
+non_condensing_boiler_components.md,269,   - Check O₂ and CO₂ levels for proper combustion
+non_condensing_boiler_components.md,270,
+non_condensing_boiler_components.md,271,4. **Temperature Differential Test**
+non_condensing_boiler_components.md,272,   - Measure water temperature entering and leaving exchanger
+non_condensing_boiler_components.md,273,   - Normal differential: 11-22°C
+non_condensing_boiler_components.md,274,   - Low differential indicates scaling or flow problems
+non_condensing_boiler_components.md,275,
+non_condensing_boiler_components.md,276,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,277,
+non_condensing_boiler_components.md,278,1. **Section Cracks (Cast Iron)**
+non_condensing_boiler_components.md,279,"   - Symptoms: Water leakage, especially during startup/shutdown"
+non_condensing_boiler_components.md,280,"   - Cause: Thermal stress, freeze damage"
+non_condensing_boiler_components.md,281,   - Solution: Replace sections or entire exchanger
+non_condensing_boiler_components.md,282,
+non_condensing_boiler_components.md,283,2. **Scaling/Limescale Buildup**
+non_condensing_boiler_components.md,284,"   - Symptoms: Kettling noise, reduced heat transfer"
+non_condensing_boiler_components.md,285,   - Cause: Hard water deposits
+non_condensing_boiler_components.md,286,"   - Solution: Chemical descaling (if mild), replace if severe"
+non_condensing_boiler_components.md,287,
+non_condensing_boiler_components.md,288,3. **Pinhole Leaks (Copper)**
+non_condensing_boiler_components.md,289,   - Symptoms: Small water leaks during operation
+non_condensing_boiler_components.md,290,"   - Cause: Corrosion, erosion"
+non_condensing_boiler_components.md,291,   - Solution: Replace heat exchanger
+non_condensing_boiler_components.md,292,
+non_condensing_boiler_components.md,293,4. **Flue Gas Pathway Blockage**
+non_condensing_boiler_components.md,294,"   - Symptoms: Poor draft, incomplete combustion"
+non_condensing_boiler_components.md,295,"   - Cause: Sooting, debris, collapsed baffles"
+non_condensing_boiler_components.md,296,"   - Solution: Clean flue ways, replace baffles"
+non_condensing_boiler_components.md,297,
+non_condensing_boiler_components.md,298,### Heat Exchanger Waterways
+non_condensing_boiler_components.md,299,
+non_condensing_boiler_components.md,300,**Symptoms:**
+non_condensing_boiler_components.md,301,- Restricted water flow
+non_condensing_boiler_components.md,302,- Uneven heating
+non_condensing_boiler_components.md,303,- Air locks
+non_condensing_boiler_components.md,304,- Excessive pumping noise
+non_condensing_boiler_components.md,305,
+non_condensing_boiler_components.md,306,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,307,
+non_condensing_boiler_components.md,308,1. **Flow Rate Testing**
+non_condensing_boiler_components.md,309,   - Measure return water temperature
+non_condensing_boiler_components.md,310,   - Calculate flow rate using heat output formula
+non_condensing_boiler_components.md,311,   - Compare with design specifications
+non_condensing_boiler_components.md,312,
+non_condensing_boiler_components.md,313,2. **Pressure Drop Test**
+non_condensing_boiler_components.md,314,   - Measure pressure across heat exchanger
+non_condensing_boiler_components.md,315,   - Excessive drop indicates restriction
+non_condensing_boiler_components.md,316,   - Compare with normal operation
+non_condensing_boiler_components.md,317,
+non_condensing_boiler_components.md,318,3. **Air Lock Testing**
+non_condensing_boiler_components.md,319,   - Check for gurgling sounds
+non_condensing_boiler_components.md,320,   - Test vent points for trapped air
+non_condensing_boiler_components.md,321,   - Verify proper system venting
+non_condensing_boiler_components.md,322,
+non_condensing_boiler_components.md,323,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,324,
+non_condensing_boiler_components.md,325,1. **Internal Blockages**
+non_condensing_boiler_components.md,326,"   - Symptoms: Reduced flow, high pressure drop"
+non_condensing_boiler_components.md,327,"   - Cause: Debris, sludge accumulation"
+non_condensing_boiler_components.md,328,"   - Solution: Power flush system, clean waterways"
+non_condensing_boiler_components.md,329,
+non_condensing_boiler_components.md,330,2. **Air Binding**
+non_condensing_boiler_components.md,331,"   - Symptoms: Poor circulation, cold spots"
+non_condensing_boiler_components.md,332,   - Cause: Inadequate venting
+non_condensing_boiler_components.md,333,"   - Solution: Proper bleeding, install automatic air vents"
+non_condensing_boiler_components.md,334,
+non_condensing_boiler_components.md,335,3. **Corrosion Buildup**
+non_condensing_boiler_components.md,336,   - Symptoms: Gradual reduction in efficiency
+non_condensing_boiler_components.md,337,   - Cause: Chemical reactions in system water
+non_condensing_boiler_components.md,338,"   - Solution: Clean system, treat with inhibitor"
+non_condensing_boiler_components.md,339,
+non_condensing_boiler_components.md,340,## PART 5: BURNER ASSEMBLY DIAGNOSIS
+non_condensing_boiler_components.md,341,
+non_condensing_boiler_components.md,342,### Main Burner Issues
+non_condensing_boiler_components.md,343,
+non_condensing_boiler_components.md,344,**Symptoms:**
+non_condensing_boiler_components.md,345,- Yellow/orange flames
+non_condensing_boiler_components.md,346,- Flame lifting from burner
+non_condensing_boiler_components.md,347,- Delayed ignition/rollout
+non_condensing_boiler_components.md,348,- Sooting
+non_condensing_boiler_components.md,349,- Uneven flame pattern
+non_condensing_boiler_components.md,350,
+non_condensing_boiler_components.md,351,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,352,
+non_condensing_boiler_components.md,353,1. **Visual Flame Inspection**
+non_condensing_boiler_components.md,354,   - Normal: Blue flames with slight orange tips
+non_condensing_boiler_components.md,355,"   - Abnormal: Yellow/orange flames, lifting, or floating"
+non_condensing_boiler_components.md,356,   - Check for even distribution across burner
+non_condensing_boiler_components.md,357,
+non_condensing_boiler_components.md,358,2. **Gas Pressure Check**
+non_condensing_boiler_components.md,359,   - Test gas pressure at test points
+non_condensing_boiler_components.md,360,   - Check against manufacturer specifications
+non_condensing_boiler_components.md,361,   - Adjust if necessary and permitted
+non_condensing_boiler_components.md,362,
+non_condensing_boiler_components.md,363,3. **Primary Air Adjustment**
+non_condensing_boiler_components.md,364,   - Inspect air shutters for correct opening
+non_condensing_boiler_components.md,365,   - Adjust to achieve proper flame characteristics
+non_condensing_boiler_components.md,366,   - Verify proper combustion with analyzer
+non_condensing_boiler_components.md,367,
+non_condensing_boiler_components.md,368,4. **Burner Cleanliness Check**
+non_condensing_boiler_components.md,369,   - Inspect for debris in burner ports
+non_condensing_boiler_components.md,370,   - Check for rust flakes or carbon buildup
+non_condensing_boiler_components.md,371,   - Verify proper burner positioning
+non_condensing_boiler_components.md,372,
+non_condensing_boiler_components.md,373,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,374,
+non_condensing_boiler_components.md,375,1. **Blocked Burner Ports**
+non_condensing_boiler_components.md,376,"   - Symptoms: Uneven flame, yellow flames"
+non_condensing_boiler_components.md,377,"   - Cause: Carbon, rust, debris in ports"
+non_condensing_boiler_components.md,378,"   - Solution: Clean burner with soft brush, compressed air"
+non_condensing_boiler_components.md,379,
+non_condensing_boiler_components.md,380,2. **Incorrect Gas/Air Mixture**
+non_condensing_boiler_components.md,381,   - Symptoms: Yellow flames or lifting flames
+non_condensing_boiler_components.md,382,   - Cause: Improper air shutter adjustment
+non_condensing_boiler_components.md,383,"   - Solution: Adjust air shutters, verify gas pressure"
+non_condensing_boiler_components.md,384,
+non_condensing_boiler_components.md,385,3. **Misaligned Burners**
+non_condensing_boiler_components.md,386,   - Symptoms: Flames impinging on heat exchanger
+non_condensing_boiler_components.md,387,   - Cause: Physical damage or improper installation
+non_condensing_boiler_components.md,388,   - Solution: Realign burners to manufacturer specifications
+non_condensing_boiler_components.md,389,
+non_condensing_boiler_components.md,390,4. **Incorrect Burner Jets/Orifices**
+non_condensing_boiler_components.md,391,"   - Symptoms: Improper flame size, poor combustion"
+non_condensing_boiler_components.md,392,   - Cause: Wrong size or partially blocked orifices
+non_condensing_boiler_components.md,393,"   - Solution: Verify correct size, clean or replace"
+non_condensing_boiler_components.md,394,
+non_condensing_boiler_components.md,395,### Combustion and Ignition Sequence
+non_condensing_boiler_components.md,396,
+non_condensing_boiler_components.md,397,**Symptoms:**
+non_condensing_boiler_components.md,398,"- Delayed ignition with ""whoosh"" sound"
+non_condensing_boiler_components.md,399,- Burner fails to light despite gas flow
+non_condensing_boiler_components.md,400,- Burner cycles on and off frequently
+non_condensing_boiler_components.md,401,- Excessive noise during ignition
+non_condensing_boiler_components.md,402,
+non_condensing_boiler_components.md,403,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,404,
+non_condensing_boiler_components.md,405,1. **Ignition Sequence Observation**
+non_condensing_boiler_components.md,406,   - Observe complete start-up sequence
+non_condensing_boiler_components.md,407,   - Time each stage against specifications
+non_condensing_boiler_components.md,408,   - Note any unusual sounds or patterns
+non_condensing_boiler_components.md,409,
+non_condensing_boiler_components.md,410,2. **Cross-Lighting Check**
+non_condensing_boiler_components.md,411,   - Verify flames spread properly across burner
+non_condensing_boiler_components.md,412,   - Check for proper burner alignment
+non_condensing_boiler_components.md,413,   - Inspect crossover ports for blockages
+non_condensing_boiler_components.md,414,
+non_condensing_boiler_components.md,415,3. **Cycle Timing Test**
+non_condensing_boiler_components.md,416,   - Measure on and off cycles
+non_condensing_boiler_components.md,417,   - Compare with thermostat settings
+non_condensing_boiler_components.md,418,   - Check for short cycling
+non_condensing_boiler_components.md,419,
+non_condensing_boiler_components.md,420,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,421,
+non_condensing_boiler_components.md,422,1. **Delayed Ignition**
+non_condensing_boiler_components.md,423,"   - Symptoms: ""Whoosh"" sound upon ignition"
+non_condensing_boiler_components.md,424,   - Cause: Gas buildup before ignition
+non_condensing_boiler_components.md,425,"   - Solution: Clean pilot/ignition system, check gas pressure"
+non_condensing_boiler_components.md,426,
+non_condensing_boiler_components.md,427,2. **Poor Cross-Lighting**
+non_condensing_boiler_components.md,428,   - Symptoms: Uneven ignition across burner
+non_condensing_boiler_components.md,429,   - Cause: Blocked crossover ports
+non_condensing_boiler_components.md,430,"   - Solution: Clean ports, verify proper alignment"
+non_condensing_boiler_components.md,431,
+non_condensing_boiler_components.md,432,3. **Short Cycling**
+non_condensing_boiler_components.md,433,   - Symptoms: Frequent on/off cycles
+non_condensing_boiler_components.md,434,"   - Cause: Oversizing, thermostat issues, airflow problems"
+non_condensing_boiler_components.md,435,"   - Solution: Address underlying cause, adjust controls"
+non_condensing_boiler_components.md,436,
+non_condensing_boiler_components.md,437,## PART 6: DRAFT AND VENTING SYSTEM DIAGNOSIS
+non_condensing_boiler_components.md,438,
+non_condensing_boiler_components.md,439,### Draft Hood and Diverter Issues
+non_condensing_boiler_components.md,440,
+non_condensing_boiler_components.md,441,**Symptoms:**
+non_condensing_boiler_components.md,442,- Flue gases entering room
+non_condensing_boiler_components.md,443,- Pilot outages
+non_condensing_boiler_components.md,444,- Boiler cuts out on high limit
+non_condensing_boiler_components.md,445,- Sooting around draft hood
+non_condensing_boiler_components.md,446,
+non_condensing_boiler_components.md,447,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,448,
+non_condensing_boiler_components.md,449,1. **Draft Testing**
+non_condensing_boiler_components.md,450,   - Equipment needed: Draft gauge
+non_condensing_boiler_components.md,451,   - Procedure:
+non_condensing_boiler_components.md,452,     1. Insert probe into flue pipe after draft hood
+non_condensing_boiler_components.md,453,     2. Normal reading: -0.01 to -0.02 inches water column
+non_condensing_boiler_components.md,454,     3. Positive reading indicates backdrafting
+non_condensing_boiler_components.md,455,
+non_condensing_boiler_components.md,456,2. **Spillage Test**
+non_condensing_boiler_components.md,457,   - Hold smoke source near draft hood edges
+non_condensing_boiler_components.md,458,   - Observe if smoke is drawn in or spills out
+non_condensing_boiler_components.md,459,   - Test during cold start and after 5 minutes of operation
+non_condensing_boiler_components.md,460,
+non_condensing_boiler_components.md,461,3. **Visual Inspection**
+non_condensing_boiler_components.md,462,"   - Check for rust, corrosion, or damage"
+non_condensing_boiler_components.md,463,   - Verify proper installation and clearances
+non_condensing_boiler_components.md,464,   - Look for signs of overheating
+non_condensing_boiler_components.md,465,
+non_condensing_boiler_components.md,466,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,467,
+non_condensing_boiler_components.md,468,1. **Inadequate Draft**
+non_condensing_boiler_components.md,469,"   - Symptoms: Spillage, pilot outages"
+non_condensing_boiler_components.md,470,"   - Cause: Blocked chimney, improper sizing"
+non_condensing_boiler_components.md,471,"   - Solution: Clean flue, check sizing, verify proper installation"
+non_condensing_boiler_components.md,472,
+non_condensing_boiler_components.md,473,2. **Damaged Draft Hood**
+non_condensing_boiler_components.md,474,"   - Symptoms: Distorted metal, improper draft"
+non_condensing_boiler_components.md,475,"   - Cause: Overheating, physical damage"
+non_condensing_boiler_components.md,476,   - Solution: Replace draft hood
+non_condensing_boiler_components.md,477,
+non_condensing_boiler_components.md,478,3. **Improper Installation**
+non_condensing_boiler_components.md,479,   - Symptoms: Inconsistent draft
+non_condensing_boiler_components.md,480,"   - Cause: Wrong clearances, improper connections"
+non_condensing_boiler_components.md,481,   - Solution: Reinstall according to manufacturer specifications
+non_condensing_boiler_components.md,482,
+non_condensing_boiler_components.md,483,### Fan-Assisted Non-Condensing Boilers
+non_condensing_boiler_components.md,484,
+non_condensing_boiler_components.md,485,**Symptoms:**
+non_condensing_boiler_components.md,486,- Fan runs but boiler won't fire
+non_condensing_boiler_components.md,487,- Excessive fan noise
+non_condensing_boiler_components.md,488,- Fan runs continuously
+non_condensing_boiler_components.md,489,- Delayed fan operation
+non_condensing_boiler_components.md,490,
+non_condensing_boiler_components.md,491,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,492,
+non_condensing_boiler_components.md,493,1. **Fan Operation Check**
+non_condensing_boiler_components.md,494,   - Verify fan starts at correct time in sequence
+non_condensing_boiler_components.md,495,   - Check fan speed (if multi-speed)
+non_condensing_boiler_components.md,496,   - Measure current draw against specifications
+non_condensing_boiler_components.md,497,
+non_condensing_boiler_components.md,498,2. **Pressure Switch Testing**
+non_condensing_boiler_components.md,499,   - Jumper terminals (temporarily for testing only)
+non_condensing_boiler_components.md,500,   - Listen for contact closure
+non_condensing_boiler_components.md,501,   - Measure pressure differential across switch
+non_condensing_boiler_components.md,502,
+non_condensing_boiler_components.md,503,3. **Air Pressure Test**
+non_condensing_boiler_components.md,504,   - Check pressure switch tubing for blockages
+non_condensing_boiler_components.md,505,   - Verify correct routing of pressure tubes
+non_condensing_boiler_components.md,506,   - Test with manometer if available
+non_condensing_boiler_components.md,507,
+non_condensing_boiler_components.md,508,4. **Fan Wiring Check**
+non_condensing_boiler_components.md,509,   - Verify proper voltage to fan
+non_condensing_boiler_components.md,510,   - Check capacitor (if present)
+non_condensing_boiler_components.md,511,   - Inspect wire connections
+non_condensing_boiler_components.md,512,
+non_condensing_boiler_components.md,513,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,514,
+non_condensing_boiler_components.md,515,1. **Faulty Pressure Switch**
+non_condensing_boiler_components.md,516,   - Symptoms: Fan runs but boiler won't fire
+non_condensing_boiler_components.md,517,   - Cause: Switch contacts worn or diaphragm damaged
+non_condensing_boiler_components.md,518,   - Solution: Replace pressure switch
+non_condensing_boiler_components.md,519,
+non_condensing_boiler_components.md,520,2. **Blocked Pressure Sensing Tubes**
+non_condensing_boiler_components.md,521,   - Symptoms: Inconsistent operation
+non_condensing_boiler_components.md,522,"   - Cause: Moisture, debris in tubes"
+non_condensing_boiler_components.md,523,   - Solution: Clean or replace tubing
+non_condensing_boiler_components.md,524,
+non_condensing_boiler_components.md,525,3. **Fan Motor Issues**
+non_condensing_boiler_components.md,526,"   - Symptoms: Slow starting, unusual noise"
+non_condensing_boiler_components.md,527,"   - Cause: Worn bearings, failed capacitor"
+non_condensing_boiler_components.md,528,   - Solution: Replace motor or capacitor as needed
+non_condensing_boiler_components.md,529,
+non_condensing_boiler_components.md,530,4. **Vent Terminal Blockage**
+non_condensing_boiler_components.md,531,   - Symptoms: Pressure switch won't close
+non_condensing_boiler_components.md,532,   - Cause: Blocked flue terminal
+non_condensing_boiler_components.md,533,"   - Solution: Clear blockage, check for proper installation"
+non_condensing_boiler_components.md,534,
+non_condensing_boiler_components.md,535,## PART 7: CONTROL SYSTEMS DIAGNOSIS
+non_condensing_boiler_components.md,536,
+non_condensing_boiler_components.md,537,### Primary Control Board (PCB) Issues
+non_condensing_boiler_components.md,538,
+non_condensing_boiler_components.md,539,**Symptoms:**
+non_condensing_boiler_components.md,540,- No response to thermostat calls
+non_condensing_boiler_components.md,541,- Erratic operation
+non_condensing_boiler_components.md,542,- LED fault codes
+non_condensing_boiler_components.md,543,- Partial system function
+non_condensing_boiler_components.md,544,
+non_condensing_boiler_components.md,545,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,546,
+non_condensing_boiler_components.md,547,1. **Visual Inspection**
+non_condensing_boiler_components.md,548,   - Check for burned components
+non_condensing_boiler_components.md,549,   - Look for capacitor bulging
+non_condensing_boiler_components.md,550,   - Inspect for water damage or corrosion
+non_condensing_boiler_components.md,551,
+non_condensing_boiler_components.md,552,2. **Power Supply Testing**
+non_condensing_boiler_components.md,553,   - Measure input voltage
+non_condensing_boiler_components.md,554,   - Check transformer output
+non_condensing_boiler_components.md,555,   - Verify voltage at all terminals
+non_condensing_boiler_components.md,556,
+non_condensing_boiler_components.md,557,3. **Input Signal Testing**
+non_condensing_boiler_components.md,558,   - Bypass thermostat with jumper wire
+non_condensing_boiler_components.md,559,   - Test for continuity in limit circuit
+non_condensing_boiler_components.md,560,   - Verify proper signal voltage from sensors
+non_condensing_boiler_components.md,561,
+non_condensing_boiler_components.md,562,4. **Output Testing**
+non_condensing_boiler_components.md,563,   - Measure voltage to gas valve
+non_condensing_boiler_components.md,564,   - Check fan relay operation
+non_condensing_boiler_components.md,565,   - Test pump control circuit
+non_condensing_boiler_components.md,566,
+non_condensing_boiler_components.md,567,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,568,
+non_condensing_boiler_components.md,569,1. **Failed Relay**
+non_condensing_boiler_components.md,570,   - Symptoms: Component won't activate despite call
+non_condensing_boiler_components.md,571,"   - Cause: Mechanical wear, electrical damage"
+non_condensing_boiler_components.md,572,   - Solution: Replace control board
+non_condensing_boiler_components.md,573,
+non_condensing_boiler_components.md,574,2. **Power Supply Issues**
+non_condensing_boiler_components.md,575,   - Symptoms: Intermittent operation
+non_condensing_boiler_components.md,576,"   - Cause: Transformer issues, poor connections"
+non_condensing_boiler_components.md,577,"   - Solution: Replace transformer, secure connections"
+non_condensing_boiler_components.md,578,
+non_condensing_boiler_components.md,579,3. **Water Damage**
+non_condensing_boiler_components.md,580,"   - Symptoms: Corrosion, erratic behavior"
+non_condensing_boiler_components.md,581,"   - Cause: Leaks, condensation"
+non_condensing_boiler_components.md,582,"   - Solution: Replace board, fix source of moisture"
+non_condensing_boiler_components.md,583,
+non_condensing_boiler_components.md,584,4. **Reset Procedure**
+non_condensing_boiler_components.md,585,   - For transient issues
+non_condensing_boiler_components.md,586,"   - Procedure: Power off for 30 seconds, restore power"
+non_condensing_boiler_components.md,587,   - Note: Persistent issues after reset indicate hardware failure
+non_condensing_boiler_components.md,588,
+non_condensing_boiler_components.md,589,### Limit Controls and Safety Devices
+non_condensing_boiler_components.md,590,
+non_condensing_boiler_components.md,591,**Symptoms:**
+non_condensing_boiler_components.md,592,- Boiler lockout
+non_condensing_boiler_components.md,593,- Short cycling
+non_condensing_boiler_components.md,594,- Overheating
+non_condensing_boiler_components.md,595,- Pressure issues
+non_condensing_boiler_components.md,596,
+non_condensing_boiler_components.md,597,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,598,
+non_condensing_boiler_components.md,599,1. **High Limit Control Testing**
+non_condensing_boiler_components.md,600,   - Jump out temporarily to test circuit
+non_condensing_boiler_components.md,601,   - Measure continuity across terminals
+non_condensing_boiler_components.md,602,   - Check calibration against thermometer
+non_condensing_boiler_components.md,603,
+non_condensing_boiler_components.md,604,2. **Pressure Control Testing**
+non_condensing_boiler_components.md,605,   - Verify pressure gauge accuracy
+non_condensing_boiler_components.md,606,   - Test switch operation at various pressures
+non_condensing_boiler_components.md,607,   - Check electrical contacts
+non_condensing_boiler_components.md,608,
+non_condensing_boiler_components.md,609,3. **Low Water Cutoff Testing**
+non_condensing_boiler_components.md,610,   - Test proper operation by lowering water level (if possible)
+non_condensing_boiler_components.md,611,   - Verify electrical contacts
+non_condensing_boiler_components.md,612,   - Check for sediment accumulation
+non_condensing_boiler_components.md,613,
+non_condensing_boiler_components.md,614,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,615,
+non_condensing_boiler_components.md,616,1. **Faulty High Limit**
+non_condensing_boiler_components.md,617,"   - Symptoms: Nuisance tripping, lockouts"
+non_condensing_boiler_components.md,618,"   - Cause: Calibration drift, damaged sensor"
+non_condensing_boiler_components.md,619,   - Solution: Replace high limit control
+non_condensing_boiler_components.md,620,
+non_condensing_boiler_components.md,621,2. **Sediment in Low Water Cutoff**
+non_condensing_boiler_components.md,622,   - Symptoms: False low water indications
+non_condensing_boiler_components.md,623,   - Cause: Buildup of sediment
+non_condensing_boiler_components.md,624,   - Solution: Clean or replace low water cutoff
+non_condensing_boiler_components.md,625,
+non_condensing_boiler_components.md,626,3. **Pressure Control Issues**
+non_condensing_boiler_components.md,627,   - Symptoms: Lockouts at normal pressure
+non_condensing_boiler_components.md,628,"   - Cause: Mechanical failure, diaphragm issues"
+non_condensing_boiler_components.md,629,   - Solution: Replace pressure control
+non_condensing_boiler_components.md,630,
+non_condensing_boiler_components.md,631,## PART 8: HYDRAULIC SYSTEM DIAGNOSIS
+non_condensing_boiler_components.md,632,
+non_condensing_boiler_components.md,633,### Pump and Circulation Issues
+non_condensing_boiler_components.md,634,
+non_condensing_boiler_components.md,635,**Symptoms:**
+non_condensing_boiler_components.md,636,- No circulation
+non_condensing_boiler_components.md,637,- Pump noise
+non_condensing_boiler_components.md,638,- Overheating pump
+non_condensing_boiler_components.md,639,- Air locks
+non_condensing_boiler_components.md,640,- Inadequate heat distribution
+non_condensing_boiler_components.md,641,
+non_condensing_boiler_components.md,642,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,643,
+non_condensing_boiler_components.md,644,1. **Pump Operation Check**
+non_condensing_boiler_components.md,645,   - Verify pump is running (vibration/noise)
+non_condensing_boiler_components.md,646,   - Feel inlet and outlet pipes for temperature difference
+non_condensing_boiler_components.md,647,   - Listen for smooth operation without cavitation
+non_condensing_boiler_components.md,648,
+non_condensing_boiler_components.md,649,2. **Electrical Testing**
+non_condensing_boiler_components.md,650,   - Measure voltage at pump
+non_condensing_boiler_components.md,651,   - Check current draw against rating
+non_condensing_boiler_components.md,652,   - Test capacitor (if applicable)
+non_condensing_boiler_components.md,653,
+non_condensing_boiler_components.md,654,3. **Rotation Testing**
+non_condensing_boiler_components.md,655,   - Check for shaft rotation
+non_condensing_boiler_components.md,656,   - Verify direction (if visible)
+non_condensing_boiler_components.md,657,   - Manual rotation test when cool
+non_condensing_boiler_components.md,658,
+non_condensing_boiler_components.md,659,4. **Flow Check**
+non_condensing_boiler_components.md,660,   - Measure temperature differential across system
+non_condensing_boiler_components.md,661,   - Feel pipe temperatures
+non_condensing_boiler_components.md,662,   - Listen for water flow sounds
+non_condensing_boiler_components.md,663,
+non_condensing_boiler_components.md,664,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,665,
+non_condensing_boiler_components.md,666,1. **Seized Pump**
+non_condensing_boiler_components.md,667,"   - Symptoms: Humming but not turning, overheating"
+non_condensing_boiler_components.md,668,"   - Cause: Bearing failure, impeller blockage"
+non_condensing_boiler_components.md,669,   - Solution: Free seized rotor or replace pump
+non_condensing_boiler_components.md,670,
+non_condensing_boiler_components.md,671,2. **Air Lock**
+non_condensing_boiler_components.md,672,"   - Symptoms: Noisy operation, poor circulation"
+non_condensing_boiler_components.md,673,   - Cause: Air trapped in pump housing
+non_condensing_boiler_components.md,674,"   - Solution: Bleed pump, vent system properly"
+non_condensing_boiler_components.md,675,
+non_condensing_boiler_components.md,676,3. **Worn Bearings**
+non_condensing_boiler_components.md,677,"   - Symptoms: Excessive noise, vibration"
+non_condensing_boiler_components.md,678,"   - Cause: Age, water quality issues"
+non_condensing_boiler_components.md,679,   - Solution: Replace pump or rebuild if possible
+non_condensing_boiler_components.md,680,
+non_condensing_boiler_components.md,681,### Relief Valve and Expansion Issues
+non_condensing_boiler_components.md,682,
+non_condensing_boiler_components.md,683,**Symptoms:**
+non_condensing_boiler_components.md,684,- Pressure relief valve discharge
+non_condensing_boiler_components.md,685,- Excessive system pressure
+non_condensing_boiler_components.md,686,- Pressure drops after shutdown
+non_condensing_boiler_components.md,687,- Water hammering
+non_condensing_boiler_components.md,688,
+non_condensing_boiler_components.md,689,**Diagnostic Procedures:**
+non_condensing_boiler_components.md,690,
+non_condensing_boiler_components.md,691,1. **Pressure Relief Valve Testing**
+non_condensing_boiler_components.md,692,   - Check for leakage or weeping
+non_condensing_boiler_components.md,693,   - Test manual operation (if conditions allow)
+non_condensing_boiler_components.md,694,   - Verify correct pressure rating
+non_condensing_boiler_components.md,695,
+non_condensing_boiler_components.md,696,2. **Expansion Vessel Testing**
+non_condensing_boiler_components.md,697,   - Test air pressure when system cold
+non_condensing_boiler_components.md,698,   - Compare with manufacturer specifications
+non_condensing_boiler_components.md,699,   - Check for water in air chamber
+non_condensing_boiler_components.md,700,
+non_condensing_boiler_components.md,701,3. **System Pressure Test**
+non_condensing_boiler_components.md,702,   - Monitor pressure during heating cycle
+non_condensing_boiler_components.md,703,   - Check for excessive pressure increase
+non_condensing_boiler_components.md,704,   - Verify pressure drops to normal when cool
+non_condensing_boiler_components.md,705,
+non_condensing_boiler_components.md,706,**Common Faults and Solutions:**
+non_condensing_boiler_components.md,707,
+non_condensing_boiler_components.md,708,1. **Leaking Relief Valve**
+non_condensing_boiler_components.md,709,"   - Symptoms: Water discharge, pressure loss"
+non_condensing_boiler_components.md,710,"   - Cause: Debris in seat, spring fatigue"
+non_condensing_boiler_components.md,711,   - Solution: Clean or replace valve
+non_condensing_boiler_components.md,712,
+non_condensing_boiler_components.md,713,2. **Failed Expansion Vessel**
+non_condensing_boiler_components.md,714,   - Symptoms: Pressure rises rapidly when heated
+non_condensing_boiler_components.md,715,"   - Cause: Ruptured diaphragm, loss of air charge"
+non_condensing_boiler_components.md,716,   - Solution: Recharge or replace vessel
+non_condensing_boiler_components.md,717,
+non_condensing_boiler_components.md,718,3. **Water Hammering**
+non_condensing_boiler_components.md,719,   - Symptoms: Banging pipes during operation
+non_condensing_boiler_components.md,720,"   - Cause: Rapid valve closure, air pockets"
+non_condensing_boiler_components.md,721,"   - Solution: Install water hammer arrestor, proper venting"
+non_condensing_boiler_components.md,722,
+non_condensing_boiler_components.md,723,## PART 9: REFERENCE TABLES
+non_condensing_boiler_components.md,724,
+non_condensing_boiler_components.md,725,### Normal Operating Values
+non_condensing_boiler_components.md,726,
+non_condensing_boiler_components.md,727,| Component | Parameter | Normal Value | Warning Signs |
+non_condensing_boiler_components.md,728,|-----------|-----------|--------------|--------------|
+non_condensing_boiler_components.md,729,"| Pilot Flame | Appearance | Blue, steady | Yellow, flickering |"
+non_condensing_boiler_components.md,730,| Thermocouple | Output | 25-30mV | <20mV |
+non_condensing_boiler_components.md,731,"| Main Burner | Flame Color | Blue with orange tips | Yellow, floating |"
+non_condensing_boiler_components.md,732,| Gas Valve | Inlet Pressure (NG) | 20mbar | <17mbar or >25mbar |
+non_condensing_boiler_components.md,733,| Gas Valve | Outlet Pressure (NG) | 8-10mbar (typical) | Varies by model |
+non_condensing_boiler_components.md,734,| Heat Exchanger | Temp Differential | 11-22°C | <8°C or >25°C |
+non_condensing_boiler_components.md,735,"| Draft | Negative Pressure | -0.01 to -0.02"" WC | Positive reading |"
+non_condensing_boiler_components.md,736,| Fan | Current Draw | See rating plate | >10% of rating |
+non_condensing_boiler_components.md,737,| PCB | Control Voltage | 24V AC | <20V AC |
+non_condensing_boiler_components.md,738,"| Pump | Noise Level | Low hum | Grinding, cavitation |"
+non_condensing_boiler_components.md,739,| System | Working Pressure | 1-1.5 bar cold | <0.5 bar or >2.5 bar |
+non_condensing_boiler_components.md,740,
+non_condensing_boiler_components.md,741,### Common Gas Valve Resistance Values
+non_condensing_boiler_components.md,742,
+non_condensing_boiler_components.md,743,| Valve Type | Component | Normal Resistance | Notes |
+non_condensing_boiler_components.md,744,|------------|-----------|-------------------|-------|
+non_condensing_boiler_components.md,745,| Honeywell VR8200 | Main Coil | 2-3 kΩ | Values vary by model |
+non_condensing_boiler_components.md,746,| SIT Nova | Main Coil | 1.6-2.2 kΩ | Check manufacturer specs |
+non_condensing_boiler_components.md,747,| White Rodgers | Main Coil | 1.8-2.5 kΩ | Higher when cold |
+non_condensing_boiler_components.md,748,| Robertshaw | Operator Coil | 1.5-2.0 kΩ | - |
+non_condensing_boiler_components.md,749,
+non_condensing_boiler_components.md,750,### Combustion Test Values (Typical)
+non_condensing_boiler_components.md,751,
+non_condensing_boiler_components.md,752,| Fuel | CO₂ | O₂ | CO | Efficiency |
+non_condensing_boiler_components.md,753,|------|-----|-----|-------|-----------|
+non_condensing_boiler_components.md,754,| Natural Gas | 7-9% | 4-6% | <50ppm | 75-82% |
+non_condensing_boiler_components.md,755,| LPG | 9-11% | 4-6% | <50ppm | 75-82% |
+non_condensing_boiler_components.md,756,| Oil | 11-13% | 3-5% | <50ppm | 75-85% |
+non_condensing_boiler_components.md,757,
+non_condensing_boiler_components.md,758,## PART 10: SAFETY CONSIDERATIONS
+non_condensing_boiler_components.md,759,
+non_condensing_boiler_components.md,760,### Gas Safety
+non_condensing_boiler_components.md,761,
+non_condensing_boiler_components.md,762,1. **Before Working on Gas Components**
+non_condensing_boiler_components.md,763,   - Turn off gas supply
+non_condensing_boiler_components.md,764,   - Allow residual gas to dissipate
+non_condensing_boiler_components.md,765,   - Use proper tools to avoid damage
+non_condensing_boiler_components.md,766,   - Check for leaks after repair
+non_condensing_boiler_components.md,767,
+non_condensing_boiler_components.md,768,2. **Leak Testing**
+non_condensing_boiler_components.md,769,   - Never use a flame to check for leaks
+non_condensing_boiler_components.md,770,   - Use approved leak detection solution
+non_condensing_boiler_components.md,771,   - Test all joints and connections
+non_condensing_boiler_components.md,772,   - Pay special attention to recently disturbed fittings
+non_condensing_boiler_components.md,773,
+non_condensing_boiler_components.md,774,3. **Pilot Light Safety**
+non_condensing_boiler_components.md,775,   - Follow proper lighting procedures
+non_condensing_boiler_components.md,776,   - Do not override safety devices
+non_condensing_boiler_components.md,777,   - Maintain proper clearances
+non_condensing_boiler_components.md,778,   - Ensure adequate ventilation
+non_condensing_boiler_components.md,779,
+non_condensing_boiler_components.md,780,### Electrical Safety
+non_condensing_boiler_components.md,781,
+non_condensing_boiler_components.md,782,1. **Power Isolation**
+non_condensing_boiler_components.md,783,   - Disconnect power before work
+non_condensing_boiler_components.md,784,   - Verify isolation with test meter
+non_condensing_boiler_components.md,785,   - Secure isolation point
+non_condensing_boiler_components.md,786,   - Discharge capacitors if present
+non_condensing_boiler_components.md,787,
+non_condensing_boiler_components.md,788,2. **Control Circuit Testing**
+non_condensing_boiler_components.md,789,   - Use proper meter settings
+non_condensing_boiler_components.md,790,   - Avoid shorting terminals
+non_condensing_boiler_components.md,791,   - Respect polarity requirements
+non_condensing_boiler_components.md,792,   - Use insulated tools
+non_condensing_boiler_components.md,793,
+non_condensing_boiler_components.md,794,3. **Wiring Repairs**
+non_condensing_boiler_components.md,795,   - Use correct gauge wire
+non_condensing_boiler_components.md,796,   - Make secure connections
+non_condensing_boiler_components.md,797,   - Follow manufacturer's wiring diagrams
+non_condensing_boiler_components.md,798,   - Use proper terminals and connectors
+non_condensing_boiler_components.md,799,
+non_condensing_boiler_components.md,800,### Ventilation and Combustion Safety
+non_condensing_boiler_components.md,801,
+non_condensing_boiler_components.md,802,1. **Combustion Testing**
+non_condensing_boiler_components.md,803,   - Always check CO levels after service
+non_condensing_boiler_components.md,804,   - Verify proper draft
+non_condensing_boiler_components.md,805,   - Ensure no spillage
+non_condensing_boiler_components.md,806,   - Check all combustion parameters
+non_condensing_boiler_components.md,807,
+non_condensing_boiler_components.md,808,2. **Room Ventilation**
+non_condensing_boiler_components.md,809,   - Verify adequate air supply
+non_condensing_boiler_components.md,810,   - Check vents are unobstructed
+non_condensing_boiler_components.md,811,   - Ensure proper clearances
+non_condensing_boiler_components.md,812,   - Follow local regulations for ventilation requirements
+non_condensing_boiler_components.md,813,
+non_condensing_boiler_components.md,814,3. **Flue Inspection**
+non_condensing_boiler_components.md,815,   - Check for proper connection
+non_condensing_boiler_components.md,816,   - Look for corrosion or damage
+non_condensing_boiler_components.md,817,   - Verify correct sizing
+non_condensing_boiler_components.md,818,   - Ensure proper termination
+non_condensing_boiler_components.md,819,
+non_condensing_boiler_components.md,820,### Competence and Certification
+non_condensing_boiler_components.md,821,
+non_condensing_boiler_components.md,822,1. **Work Limitations**
+non_condensing_boiler_components.md,823,   - Understand regulatory restrictions
+non_condensing_boiler_components.md,824,   - Work within competence level
+non_condensing_boiler_components.md,825,   - Know when to refer to specialists
+non_condensing_boiler_components.md,826,   - Follow manufacturer guidelines
+non_condensing_boiler_components.md,827,
+non_condensing_boiler_components.md,828,2. **Documentation**
+non_condensing_boiler_components.md,829,   - Record all test values
+non_condensing_boiler_components.md,830,   - Document work performed
+non_condensing_boiler_components.md,831,   - Note replacement parts
+non_condensing_boiler_components.md,832,   - Advise customer of findings

@@ -1,0 +1,604 @@
+filename,line_number,content
+open_vent_system_diagnosis.md,1,# Open Vent Heating System Fault Finding Guide
+open_vent_system_diagnosis.md,2,
+open_vent_system_diagnosis.md,3,"This comprehensive guide covers diagnostic procedures for open vent heating systems, including feed and expansion tanks, open vent pipes, cold feed issues, and header tank problems."
+open_vent_system_diagnosis.md,4,
+open_vent_system_diagnosis.md,5,## PART 1: UNDERSTANDING OPEN VENT SYSTEMS
+open_vent_system_diagnosis.md,6,
+open_vent_system_diagnosis.md,7,### Open Vent System Components
+open_vent_system_diagnosis.md,8,
+open_vent_system_diagnosis.md,9,**1. Feed and Expansion (F&E) Tank**
+open_vent_system_diagnosis.md,10,- **Location**: Typically in loft/highest point
+open_vent_system_diagnosis.md,11,"- **Functions**: System filling, pressure regulation, expansion volume"
+open_vent_system_diagnosis.md,12,"- **Components**: Float valve, overflow, insulation, lid"
+open_vent_system_diagnosis.md,13,"- **Connections**: Cold feed down, open vent up, overflow, mains supply"
+open_vent_system_diagnosis.md,14,
+open_vent_system_diagnosis.md,15,**2. Open Vent Pipe**
+open_vent_system_diagnosis.md,16,- **Location**: Rises from boiler/system to above F&E tank water level
+open_vent_system_diagnosis.md,17,- **Function**: Safety device allowing steam/water escape during overheat
+open_vent_system_diagnosis.md,18,"- **Requirements**: 22mm minimum, continuous rise, no valves"
+open_vent_system_diagnosis.md,19,- **Termination**: Must discharge visibly above water level in F&E tank
+open_vent_system_diagnosis.md,20,
+open_vent_system_diagnosis.md,21,**3. Cold Feed Pipe**
+open_vent_system_diagnosis.md,22,- **Location**: From base of F&E tank to return side of system
+open_vent_system_diagnosis.md,23,- **Function**: Provides make-up water and creates system pressure
+open_vent_system_diagnosis.md,24,"- **Requirements**: 15mm minimum, no valves that could cause isolation"
+open_vent_system_diagnosis.md,25,- **Configuration**: Connects at neutral point (typically boiler return or low loss header)
+open_vent_system_diagnosis.md,26,
+open_vent_system_diagnosis.md,27,**4. System Components**
+open_vent_system_diagnosis.md,28,- **Air separators**: Often at high points
+open_vent_system_diagnosis.md,29,- **Motorized valves**: May separate heating and hot water circuits
+open_vent_system_diagnosis.md,30,- **Pumps**: Circulation for both heating and hot water
+open_vent_system_diagnosis.md,31,- **Cylinder**: Indirect heat exchange for hot water
+open_vent_system_diagnosis.md,32,- **System pressure**: Created by gravitational head from F&E tank
+open_vent_system_diagnosis.md,33,
+open_vent_system_diagnosis.md,34,### Operational Principles
+open_vent_system_diagnosis.md,35,
+open_vent_system_diagnosis.md,36,**Pressure Management:**
+open_vent_system_diagnosis.md,37,- Static pressure from vertical height (1 bar per 10.2m)
+open_vent_system_diagnosis.md,38,- Expansion accommodated by increasing water level in F&E tank
+open_vent_system_diagnosis.md,39,- Overpressure protection via open vent pipe
+open_vent_system_diagnosis.md,40,- System automatically maintains pressure via float valve
+open_vent_system_diagnosis.md,41,
+open_vent_system_diagnosis.md,42,**Safety Features:**
+open_vent_system_diagnosis.md,43,- No pressurization pump required
+open_vent_system_diagnosis.md,44,- Inherent overpressure protection
+open_vent_system_diagnosis.md,45,"- Visible indication of system problems (overflow, water level)"
+open_vent_system_diagnosis.md,46,- Auto air removal via open vent
+open_vent_system_diagnosis.md,47,- Self-regulating water level
+open_vent_system_diagnosis.md,48,
+open_vent_system_diagnosis.md,49,**Common Applications:**
+open_vent_system_diagnosis.md,50,- Traditional domestic heating systems
+open_vent_system_diagnosis.md,51,- Gravity hot water systems
+open_vent_system_diagnosis.md,52,- Some commercial applications
+open_vent_system_diagnosis.md,53,- Systems with heat-leak radiators for power outages
+open_vent_system_diagnosis.md,54,- Solid fuel compatible systems
+open_vent_system_diagnosis.md,55,
+open_vent_system_diagnosis.md,56,## PART 2: FEED AND EXPANSION TANK ISSUES
+open_vent_system_diagnosis.md,57,
+open_vent_system_diagnosis.md,58,### Common F&E Tank Faults
+open_vent_system_diagnosis.md,59,
+open_vent_system_diagnosis.md,60,**Symptoms:**
+open_vent_system_diagnosis.md,61,- Water dripping from overflow pipe
+open_vent_system_diagnosis.md,62,- Frequent need to top up system
+open_vent_system_diagnosis.md,63,- Excessive noise in system
+open_vent_system_diagnosis.md,64,- Radiators requiring frequent bleeding
+open_vent_system_diagnosis.md,65,- Water level too high or too low
+open_vent_system_diagnosis.md,66,- Tank overflowing during heating
+open_vent_system_diagnosis.md,67,- Frozen tank in winter
+open_vent_system_diagnosis.md,68,- Corrosion and leaks from tank
+open_vent_system_diagnosis.md,69,
+open_vent_system_diagnosis.md,70,**Diagnostic Procedures:**
+open_vent_system_diagnosis.md,71,
+open_vent_system_diagnosis.md,72,1. **Visual Inspection**
+open_vent_system_diagnosis.md,73,   - Check water level (should be 1/3 to 1/2 full when cold)
+open_vent_system_diagnosis.md,74,   - Inspect for cracks or leaks
+open_vent_system_diagnosis.md,75,   - Verify correct lid position and insulation
+open_vent_system_diagnosis.md,76,   - Examine connections for leaks
+open_vent_system_diagnosis.md,77,   - Check overflow pipe condition
+open_vent_system_diagnosis.md,78,   - Look for signs of previous overflow (staining)
+open_vent_system_diagnosis.md,79,
+open_vent_system_diagnosis.md,80,2. **Float Valve Assessment**
+open_vent_system_diagnosis.md,81,   - Manually test float valve operation
+open_vent_system_diagnosis.md,82,   - Check for free movement without binding
+open_vent_system_diagnosis.md,83,   - Verify valve shuts off completely
+open_vent_system_diagnosis.md,84,   - Examine float for water ingress
+open_vent_system_diagnosis.md,85,   - Check valve washer condition
+open_vent_system_diagnosis.md,86,   - Test for correct water level setting
+open_vent_system_diagnosis.md,87,
+open_vent_system_diagnosis.md,88,3. **Connection Verification**
+open_vent_system_diagnosis.md,89,   - Verify cold feed and vent pipes correctly positioned
+open_vent_system_diagnosis.md,90,   - Check for corrosion at pipe connections
+open_vent_system_diagnosis.md,91,   - Ensure no valves on open vent or cold feed
+open_vent_system_diagnosis.md,92,   - Confirm overflow is correctly routed outside
+open_vent_system_diagnosis.md,93,   - Verify adequate tank support
+open_vent_system_diagnosis.md,94,
+open_vent_system_diagnosis.md,95,**Common Faults and Solutions:**
+open_vent_system_diagnosis.md,96,
+open_vent_system_diagnosis.md,97,1. **Overflowing Tank**
+open_vent_system_diagnosis.md,98,"   - Symptoms: Water from overflow, constantly running float valve"
+open_vent_system_diagnosis.md,99,"   - Cause: Faulty float valve, incorrect water level setting"
+open_vent_system_diagnosis.md,100,   - Solution:
+open_vent_system_diagnosis.md,101,     * Replace float valve washer
+open_vent_system_diagnosis.md,102,     * Adjust or replace float valve
+open_vent_system_diagnosis.md,103,     * Verify correct arm adjustment
+open_vent_system_diagnosis.md,104,     * Check for float valve obstruction
+open_vent_system_diagnosis.md,105,     * Ensure valve seat is clean and undamaged
+open_vent_system_diagnosis.md,106,
+open_vent_system_diagnosis.md,107,2. **Low Water Level**
+open_vent_system_diagnosis.md,108,"   - Symptoms: System needs frequent topping up, air in radiators"
+open_vent_system_diagnosis.md,109,"   - Cause: System leaks, float valve set too low"
+open_vent_system_diagnosis.md,110,   - Solution:
+open_vent_system_diagnosis.md,111,     * Inspect system for leaks
+open_vent_system_diagnosis.md,112,     * Adjust float valve water level
+open_vent_system_diagnosis.md,113,     * Check for blocked cold feed
+open_vent_system_diagnosis.md,114,     * Verify float valve operation
+open_vent_system_diagnosis.md,115,     * Look for leaking pipe connections
+open_vent_system_diagnosis.md,116,
+open_vent_system_diagnosis.md,117,3. **Tank Freezing**
+open_vent_system_diagnosis.md,118,"   - Symptoms: No heat, overflow pipe frozen, tank ice formation"
+open_vent_system_diagnosis.md,119,"   - Cause: Inadequate insulation, extreme cold"
+open_vent_system_diagnosis.md,120,   - Solution:
+open_vent_system_diagnosis.md,121,     * Properly insulate tank and adjacent pipes
+open_vent_system_diagnosis.md,122,     * Install proper fitted lid
+open_vent_system_diagnosis.md,123,     * Confirm loft insulation doesn't block tank heat
+open_vent_system_diagnosis.md,124,     * Consider trace heating for extreme situations
+open_vent_system_diagnosis.md,125,     * Ensure tank is on insulated base
+open_vent_system_diagnosis.md,126,
+open_vent_system_diagnosis.md,127,4. **Corrosion Issues**
+open_vent_system_diagnosis.md,128,"   - Symptoms: Rust-colored water, pitting in tank, leaks"
+open_vent_system_diagnosis.md,129,"   - Cause: Age, poor water quality, no lid"
+open_vent_system_diagnosis.md,130,   - Solution:
+open_vent_system_diagnosis.md,131,     * Replace tank if significantly corroded
+open_vent_system_diagnosis.md,132,     * Install proper fitted lid
+open_vent_system_diagnosis.md,133,     * Add system inhibitor
+open_vent_system_diagnosis.md,134,     * Check water treatment levels
+open_vent_system_diagnosis.md,135,     * Consider replacing with plastic tank
+open_vent_system_diagnosis.md,136,
+open_vent_system_diagnosis.md,137,### F&E Tank Location and Installation Issues
+open_vent_system_diagnosis.md,138,
+open_vent_system_diagnosis.md,139,**Height Requirements:**
+open_vent_system_diagnosis.md,140,- Minimum 450mm above highest point in system
+open_vent_system_diagnosis.md,141,- Typically 1-1.5m above highest radiator
+open_vent_system_diagnosis.md,142,- Higher placement increases system pressure
+open_vent_system_diagnosis.md,143,- Must be above all automatic air vents
+open_vent_system_diagnosis.md,144,- Position allows for gravity circulation in power cut
+open_vent_system_diagnosis.md,145,
+open_vent_system_diagnosis.md,146,**Installation Issues:**
+open_vent_system_diagnosis.md,147,- Inadequate support (should spread load across joists)
+open_vent_system_diagnosis.md,148,- Incorrect pipe sizing (vent/feed too small)
+open_vent_system_diagnosis.md,149,- Improper overflow routing
+open_vent_system_diagnosis.md,150,- Difficult access for maintenance
+open_vent_system_diagnosis.md,151,- Proximity to cold water storage affecting temperature
+open_vent_system_diagnosis.md,152,
+open_vent_system_diagnosis.md,153,**Environmental Considerations:**
+open_vent_system_diagnosis.md,154,- Loft temperature variations
+open_vent_system_diagnosis.md,155,- Proper insulation needs
+open_vent_system_diagnosis.md,156,- Protection from debris and contamination
+open_vent_system_diagnosis.md,157,- Access requirements for maintenance
+open_vent_system_diagnosis.md,158,- Impact of water leak on ceiling below
+open_vent_system_diagnosis.md,159,
+open_vent_system_diagnosis.md,160,**Remedial Installation Solutions:**
+open_vent_system_diagnosis.md,161,- Reinforce inadequate supports
+open_vent_system_diagnosis.md,162,- Re-route incorrectly installed pipes
+open_vent_system_diagnosis.md,163,- Add proper insulation jackets
+open_vent_system_diagnosis.md,164,- Install removable lid if missing
+open_vent_system_diagnosis.md,165,- Establish maintenance access if required
+open_vent_system_diagnosis.md,166,
+open_vent_system_diagnosis.md,167,## PART 3: OPEN VENT PIPE BLOCKAGES
+open_vent_system_diagnosis.md,168,
+open_vent_system_diagnosis.md,169,### Identifying Vent Pipe Issues
+open_vent_system_diagnosis.md,170,
+open_vent_system_diagnosis.md,171,**Symptoms:**
+open_vent_system_diagnosis.md,172,- System pressure fluctuations
+open_vent_system_diagnosis.md,173,- Kettling or boiling noises
+open_vent_system_diagnosis.md,174,- Discharge from pressure relief valve
+open_vent_system_diagnosis.md,175,"- Radiators hot at bottom, cold at top"
+open_vent_system_diagnosis.md,176,- Pump cavitation
+open_vent_system_diagnosis.md,177,- System overheating
+open_vent_system_diagnosis.md,178,- Water hammer noise
+open_vent_system_diagnosis.md,179,- Ejection of water from vent pipe
+open_vent_system_diagnosis.md,180,
+open_vent_system_diagnosis.md,181,**Diagnostic Procedures:**
+open_vent_system_diagnosis.md,182,
+open_vent_system_diagnosis.md,183,1. **Visual Inspection**
+open_vent_system_diagnosis.md,184,   - Trace vent pipe from boiler to F&E tank
+open_vent_system_diagnosis.md,185,   - Verify continuous rise (no dips)
+open_vent_system_diagnosis.md,186,   - Check for visible blockages or damage
+open_vent_system_diagnosis.md,187,   - Confirm termination above water level
+open_vent_system_diagnosis.md,188,   - Look for signs of water discharge or steam marks
+open_vent_system_diagnosis.md,189,
+open_vent_system_diagnosis.md,190,2. **Flow Testing**
+open_vent_system_diagnosis.md,191,"   - With system cool, pour small amount of water down vent"
+open_vent_system_diagnosis.md,192,   - Check for free flow into F&E tank
+open_vent_system_diagnosis.md,193,   - Listen for evidence of blockage
+open_vent_system_diagnosis.md,194,   - Verify water level rises in tank
+open_vent_system_diagnosis.md,195,   - Check for water backing up in pipe
+open_vent_system_diagnosis.md,196,
+open_vent_system_diagnosis.md,197,3. **Operational Assessment**
+open_vent_system_diagnosis.md,198,   - Monitor system during heating cycle
+open_vent_system_diagnosis.md,199,   - Listen for unusual noises
+open_vent_system_diagnosis.md,200,   - Check for pressure relief valve discharge
+open_vent_system_diagnosis.md,201,   - Monitor F&E tank water level and behavior
+open_vent_system_diagnosis.md,202,   - Look for water discharge from vent pipe
+open_vent_system_diagnosis.md,203,
+open_vent_system_diagnosis.md,204,**Common Faults and Solutions:**
+open_vent_system_diagnosis.md,205,
+open_vent_system_diagnosis.md,206,1. **Physical Blockage**
+open_vent_system_diagnosis.md,207,"   - Symptoms: No flow through pipe, system over-pressurizes"
+open_vent_system_diagnosis.md,208,"   - Cause: Debris, scale, foreign objects"
+open_vent_system_diagnosis.md,209,   - Solution:
+open_vent_system_diagnosis.md,210,     * Isolate and drain system
+open_vent_system_diagnosis.md,211,     * Physically clean or rod vent pipe
+open_vent_system_diagnosis.md,212,     * Consider pipe replacement if severely scaled
+open_vent_system_diagnosis.md,213,     * Flush system to remove debris
+open_vent_system_diagnosis.md,214,     * Check F&E tank for debris that could enter pipe
+open_vent_system_diagnosis.md,215,
+open_vent_system_diagnosis.md,216,2. **Improper Installation**
+open_vent_system_diagnosis.md,217,"   - Symptoms: Restricted flow, gurgling, air locks"
+open_vent_system_diagnosis.md,218,"   - Cause: Incorrectly sized pipe, improper routing"
+open_vent_system_diagnosis.md,219,   - Solution:
+open_vent_system_diagnosis.md,220,     * Verify minimum 22mm diameter
+open_vent_system_diagnosis.md,221,     * Correct any dips or horizontal runs
+open_vent_system_diagnosis.md,222,     * Ensure continuous rise to F&E tank
+open_vent_system_diagnosis.md,223,     * Remove any valves in vent pipe
+open_vent_system_diagnosis.md,224,     * Check for crushed or damaged sections
+open_vent_system_diagnosis.md,225,
+open_vent_system_diagnosis.md,226,3. **Partial Restrictions**
+open_vent_system_diagnosis.md,227,"   - Symptoms: Slow pressure relief, intermittent noise"
+open_vent_system_diagnosis.md,228,"   - Cause: Scale buildup, partial blockage"
+open_vent_system_diagnosis.md,229,   - Solution:
+open_vent_system_diagnosis.md,230,     * Chemical descaling if scale-related
+open_vent_system_diagnosis.md,231,     * Power flush if sludge-related
+open_vent_system_diagnosis.md,232,     * Consider pipe replacement if severely restricted
+open_vent_system_diagnosis.md,233,     * Check system water treatment
+open_vent_system_diagnosis.md,234,     * Install strainer at system connection point
+open_vent_system_diagnosis.md,235,
+open_vent_system_diagnosis.md,236,### Critical Safety Considerations
+open_vent_system_diagnosis.md,237,
+open_vent_system_diagnosis.md,238,**Consequence of Blocked Vent:**
+open_vent_system_diagnosis.md,239,- Uncontrolled system pressure increase
+open_vent_system_diagnosis.md,240,- Potential dangerous steam release
+open_vent_system_diagnosis.md,241,- Risk of pressure relief valve discharge
+open_vent_system_diagnosis.md,242,- Possible component failure
+open_vent_system_diagnosis.md,243,- Overheating of boiler
+open_vent_system_diagnosis.md,244,
+open_vent_system_diagnosis.md,245,**Temporary Measures (Emergency Only):**
+open_vent_system_diagnosis.md,246,- Do not operate system with known blocked vent
+open_vent_system_diagnosis.md,247,"- If blockage suspected, shut down system until fixed"
+open_vent_system_diagnosis.md,248,- Never cap or valve off an open vent
+open_vent_system_diagnosis.md,249,- Do not attempt to unblock with system hot or under pressure
+open_vent_system_diagnosis.md,250,- Keep clear of vent termination during investigation
+open_vent_system_diagnosis.md,251,
+open_vent_system_diagnosis.md,252,**Prevention Strategies:**
+open_vent_system_diagnosis.md,253,- Regular system maintenance
+open_vent_system_diagnosis.md,254,- Proper water treatment
+open_vent_system_diagnosis.md,255,- Maintain F&E tank lid to prevent debris entry
+open_vent_system_diagnosis.md,256,- Annual visual inspection of vent pipe
+open_vent_system_diagnosis.md,257,- Proper pipe sizing during installation
+open_vent_system_diagnosis.md,258,
+open_vent_system_diagnosis.md,259,## PART 4: COLD FEED RESTRICTIONS
+open_vent_system_diagnosis.md,260,
+open_vent_system_diagnosis.md,261,### Identifying Cold Feed Problems
+open_vent_system_diagnosis.md,262,
+open_vent_system_diagnosis.md,263,**Symptoms:**
+open_vent_system_diagnosis.md,264,- Slow system refilling after drainage
+open_vent_system_diagnosis.md,265,- Air locks in radiators
+open_vent_system_diagnosis.md,266,- Pump cavitation noise
+open_vent_system_diagnosis.md,267,- System pressure drops during operation
+open_vent_system_diagnosis.md,268,- Temperature spikes in boiler
+open_vent_system_diagnosis.md,269,- Radiators not heating fully
+open_vent_system_diagnosis.md,270,- Difficulty purging air from system
+open_vent_system_diagnosis.md,271,- Frequent need to bleed radiators
+open_vent_system_diagnosis.md,272,
+open_vent_system_diagnosis.md,273,**Diagnostic Procedures:**
+open_vent_system_diagnosis.md,274,
+open_vent_system_diagnosis.md,275,1. **Visual Inspection**
+open_vent_system_diagnosis.md,276,   - Trace cold feed from F&E tank to connection point
+open_vent_system_diagnosis.md,277,   - Check for visible restrictions or damage
+open_vent_system_diagnosis.md,278,   - Verify no valves installed in cold feed line
+open_vent_system_diagnosis.md,279,   - Look for signs of improper installation
+open_vent_system_diagnosis.md,280,   - Check for external damage or freezing
+open_vent_system_diagnosis.md,281,
+open_vent_system_diagnosis.md,282,2. **Flow Testing**
+open_vent_system_diagnosis.md,283,   - Drain small amount of system water
+open_vent_system_diagnosis.md,284,   - Observe refill rate from F&E tank
+open_vent_system_diagnosis.md,285,   - Listen for proper water flow
+open_vent_system_diagnosis.md,286,   - Check for air being drawn into system
+open_vent_system_diagnosis.md,287,   - Time recovery of system water level
+open_vent_system_diagnosis.md,288,
+open_vent_system_diagnosis.md,289,3. **Pressure Assessment**
+open_vent_system_diagnosis.md,290,   - Monitor system behavior during heating cycle
+open_vent_system_diagnosis.md,291,   - Check for unusual pressure fluctuations
+open_vent_system_diagnosis.md,292,   - Verify if pressure drop coincides with pump operation
+open_vent_system_diagnosis.md,293,   - Test if air enters system during cool-down
+open_vent_system_diagnosis.md,294,   - Listen for pump cavitation during operation
+open_vent_system_diagnosis.md,295,
+open_vent_system_diagnosis.md,296,**Common Faults and Solutions:**
+open_vent_system_diagnosis.md,297,
+open_vent_system_diagnosis.md,298,1. **Internal Blockage**
+open_vent_system_diagnosis.md,299,"   - Symptoms: Very slow refilling, pressure issues"
+open_vent_system_diagnosis.md,300,"   - Cause: Scale, debris, sludge"
+open_vent_system_diagnosis.md,301,   - Solution:
+open_vent_system_diagnosis.md,302,     * Isolate and clean cold feed pipe
+open_vent_system_diagnosis.md,303,     * Consider pipe replacement if severely scaled
+open_vent_system_diagnosis.md,304,     * Install strainer at F&E tank outlet
+open_vent_system_diagnosis.md,305,     * Flush system to remove debris
+open_vent_system_diagnosis.md,306,     * Check water treatment regime
+open_vent_system_diagnosis.md,307,
+open_vent_system_diagnosis.md,308,2. **Improper Installation**
+open_vent_system_diagnosis.md,309,"   - Symptoms: Air ingress, slow refill, pressure fluctuations"
+open_vent_system_diagnosis.md,310,"   - Cause: Undersized pipe, improper routing"
+open_vent_system_diagnosis.md,311,   - Solution:
+open_vent_system_diagnosis.md,312,     * Verify minimum 15mm diameter
+open_vent_system_diagnosis.md,313,     * Check for proper connection at system
+open_vent_system_diagnosis.md,314,     * Ensure no high points causing air locks
+open_vent_system_diagnosis.md,315,     * Remove any unauthorized valves
+open_vent_system_diagnosis.md,316,     * Correct any installation defects
+open_vent_system_diagnosis.md,317,
+open_vent_system_diagnosis.md,318,3. **Connection Point Issues**
+open_vent_system_diagnosis.md,319,"   - Symptoms: Air being drawn into system, pump noise"
+open_vent_system_diagnosis.md,320,"   - Cause: Incorrect connection location, vortexing"
+open_vent_system_diagnosis.md,321,   - Solution:
+open_vent_system_diagnosis.md,322,     * Verify connection at neutral point in system
+open_vent_system_diagnosis.md,323,     * Check connection orientation (avoid top of pipe)
+open_vent_system_diagnosis.md,324,     * Ensure connection not near pump intake
+open_vent_system_diagnosis.md,325,     * Modify connection to prevent air entrainment
+open_vent_system_diagnosis.md,326,     * Consider adding anti-vortex fitting
+open_vent_system_diagnosis.md,327,
+open_vent_system_diagnosis.md,328,### Cold Feed Design Principles
+open_vent_system_diagnosis.md,329,
+open_vent_system_diagnosis.md,330,**Size Requirements:**
+open_vent_system_diagnosis.md,331,- Minimum 15mm for domestic systems
+open_vent_system_diagnosis.md,332,- Larger for commercial applications
+open_vent_system_diagnosis.md,333,- Must handle maximum potential flow rate
+open_vent_system_diagnosis.md,334,- Should allow rapid refilling
+open_vent_system_diagnosis.md,335,- Must accommodate expansion backflow
+open_vent_system_diagnosis.md,336,
+open_vent_system_diagnosis.md,337,**Connection Location:**
+open_vent_system_diagnosis.md,338,- Return side of system
+open_vent_system_diagnosis.md,339,- At neutral point (typically before boiler return)
+open_vent_system_diagnosis.md,340,- Away from turbulent areas
+open_vent_system_diagnosis.md,341,- Below circulation pump
+open_vent_system_diagnosis.md,342,- Must prevent air entrainment
+open_vent_system_diagnosis.md,343,
+open_vent_system_diagnosis.md,344,**Installation Best Practices:**
+open_vent_system_diagnosis.md,345,- No valves or restrictions
+open_vent_system_diagnosis.md,346,- Minimum bends and fittings
+open_vent_system_diagnosis.md,347,- Protection from freezing
+open_vent_system_diagnosis.md,348,- Accessible for maintenance
+open_vent_system_diagnosis.md,349,- Continuous fall from F&E tank where possible
+open_vent_system_diagnosis.md,350,
+open_vent_system_diagnosis.md,351,**Upgrade Considerations:**
+open_vent_system_diagnosis.md,352,- Increase undersized pipe diameter
+open_vent_system_diagnosis.md,353,- Reconfigure incorrect connection points
+open_vent_system_diagnosis.md,354,- Add insulation for freeze protection
+open_vent_system_diagnosis.md,355,- Install removable test point for flow verification
+open_vent_system_diagnosis.md,356,- Consider strainer for problematic systems
+open_vent_system_diagnosis.md,357,
+open_vent_system_diagnosis.md,358,## PART 5: HEADER TANK FLOAT VALVE FAILURES
+open_vent_system_diagnosis.md,359,
+open_vent_system_diagnosis.md,360,### Float Valve Problems
+open_vent_system_diagnosis.md,361,
+open_vent_system_diagnosis.md,362,**Common Float Valve Types:**
+open_vent_system_diagnosis.md,363,- Portsmouth (traditional brass arm type)
+open_vent_system_diagnosis.md,364,- Diaphragm type (more modern)
+open_vent_system_diagnosis.md,365,- Compact plastic types
+open_vent_system_diagnosis.md,366,- Side entry vs. bottom entry
+open_vent_system_diagnosis.md,367,- Equilibrium valves for high pressure
+open_vent_system_diagnosis.md,368,
+open_vent_system_diagnosis.md,369,**Diagnostic Procedures:**
+open_vent_system_diagnosis.md,370,
+open_vent_system_diagnosis.md,371,1. **Operational Testing**
+open_vent_system_diagnosis.md,372,   - Manually operate float arm
+open_vent_system_diagnosis.md,373,   - Check for smooth movement
+open_vent_system_diagnosis.md,374,   - Verify complete shut-off when raised
+open_vent_system_diagnosis.md,375,   - Test for prompt opening when lowered
+open_vent_system_diagnosis.md,376,   - Listen for water passing when valve closed
+open_vent_system_diagnosis.md,377,
+open_vent_system_diagnosis.md,378,2. **Component Inspection**
+open_vent_system_diagnosis.md,379,   - Check float for water ingress (sink test)
+open_vent_system_diagnosis.md,380,   - Examine arm for bending or damage
+open_vent_system_diagnosis.md,381,   - Inspect valve seat for debris or damage
+open_vent_system_diagnosis.md,382,   - Check washer condition
+open_vent_system_diagnosis.md,383,   - Verify correct adjustment and water level
+open_vent_system_diagnosis.md,384,
+open_vent_system_diagnosis.md,385,3. **Pressure Testing**
+open_vent_system_diagnosis.md,386,   - Verify adequate supply pressure
+open_vent_system_diagnosis.md,387,   - Check for pressure drop during operation
+open_vent_system_diagnosis.md,388,   - Test shut-off against full pressure
+open_vent_system_diagnosis.md,389,   - Verify no creep after closure
+open_vent_system_diagnosis.md,390,   - Confirm suitable valve type for pressure
+open_vent_system_diagnosis.md,391,
+open_vent_system_diagnosis.md,392,**Common Faults and Solutions:**
+open_vent_system_diagnosis.md,393,
+open_vent_system_diagnosis.md,394,1. **Continuous Running**
+open_vent_system_diagnosis.md,395,   - Symptoms: Water constantly flowing to overflow
+open_vent_system_diagnosis.md,396,"   - Cause: Debris on valve seat, damaged washer"
+open_vent_system_diagnosis.md,397,   - Solution:
+open_vent_system_diagnosis.md,398,     * Clean valve seat
+open_vent_system_diagnosis.md,399,     * Replace washer or valve assembly
+open_vent_system_diagnosis.md,400,     * Check for correct alignment
+open_vent_system_diagnosis.md,401,     * Verify float arm adjustment
+open_vent_system_diagnosis.md,402,     * Ensure adequate clearance from tank sides
+open_vent_system_diagnosis.md,403,
+open_vent_system_diagnosis.md,404,2. **Insufficient Filling**
+open_vent_system_diagnosis.md,405,"   - Symptoms: Low water level, system air problems"
+open_vent_system_diagnosis.md,406,"   - Cause: Restricted flow, incorrect adjustment"
+open_vent_system_diagnosis.md,407,   - Solution:
+open_vent_system_diagnosis.md,408,     * Clean inlet filter if present
+open_vent_system_diagnosis.md,409,     * Adjust float arm for correct level
+open_vent_system_diagnosis.md,410,     * Check supply pressure
+open_vent_system_diagnosis.md,411,     * Verify valve size adequate for system
+open_vent_system_diagnosis.md,412,     * Consider upgrading to larger capacity valve
+open_vent_system_diagnosis.md,413,
+open_vent_system_diagnosis.md,414,3. **Erratic Operation**
+open_vent_system_diagnosis.md,415,"   - Symptoms: Water level fluctuations, intermittent overflow"
+open_vent_system_diagnosis.md,416,"   - Cause: Mechanical problems, pressure fluctuations"
+open_vent_system_diagnosis.md,417,   - Solution:
+open_vent_system_diagnosis.md,418,     * Replace worn components
+open_vent_system_diagnosis.md,419,     * Check for binding or sticking
+open_vent_system_diagnosis.md,420,     * Install pressure reducer if supply pressure fluctuates
+open_vent_system_diagnosis.md,421,     * Consider equilibrium valve for problematic installations
+open_vent_system_diagnosis.md,422,     * Verify tank itself is level
+open_vent_system_diagnosis.md,423,
+open_vent_system_diagnosis.md,424,4. **Water-Logged Float**
+open_vent_system_diagnosis.md,425,"   - Symptoms: Tank overflows, float sits low in water"
+open_vent_system_diagnosis.md,426,   - Cause: Water penetration into float
+open_vent_system_diagnosis.md,427,   - Solution:
+open_vent_system_diagnosis.md,428,     * Replace float
+open_vent_system_diagnosis.md,429,     * Check for correct float type
+open_vent_system_diagnosis.md,430,     * Consider solid plastic float replacement
+open_vent_system_diagnosis.md,431,     * Verify adequate float buoyancy
+open_vent_system_diagnosis.md,432,     * Ensure proper arm attachment to float
+open_vent_system_diagnosis.md,433,
+open_vent_system_diagnosis.md,434,### Float Valve Selection and Upgrading
+open_vent_system_diagnosis.md,435,
+open_vent_system_diagnosis.md,436,**Selection Criteria:**
+open_vent_system_diagnosis.md,437,- Supply pressure rating
+open_vent_system_diagnosis.md,438,- Flow capacity required
+open_vent_system_diagnosis.md,439,- Physical space constraints
+open_vent_system_diagnosis.md,440,- Quiet operation requirements
+open_vent_system_diagnosis.md,441,- Reliability considerations
+open_vent_system_diagnosis.md,442,
+open_vent_system_diagnosis.md,443,**Common Replacement Options:**
+open_vent_system_diagnosis.md,444,- Diaphragm valves for higher pressure
+open_vent_system_diagnosis.md,445,- Equilibrium valves for pressure fluctuations
+open_vent_system_diagnosis.md,446,- Plastic bodied for corrosive water
+open_vent_system_diagnosis.md,447,- Adjustable arms for fine tuning
+open_vent_system_diagnosis.md,448,- Quiet action models for noise-sensitive locations
+open_vent_system_diagnosis.md,449,
+open_vent_system_diagnosis.md,450,**Installation Best Practices:**
+open_vent_system_diagnosis.md,451,- Ensure adequate clearance from tank sides
+open_vent_system_diagnosis.md,452,- Install isolating valve before float valve
+open_vent_system_diagnosis.md,453,- Use PTFE tape or appropriate jointing compound
+open_vent_system_diagnosis.md,454,- Verify correct arm adjustment after installation
+open_vent_system_diagnosis.md,455,- Test operation through full range of movement
+open_vent_system_diagnosis.md,456,
+open_vent_system_diagnosis.md,457,**Upgrade Considerations:**
+open_vent_system_diagnosis.md,458,- Replace older Portsmouth valves with modern diaphragm type
+open_vent_system_diagnosis.md,459,- Consider pressure-reducing valve for high pressure supplies
+open_vent_system_diagnosis.md,460,- Add strainer for debris protection
+open_vent_system_diagnosis.md,461,- Install anti-splash tube for noisy installations
+open_vent_system_diagnosis.md,462,- Consider servicing kit if valve body in good condition
+open_vent_system_diagnosis.md,463,
+open_vent_system_diagnosis.md,464,## PART 6: GRAVITY CIRCULATION ISSUES
+open_vent_system_diagnosis.md,465,
+open_vent_system_diagnosis.md,466,### Understanding Gravity Circulation
+open_vent_system_diagnosis.md,467,
+open_vent_system_diagnosis.md,468,**Operational Principles:**
+open_vent_system_diagnosis.md,469,"- Hot water rises, cold water falls"
+open_vent_system_diagnosis.md,470,- Temperature differential creates natural flow
+open_vent_system_diagnosis.md,471,- No pump required
+open_vent_system_diagnosis.md,472,- Dependent on correct pipe sizing and routing
+open_vent_system_diagnosis.md,473,- Typically used for cylinder heating or heat leak radiators
+open_vent_system_diagnosis.md,474,
+open_vent_system_diagnosis.md,475,**System Requirements:**
+open_vent_system_diagnosis.md,476,- Minimum 28mm pipe size
+open_vent_system_diagnosis.md,477,"- Short, direct routes"
+open_vent_system_diagnosis.md,478,- Continuous rise to cylinder/radiator
+open_vent_system_diagnosis.md,479,- Adequate vertical separation (minimum 450mm)
+open_vent_system_diagnosis.md,480,- No restrictions or valves that impede flow
+open_vent_system_diagnosis.md,481,
+open_vent_system_diagnosis.md,482,**Diagnostic Procedures:**
+open_vent_system_diagnosis.md,483,
+open_vent_system_diagnosis.md,484,1. **Temperature Assessment**
+open_vent_system_diagnosis.md,485,   - Check temperature differential across circuit
+open_vent_system_diagnosis.md,486,   - Verify cylinder heats during boiler operation
+open_vent_system_diagnosis.md,487,   - Ensure heat leak radiator warms during firing
+open_vent_system_diagnosis.md,488,   - Monitor heat distribution pattern
+open_vent_system_diagnosis.md,489,   - Time heating cycle duration
+open_vent_system_diagnosis.md,490,
+open_vent_system_diagnosis.md,491,2. **Flow Verification**
+open_vent_system_diagnosis.md,492,   - Feel pipes for temperature difference
+open_vent_system_diagnosis.md,493,   - Listen for water movement
+open_vent_system_diagnosis.md,494,   - Check for convection current using temperature probe
+open_vent_system_diagnosis.md,495,   - Verify no crossflow with pumped circuits
+open_vent_system_diagnosis.md,496,   - Test operation during power outage
+open_vent_system_diagnosis.md,497,
+open_vent_system_diagnosis.md,498,3. **Installation Review**
+open_vent_system_diagnosis.md,499,   - Check pipe sizing (minimum 28mm)
+open_vent_system_diagnosis.md,500,   - Verify continuous rise to emitter
+open_vent_system_diagnosis.md,501,   - Look for potential air traps
+open_vent_system_diagnosis.md,502,   - Check for restrictions or partial blockages
+open_vent_system_diagnosis.md,503,   - Confirm adequate vertical separation
+open_vent_system_diagnosis.md,504,
+open_vent_system_diagnosis.md,505,**Common Faults and Solutions:**
+open_vent_system_diagnosis.md,506,
+open_vent_system_diagnosis.md,507,1. **Poor Circulation**
+open_vent_system_diagnosis.md,508,"   - Symptoms: Slow heating, inadequate temperature"
+open_vent_system_diagnosis.md,509,"   - Cause: Restrictions, improper pipe sizing"
+open_vent_system_diagnosis.md,510,   - Solution:
+open_vent_system_diagnosis.md,511,     * Upgrade undersized pipes
+open_vent_system_diagnosis.md,512,     * Remove restrictions
+open_vent_system_diagnosis.md,513,     * Improve pipe routing
+open_vent_system_diagnosis.md,514,     * Clean system if sludge present
+open_vent_system_diagnosis.md,515,     * Consider adding micro-bore connections
+open_vent_system_diagnosis.md,516,
+open_vent_system_diagnosis.md,517,2. **Reverse Circulation**
+open_vent_system_diagnosis.md,518,   - Symptoms: Heat travelling in unintended direction
+open_vent_system_diagnosis.md,519,"   - Cause: Competing flow paths, poor design"
+open_vent_system_diagnosis.md,520,   - Solution:
+open_vent_system_diagnosis.md,521,     * Install non-return valve
+open_vent_system_diagnosis.md,522,     * Redesign pipe layout
+open_vent_system_diagnosis.md,523,     * Separate competing circuits
+open_vent_system_diagnosis.md,524,     * Balance flow resistance
+open_vent_system_diagnosis.md,525,     * Consider heat trap loop
+open_vent_system_diagnosis.md,526,
+open_vent_system_diagnosis.md,527,3. **Interaction with Pumped Circuits**
+open_vent_system_diagnosis.md,528,   - Symptoms: Gravity circuit inactive when pump running
+open_vent_system_diagnosis.md,529,"   - Cause: Competing flows, hydraulic resistance"
+open_vent_system_diagnosis.md,530,   - Solution:
+open_vent_system_diagnosis.md,531,     * Hydraulically separate circuits
+open_vent_system_diagnosis.md,532,     * Install injector tee
+open_vent_system_diagnosis.md,533,     * Use low-loss header
+open_vent_system_diagnosis.md,534,     * Add check valve to prevent reverse flow
+open_vent_system_diagnosis.md,535,     * Consider dedicated gravity circuit from boiler
+open_vent_system_diagnosis.md,536,
+open_vent_system_diagnosis.md,537,### Improving Gravity Performance
+open_vent_system_diagnosis.md,538,
+open_vent_system_diagnosis.md,539,**Design Modifications:**
+open_vent_system_diagnosis.md,540,- Increase pipe diameter
+open_vent_system_diagnosis.md,541,- Reduce number of bends
+open_vent_system_diagnosis.md,542,- Shorten pipe runs
+open_vent_system_diagnosis.md,543,- Increase vertical separation
+open_vent_system_diagnosis.md,544,- Add heat trap loops
+open_vent_system_diagnosis.md,545,
+open_vent_system_diagnosis.md,546,**Thermal Improvements:**
+open_vent_system_diagnosis.md,547,- Insulate pipes to maintain temperature differential
+open_vent_system_diagnosis.md,548,- Maximize vertical height difference
+open_vent_system_diagnosis.md,549,- Ensure adequate venting of air
+open_vent_system_diagnosis.md,550,- Create thermal store effect in cylinder
+open_vent_system_diagnosis.md,551,- Consider thermal accelerator devices
+open_vent_system_diagnosis.md,552,
+open_vent_system_diagnosis.md,553,**Alternative Solutions:**
+open_vent_system_diagnosis.md,554,- Secondary circulation pump with power outage override
+open_vent_system_diagnosis.md,555,- Heat leak port in primary system
+open_vent_system_diagnosis.md,556,- Modern pre-plumbed cylinders with backup circulation
+open_vent_system_diagnosis.md,557,- Thermosyphon bypass arrangements
+open_vent_system_diagnosis.md,558,- Low-voltage backup pump systems
+open_vent_system_diagnosis.md,559,
+open_vent_system_diagnosis.md,560,## PART 7: REFERENCE TABLES AND TROUBLESHOOTING GUIDES
+open_vent_system_diagnosis.md,561,
+open_vent_system_diagnosis.md,562,### Open Vent System Pressure Reference
+open_vent_system_diagnosis.md,563,
+open_vent_system_diagnosis.md,564,| Component | Height Above Highest Radiator | Static Pressure | System Application |
+open_vent_system_diagnosis.md,565,|-----------|---------------------------|----------------|---------------------|
+open_vent_system_diagnosis.md,566,| F&E Tank | 0.5m | 0.05 bar | Minimum working height |
+open_vent_system_diagnosis.md,567,| F&E Tank | 1.0m | 0.1 bar | Typical domestic installation |
+open_vent_system_diagnosis.md,568,| F&E Tank | 3.0m | 0.3 bar | Recommended for larger systems |
+open_vent_system_diagnosis.md,569,| F&E Tank | 5.0m | 0.5 bar | Multi-story applications |
+open_vent_system_diagnosis.md,570,| F&E Tank | 10.0m | 1.0 bar | Maximum practical height |
+open_vent_system_diagnosis.md,571,
+open_vent_system_diagnosis.md,572,### Pipe Sizing Requirements
+open_vent_system_diagnosis.md,573,
+open_vent_system_diagnosis.md,574,| System Type | Cold Feed Minimum | Open Vent Minimum | Gravity Circuit Minimum | Notes |
+open_vent_system_diagnosis.md,575,|-------------|-------------------|-------------------|-------------------------|-------|
+open_vent_system_diagnosis.md,576,| Small Domestic | 15mm | 22mm | 28mm | Up to 15kW output |
+open_vent_system_diagnosis.md,577,| Standard Domestic | 22mm | 22mm | 28mm | 15-30kW output |
+open_vent_system_diagnosis.md,578,| Large Domestic | 22mm | 28mm | 35mm | 30-50kW output |
+open_vent_system_diagnosis.md,579,| Commercial | 28mm+ | 35mm+ | 42mm+ | Size to system requirements |
+open_vent_system_diagnosis.md,580,| Solid Fuel | 28mm | 28mm | 35mm | Must not be able to be isolated |
+open_vent_system_diagnosis.md,581,
+open_vent_system_diagnosis.md,582,### F&E Tank Sizing Guide
+open_vent_system_diagnosis.md,583,
+open_vent_system_diagnosis.md,584,| System Capacity | Minimum Tank Volume | Expansion Allowance | Recommended Size |
+open_vent_system_diagnosis.md,585,|-----------------|---------------------|---------------------|------------------|
+open_vent_system_diagnosis.md,586,| Small (100L) | 16L | 4L | 25L |
+open_vent_system_diagnosis.md,587,| Medium (150L) | 24L | 6L | 40L |
+open_vent_system_diagnosis.md,588,| Large (200L) | 32L | 8L | 50L |
+open_vent_system_diagnosis.md,589,| Very Large (300L+) | 45L+ | 12L+ | 70L+ |
+open_vent_system_diagnosis.md,590,
+open_vent_system_diagnosis.md,591,*Note: Expansion allowance should be minimum 4% of system volume*
+open_vent_system_diagnosis.md,592,
+open_vent_system_diagnosis.md,593,### Common Open Vent System Faults and Solutions
+open_vent_system_diagnosis.md,594,
+open_vent_system_diagnosis.md,595,| Problem | Symptoms | Likely Causes | Solutions |
+open_vent_system_diagnosis.md,596,|---------|----------|--------------|-----------|
+open_vent_system_diagnosis.md,597,"| Boiler noises | Kettling, bubbling | Blocked vent pipe | Clear blockage, check pipe size |"
+open_vent_system_diagnosis.md,598,"| System air | Needs frequent bleeding | Low water level, feed issue | Check F&E tank, cold feed |"
+open_vent_system_diagnosis.md,599,"| Overflow running | Water from overflow pipe | Float valve fault | Replace washer, adjust float |"
+open_vent_system_diagnosis.md,600,"| No heat after power cut | Cold radiators | Poor gravity circulation | Check pipe size, routing |"
+open_vent_system_diagnosis.md,601,"| Frozen F&E tank | No heating, burst risk | Inadequate insulation | Insulate tank, pipes, add lid |"
+open_vent_system_diagnosis.md,602,| Pump cavitation | Noisy pump operation | Restricted cold feed | Clean/replace cold feed pipe |
+open_vent_system_diagnosis.md,603,"| Poor heating | Slow to heat, cold spots | Flow restrictions | Check for blockages, clean system |"

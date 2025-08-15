@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        input { width: 100%; padding: 10px; margin: 5px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .result { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>🔐 BoilerBrain Authentication Test</h1>
+    
+    <div class="form-group">
+        <h3>Test Credentials</h3>
+        <button onclick="testDemo()">Test Demo User</button>
+        <button onclick="testAdmin()">Test Admin User</button>
+        <button onclick="testMaster()">Test Master User</button>
+    </div>
+    
+    <div class="form-group">
+        <h3>Manual Test</h3>
+        <input type="email" id="email" placeholder="Email" value="demo@boilerbrain.com">
+        <input type="password" id="password" placeholder="Password" value="boilerbrain">
+        <button onclick="testLogin()">Test Login</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const supabaseUrl = 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME';
+        
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        function showResult(message, isError = false) {
+            const result = document.getElementById('result');
+            result.className = `result ${isError ? 'error' : 'success'}`;
+            result.innerHTML = message;
+        }
+        
+        async function testCredentials(email, password, label) {
+            try {
+                showResult(`Testing ${label}...`);
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    showResult(`❌ ${label} FAILED: ${error.message}`, true);
+                } else {
+                    showResult(`✅ ${label} SUCCESS: Logged in as ${data.user.email}<br>User ID: ${data.user.id}<br>Created: ${new Date(data.user.created_at).toLocaleString()}`);
+                    
+                    // Sign out after test
+                    await supabase.auth.signOut();
+                }
+            } catch (err) {
+                showResult(`❌ ${label} ERROR: ${err.message}`, true);
+            }
+        }
+        
+        function testDemo() {
+            testCredentials('demo@boilerbrain.com', 'boilerbrain', 'Demo User');
+        }
+        
+        function testAdmin() {
+            testCredentials('mark@boilerbrain.com', 'Smurf1980', 'Admin User');
+        }
+        
+        function testMaster() {
+            testCredentials('burrows1980@yahoo.co.uk', 'Smurf1980', 'Master User');
+        }
+        
+        function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            testCredentials(email, password, 'Manual Test');
+        }
+    </script>
+</body>
+</html>

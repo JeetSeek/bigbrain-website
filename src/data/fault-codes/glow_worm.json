@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "manufacturer": "Glow-worm",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Glow-worm Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "F.00",
+      "description": "Flow temperature sensor open circuit",
+      "troubleshooting_steps": "Check flow temperature sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow temperature sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.01",
+      "description": "Return temperature sensor open circuit",
+      "troubleshooting_steps": "Check return temperature sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["return temperature sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.02",
+      "description": "DHW sensor open circuit",
+      "troubleshooting_steps": "Check DHW temperature sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["DHW temperature sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.05",
+      "description": "Flue sensor open circuit",
+      "troubleshooting_steps": "Check flue sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flue sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.20",
+      "description": "Safety shutdown - overheating",
+      "troubleshooting_steps": "Check pump operation. Check system circulation. Check safety temp limiter and connections.",
+      "safety_warning": "Allow system to cool before handling components.",
+      "components": ["pump", "safety temp limiter", "heating circuit"]
+    },
+    {
+      "code": "F.22",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "heating circuit"]
+    },
+    {
+      "code": "F.23",
+      "description": "Water circulation error (temp difference too high)",
+      "troubleshooting_steps": "Check pump operation. Check for blockages. Check flow and return sensors.",
+      "safety_warning": null,
+      "components": ["pump", "flow sensor", "return sensor", "heating circuit"]
+    },
+    {
+      "code": "F.24",
+      "description": "Water circulation error (temp rise too fast)",
+      "troubleshooting_steps": "Check pump operation. Check for blockages. Check system pressure.",
+      "safety_warning": null,
+      "components": ["pump", "heating circuit", "expansion vessel"]
+    },
+    {
+      "code": "F.28",
+      "description": "No ignition",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue system. Check gas valve. Check PCB.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas supply", "ignition electrode", "gas valve", "PCB"]
+    },
+    {
+      "code": "F.29",
+      "description": "Flame loss",
+      "troubleshooting_steps": "Check gas supply. Check flue system. Check flame sensing electrode. Check PCB.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas supply", "flue system", "flame sensing electrode", "gas valve"]
+    },
+    {
+      "code": "F.32",
+      "description": "Fan fault",
+      "troubleshooting_steps": "Check fan electrical connection. Check PCB. Check fan for blockage or damage.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "F.42",
+      "description": "Coding resistor fault",
+      "troubleshooting_steps": "Check coding resistor value. Check connections. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["coding resistor", "PCB", "wiring"]
+    }
+  ]
+}

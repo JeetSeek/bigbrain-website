@@ -1,0 +1,276 @@
+filename,line_number,content
+heat_exchanger_leak_diagnosis.md,1,# Diagnostic Guide: Identifying Heat Exchanger Leaks and Splits
+heat_exchanger_leak_diagnosis.md,2,
+heat_exchanger_leak_diagnosis.md,3,This guide provides detailed procedures for detecting internal splits in plate heat exchangers and leaks in main heat exchangers - two critical but sometimes difficult-to-diagnose issues in combi boilers.
+heat_exchanger_leak_diagnosis.md,4,
+heat_exchanger_leak_diagnosis.md,5,## PART 1: IDENTIFYING INTERNAL SPLITS IN PLATE HEAT EXCHANGERS
+heat_exchanger_leak_diagnosis.md,6,
+heat_exchanger_leak_diagnosis.md,7,"An internal split in a plate heat exchanger is particularly problematic as it allows water from the primary circuit to mix with domestic hot water, potentially introducing system water (containing inhibitors and contaminants) into the drinking water supply."
+heat_exchanger_leak_diagnosis.md,8,
+heat_exchanger_leak_diagnosis.md,9,### Common Symptoms of a Split Plate Heat Exchanger
+heat_exchanger_leak_diagnosis.md,10,
+heat_exchanger_leak_diagnosis.md,11,1. **Water Quality Issues**
+heat_exchanger_leak_diagnosis.md,12,   - Discolored water from hot taps only (often a blue/green tint from corrosion inhibitor)
+heat_exchanger_leak_diagnosis.md,13,   - Metallic or unusual taste in hot water only
+heat_exchanger_leak_diagnosis.md,14,   - Debris or particles in hot water that aren't present in cold water
+heat_exchanger_leak_diagnosis.md,15,
+heat_exchanger_leak_diagnosis.md,16,2. **System Pressure Changes**
+heat_exchanger_leak_diagnosis.md,17,   - Unexplained and recurring drop in system pressure
+heat_exchanger_leak_diagnosis.md,18,   - Need to frequently top up the system
+heat_exchanger_leak_diagnosis.md,19,   - Pressure drops specifically when hot water is being used
+heat_exchanger_leak_diagnosis.md,20,
+heat_exchanger_leak_diagnosis.md,21,3. **Performance Anomalies**
+heat_exchanger_leak_diagnosis.md,22,   - Hot water temperature fluctuations not related to flow rate
+heat_exchanger_leak_diagnosis.md,23,   - System pressure increases when hot water taps are opened
+heat_exchanger_leak_diagnosis.md,24,   - Heating activates or deactivates when hot water is used
+heat_exchanger_leak_diagnosis.md,25,
+heat_exchanger_leak_diagnosis.md,26,### Diagnostic Tests for Internal PHE Splits
+heat_exchanger_leak_diagnosis.md,27,
+heat_exchanger_leak_diagnosis.md,28,#### 1. Primary Pressure Test
+heat_exchanger_leak_diagnosis.md,29,
+heat_exchanger_leak_diagnosis.md,30,This test checks if primary circuit water is entering the domestic water circuit:
+heat_exchanger_leak_diagnosis.md,31,
+heat_exchanger_leak_diagnosis.md,32,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,33,- Pressure gauge
+heat_exchanger_leak_diagnosis.md,34,- Isolation valves for PHE
+heat_exchanger_leak_diagnosis.md,35,
+heat_exchanger_leak_diagnosis.md,36,**Procedure:**
+heat_exchanger_leak_diagnosis.md,37,1. Turn off the boiler and allow to cool
+heat_exchanger_leak_diagnosis.md,38,2. Close isolation valves to isolate the PHE
+heat_exchanger_leak_diagnosis.md,39,3. Record the initial pressure on the boiler gauge
+heat_exchanger_leak_diagnosis.md,40,4. Draw off hot water from a tap for 30 seconds
+heat_exchanger_leak_diagnosis.md,41,5. Check the pressure gauge again
+heat_exchanger_leak_diagnosis.md,42,6. A significant drop in pressure (>0.2 bar) indicates potential internal leak
+heat_exchanger_leak_diagnosis.md,43,
+heat_exchanger_leak_diagnosis.md,44,#### 2. Cross-Contamination Visual Test
+heat_exchanger_leak_diagnosis.md,45,
+heat_exchanger_leak_diagnosis.md,46,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,47,- Clean white container or glass
+heat_exchanger_leak_diagnosis.md,48,- Flashlight
+heat_exchanger_leak_diagnosis.md,49,- Reference sample of cold water from the same property
+heat_exchanger_leak_diagnosis.md,50,
+heat_exchanger_leak_diagnosis.md,51,**Procedure:**
+heat_exchanger_leak_diagnosis.md,52,1. Run cold water from kitchen tap into one container
+heat_exchanger_leak_diagnosis.md,53,2. Run hot water from same tap into a second container (allow to cool)
+heat_exchanger_leak_diagnosis.md,54,3. Compare the two samples:
+heat_exchanger_leak_diagnosis.md,55,   - Color differences (green/blue tint in hot water suggests inhibitor contamination)
+heat_exchanger_leak_diagnosis.md,56,   - Cloudiness or particles in hot water only
+heat_exchanger_leak_diagnosis.md,57,   - Different tastes or smells
+heat_exchanger_leak_diagnosis.md,58,
+heat_exchanger_leak_diagnosis.md,59,#### 3. Inhibitor Detection Test
+heat_exchanger_leak_diagnosis.md,60,
+heat_exchanger_leak_diagnosis.md,61,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,62,- Inhibitor test kit (available from heating suppliers)
+heat_exchanger_leak_diagnosis.md,63,
+heat_exchanger_leak_diagnosis.md,64,**Procedure:**
+heat_exchanger_leak_diagnosis.md,65,1. Turn off boiler and allow water to cool
+heat_exchanger_leak_diagnosis.md,66,2. Draw a sample of water from a hot tap into a clean container
+heat_exchanger_leak_diagnosis.md,67,3. Follow test kit instructions to detect presence of inhibitor
+heat_exchanger_leak_diagnosis.md,68,4. Presence of inhibitor in hot water confirms cross-contamination
+heat_exchanger_leak_diagnosis.md,69,
+heat_exchanger_leak_diagnosis.md,70,#### 4. Pressure Differential Test During Operation
+heat_exchanger_leak_diagnosis.md,71,
+heat_exchanger_leak_diagnosis.md,72,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,73,- Two pressure gauges
+heat_exchanger_leak_diagnosis.md,74,- Appropriate fittings to connect to system
+heat_exchanger_leak_diagnosis.md,75,
+heat_exchanger_leak_diagnosis.md,76,**Procedure:**
+heat_exchanger_leak_diagnosis.md,77,1. Install one pressure gauge at PHE primary inlet
+heat_exchanger_leak_diagnosis.md,78,2. Install second gauge at PHE primary outlet
+heat_exchanger_leak_diagnosis.md,79,3. Run hot water tap and observe pressure readings
+heat_exchanger_leak_diagnosis.md,80,4. Normal differential should be steady (0.5-1.0 bar typically)
+heat_exchanger_leak_diagnosis.md,81,5. Fluctuating readings or abnormal differential suggests internal problem
+heat_exchanger_leak_diagnosis.md,82,
+heat_exchanger_leak_diagnosis.md,83,### Advanced Diagnostic: Hydraulic Pressure Test
+heat_exchanger_leak_diagnosis.md,84,
+heat_exchanger_leak_diagnosis.md,85,This is a more conclusive test but requires boiler disassembly:
+heat_exchanger_leak_diagnosis.md,86,
+heat_exchanger_leak_diagnosis.md,87,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,88,- Hydraulic pressure test kit
+heat_exchanger_leak_diagnosis.md,89,- Pressure gauge
+heat_exchanger_leak_diagnosis.md,90,- Couplings to connect to PHE
+heat_exchanger_leak_diagnosis.md,91,- Drain hose
+heat_exchanger_leak_diagnosis.md,92,
+heat_exchanger_leak_diagnosis.md,93,**Procedure:**
+heat_exchanger_leak_diagnosis.md,94,1. Isolate and remove PHE from boiler
+heat_exchanger_leak_diagnosis.md,95,2. Cap one side of domestic water connections
+heat_exchanger_leak_diagnosis.md,96,3. Connect pressure tester to other side
+heat_exchanger_leak_diagnosis.md,97,4. Pressurize to manufacturer's test pressure (typically 3-6 bar)
+heat_exchanger_leak_diagnosis.md,98,5. Monitor pressure for 5-10 minutes
+heat_exchanger_leak_diagnosis.md,99,6. Any pressure drop or visible leakage indicates a split
+heat_exchanger_leak_diagnosis.md,100,7. Repeat test on primary circuit side
+heat_exchanger_leak_diagnosis.md,101,8. Any cross-leakage confirms internal split
+heat_exchanger_leak_diagnosis.md,102,
+heat_exchanger_leak_diagnosis.md,103,## PART 2: IDENTIFYING LEAKS IN MAIN HEAT EXCHANGERS
+heat_exchanger_leak_diagnosis.md,104,
+heat_exchanger_leak_diagnosis.md,105,"A leak in the main heat exchanger is usually caused by corrosion, cracking, or erosion. Early detection is crucial to prevent water damage, inefficient operation, and potential hazards."
+heat_exchanger_leak_diagnosis.md,106,
+heat_exchanger_leak_diagnosis.md,107,### Common Symptoms of a Leaking Main Heat Exchanger
+heat_exchanger_leak_diagnosis.md,108,
+heat_exchanger_leak_diagnosis.md,109,1. **Physical Evidence**
+heat_exchanger_leak_diagnosis.md,110,   - Water or moisture beneath the boiler
+heat_exchanger_leak_diagnosis.md,111,   - Water dripping from boiler casing
+heat_exchanger_leak_diagnosis.md,112,   - Corrosion stains on external boiler components
+heat_exchanger_leak_diagnosis.md,113,   - Water in the combustion chamber or burner area
+heat_exchanger_leak_diagnosis.md,114,
+heat_exchanger_leak_diagnosis.md,115,2. **Performance Issues**
+heat_exchanger_leak_diagnosis.md,116,   - Frequent system pressure drops requiring regular top-ups
+heat_exchanger_leak_diagnosis.md,117,   - Boiler lockouts with error codes related to temperature or pressure
+heat_exchanger_leak_diagnosis.md,118,   - Difficulty maintaining temperature
+heat_exchanger_leak_diagnosis.md,119,   - Unusual or excessive noise from boiler during operation
+heat_exchanger_leak_diagnosis.md,120,
+heat_exchanger_leak_diagnosis.md,121,3. **Combustion Issues**
+heat_exchanger_leak_diagnosis.md,122,   - Flame distortion or quenching
+heat_exchanger_leak_diagnosis.md,123,   - Steam visible in flue gases
+heat_exchanger_leak_diagnosis.md,124,   - Hissing or sizzling sounds during operation
+heat_exchanger_leak_diagnosis.md,125,   - Poor combustion readings during analyzer test
+heat_exchanger_leak_diagnosis.md,126,
+heat_exchanger_leak_diagnosis.md,127,### Diagnostic Tests for Main Heat Exchanger Leaks
+heat_exchanger_leak_diagnosis.md,128,
+heat_exchanger_leak_diagnosis.md,129,#### 1. Visual Inspection
+heat_exchanger_leak_diagnosis.md,130,
+heat_exchanger_leak_diagnosis.md,131,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,132,- Inspection mirror
+heat_exchanger_leak_diagnosis.md,133,- Flashlight
+heat_exchanger_leak_diagnosis.md,134,- Boroscope (if available)
+heat_exchanger_leak_diagnosis.md,135,
+heat_exchanger_leak_diagnosis.md,136,**Procedure:**
+heat_exchanger_leak_diagnosis.md,137,1. Turn off boiler and allow to cool completely
+heat_exchanger_leak_diagnosis.md,138,2. Remove boiler casing following manufacturer instructions
+heat_exchanger_leak_diagnosis.md,139,3. Inspect visible sections of heat exchanger for:
+heat_exchanger_leak_diagnosis.md,140,   - Corrosion marks or stains
+heat_exchanger_leak_diagnosis.md,141,   - White or greenish deposits (suggests leak)
+heat_exchanger_leak_diagnosis.md,142,   - Moisture in unusual areas
+heat_exchanger_leak_diagnosis.md,143,   - Rust around joints or seams
+heat_exchanger_leak_diagnosis.md,144,4. Use boroscope to inspect internal areas if possible
+heat_exchanger_leak_diagnosis.md,145,5. Check combustion chamber for water signs
+heat_exchanger_leak_diagnosis.md,146,6. Inspect burner for water marks or corrosion
+heat_exchanger_leak_diagnosis.md,147,
+heat_exchanger_leak_diagnosis.md,148,#### 2. Pressure Drop Test
+heat_exchanger_leak_diagnosis.md,149,
+heat_exchanger_leak_diagnosis.md,150,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,151,- Pressure gauge (usually on boiler)
+heat_exchanger_leak_diagnosis.md,152,- Stopwatch
+heat_exchanger_leak_diagnosis.md,153,
+heat_exchanger_leak_diagnosis.md,154,**Procedure:**
+heat_exchanger_leak_diagnosis.md,155,1. Ensure boiler is off and system is at normal operating pressure (typically 1.0-1.5 bar)
+heat_exchanger_leak_diagnosis.md,156,2. Note the exact pressure reading
+heat_exchanger_leak_diagnosis.md,157,3. Isolate the boiler from the rest of the system by closing valves
+heat_exchanger_leak_diagnosis.md,158,4. Monitor pressure for 1 hour
+heat_exchanger_leak_diagnosis.md,159,5. A pressure drop exceeding 0.1-0.2 bar indicates a leak
+heat_exchanger_leak_diagnosis.md,160,"6. If pressure drops, check all other connections first to rule out external leaks"
+heat_exchanger_leak_diagnosis.md,161,
+heat_exchanger_leak_diagnosis.md,162,#### 3. Condensate Analysis
+heat_exchanger_leak_diagnosis.md,163,
+heat_exchanger_leak_diagnosis.md,164,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,165,- pH testing strips
+heat_exchanger_leak_diagnosis.md,166,- Clean container
+heat_exchanger_leak_diagnosis.md,167,
+heat_exchanger_leak_diagnosis.md,168,**Procedure:**
+heat_exchanger_leak_diagnosis.md,169,1. Collect condensate from the condensate trap
+heat_exchanger_leak_diagnosis.md,170,2. Test pH level - should normally be acidic (pH 3-5)
+heat_exchanger_leak_diagnosis.md,171,3. A more neutral pH (5-7) may indicate heat exchanger leak allowing alkaline system water into the condensate
+heat_exchanger_leak_diagnosis.md,172,4. Look for discoloration or inhibitor presence in condensate
+heat_exchanger_leak_diagnosis.md,173,
+heat_exchanger_leak_diagnosis.md,174,#### 4. Combustion Analysis Test
+heat_exchanger_leak_diagnosis.md,175,
+heat_exchanger_leak_diagnosis.md,176,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,177,- Flue gas analyzer
+heat_exchanger_leak_diagnosis.md,178,
+heat_exchanger_leak_diagnosis.md,179,**Procedure:**
+heat_exchanger_leak_diagnosis.md,180,1. Run the boiler at full load for 10+ minutes
+heat_exchanger_leak_diagnosis.md,181,2. Insert analyzer probe into test point
+heat_exchanger_leak_diagnosis.md,182,"3. Record CO, CO₂, and efficiency readings"
+heat_exchanger_leak_diagnosis.md,183,4. Erratic readings or efficiency below 80% can indicate leak
+heat_exchanger_leak_diagnosis.md,184,5. High CO levels with normal gas pressure suggests flame disturbance possibly from water
+heat_exchanger_leak_diagnosis.md,185,
+heat_exchanger_leak_diagnosis.md,186,#### 5. Hydrostatic Test (Advanced)
+heat_exchanger_leak_diagnosis.md,187,
+heat_exchanger_leak_diagnosis.md,188,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,189,- Pressure testing equipment
+heat_exchanger_leak_diagnosis.md,190,- Appropriate adaptors
+heat_exchanger_leak_diagnosis.md,191,- Pressure gauge
+heat_exchanger_leak_diagnosis.md,192,- Clean water supply
+heat_exchanger_leak_diagnosis.md,193,
+heat_exchanger_leak_diagnosis.md,194,**Procedure:**
+heat_exchanger_leak_diagnosis.md,195,1. Isolate heat exchanger (may require partial disassembly)
+heat_exchanger_leak_diagnosis.md,196,2. Connect pressure tester to flow connection
+heat_exchanger_leak_diagnosis.md,197,3. Cap return connection
+heat_exchanger_leak_diagnosis.md,198,4. Pressurize to manufacturer's test pressure (usually 1.5x operating pressure)
+heat_exchanger_leak_diagnosis.md,199,5. Monitor for 30 minutes
+heat_exchanger_leak_diagnosis.md,200,6. Any pressure drop indicates leak
+heat_exchanger_leak_diagnosis.md,201,7. Inspect for water emergence points to locate leak
+heat_exchanger_leak_diagnosis.md,202,
+heat_exchanger_leak_diagnosis.md,203,### Specialized Tests for Microcracks
+heat_exchanger_leak_diagnosis.md,204,
+heat_exchanger_leak_diagnosis.md,205,#### 1. Dye Penetrant Test
+heat_exchanger_leak_diagnosis.md,206,
+heat_exchanger_leak_diagnosis.md,207,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,208,- Fluorescent dye penetrant kit
+heat_exchanger_leak_diagnosis.md,209,- UV light
+heat_exchanger_leak_diagnosis.md,210,
+heat_exchanger_leak_diagnosis.md,211,**Procedure:**
+heat_exchanger_leak_diagnosis.md,212,1. Clean heat exchanger thoroughly
+heat_exchanger_leak_diagnosis.md,213,2. Apply dye penetrant according to kit instructions
+heat_exchanger_leak_diagnosis.md,214,3. Allow appropriate dwell time
+heat_exchanger_leak_diagnosis.md,215,4. Clean surface excess
+heat_exchanger_leak_diagnosis.md,216,5. Use UV light to inspect - fluorescent indications reveal cracks
+heat_exchanger_leak_diagnosis.md,217,
+heat_exchanger_leak_diagnosis.md,218,#### 2. Bubble Test
+heat_exchanger_leak_diagnosis.md,219,
+heat_exchanger_leak_diagnosis.md,220,**Tools needed:**
+heat_exchanger_leak_diagnosis.md,221,- Pressure source (air)
+heat_exchanger_leak_diagnosis.md,222,- Leak detection solution (soapy water)
+heat_exchanger_leak_diagnosis.md,223,- Brush or spray bottle
+heat_exchanger_leak_diagnosis.md,224,
+heat_exchanger_leak_diagnosis.md,225,**Procedure:**
+heat_exchanger_leak_diagnosis.md,226,1. Isolate heat exchanger
+heat_exchanger_leak_diagnosis.md,227,2. Pressurize with air to manufacturer-recommended test pressure
+heat_exchanger_leak_diagnosis.md,228,"3. Apply leak detection solution to all surfaces, focusing on joints and seams"
+heat_exchanger_leak_diagnosis.md,229,4. Bubbles forming indicate leak locations
+heat_exchanger_leak_diagnosis.md,230,
+heat_exchanger_leak_diagnosis.md,231,## INTERPRETING YOUR FINDINGS
+heat_exchanger_leak_diagnosis.md,232,
+heat_exchanger_leak_diagnosis.md,233,### For Plate Heat Exchanger Splits:
+heat_exchanger_leak_diagnosis.md,234,
+heat_exchanger_leak_diagnosis.md,235,| Test Result | Interpretation | Recommended Action |
+heat_exchanger_leak_diagnosis.md,236,|-------------|----------------|-------------------|
+heat_exchanger_leak_diagnosis.md,237,| Colored hot water + pressure drop during hot water use | Confirmed internal PHE split | Replace PHE |
+heat_exchanger_leak_diagnosis.md,238,| Inhibitor detected in hot water | Confirmed internal PHE split | Replace PHE |
+heat_exchanger_leak_diagnosis.md,239,| Pressure drop during hydraulic test | Confirmed internal PHE split | Replace PHE |
+heat_exchanger_leak_diagnosis.md,240,| Slight pressure fluctuation but no contamination | Possible small split or other issue | Further testing/monitoring |
+heat_exchanger_leak_diagnosis.md,241,
+heat_exchanger_leak_diagnosis.md,242,### For Main Heat Exchanger Leaks:
+heat_exchanger_leak_diagnosis.md,243,
+heat_exchanger_leak_diagnosis.md,244,| Test Result | Interpretation | Recommended Action |
+heat_exchanger_leak_diagnosis.md,245,|-------------|----------------|-------------------|
+heat_exchanger_leak_diagnosis.md,246,| Visible water in combustion area | Confirmed heat exchanger leak | Replace heat exchanger |
+heat_exchanger_leak_diagnosis.md,247,| Significant pressure drop when isolated | Probable heat exchanger leak | Replace heat exchanger |
+heat_exchanger_leak_diagnosis.md,248,| Neutral pH condensate + visible corrosion | Confirmed heat exchanger leak | Replace heat exchanger |
+heat_exchanger_leak_diagnosis.md,249,| Bubble formation during test | Confirmed heat exchanger leak | Replace heat exchanger |
+heat_exchanger_leak_diagnosis.md,250,| Erratic combustion readings only | Possible leak or other combustion issue | Further testing |
+heat_exchanger_leak_diagnosis.md,251,
+heat_exchanger_leak_diagnosis.md,252,## SAFETY CONSIDERATIONS
+heat_exchanger_leak_diagnosis.md,253,
+heat_exchanger_leak_diagnosis.md,254,1. **Carbon Monoxide Risk**: Main heat exchanger leaks can disturb combustion causing CO production. Always fit a CO detector in properties with gas appliances.
+heat_exchanger_leak_diagnosis.md,255,
+heat_exchanger_leak_diagnosis.md,256,2. **Cross-Contamination Risk**: Plate heat exchanger splits introduce system water to drinking supply. Advise customers immediately if detected.
+heat_exchanger_leak_diagnosis.md,257,
+heat_exchanger_leak_diagnosis.md,258,3. **Professional Repair**: Both issues require professional repair. Temporary operation with either fault is not recommended.
+heat_exchanger_leak_diagnosis.md,259,
+heat_exchanger_leak_diagnosis.md,260,"4. **System Cleansing**: After replacing a split plate heat exchanger, the hot water system should be flushed to remove any contaminants."
+heat_exchanger_leak_diagnosis.md,261,
+heat_exchanger_leak_diagnosis.md,262,## PREVENTATIVE MEASURES
+heat_exchanger_leak_diagnosis.md,263,
+heat_exchanger_leak_diagnosis.md,264,### To Prevent Plate Heat Exchanger Splits:
+heat_exchanger_leak_diagnosis.md,265,- Maintain proper system pressure (avoid over-pressurization)
+heat_exchanger_leak_diagnosis.md,266,- Ensure correct inhibitor concentration
+heat_exchanger_leak_diagnosis.md,267,- Address limescale build-up promptly
+heat_exchanger_leak_diagnosis.md,268,- Install scale reducers in hard water areas
+heat_exchanger_leak_diagnosis.md,269,
+heat_exchanger_leak_diagnosis.md,270,### To Prevent Main Heat Exchanger Leaks:
+heat_exchanger_leak_diagnosis.md,271,- Annual boiler service and inspection
+heat_exchanger_leak_diagnosis.md,272,- Maintain proper water quality with inhibitor
+heat_exchanger_leak_diagnosis.md,273,- Install magnetic filter to catch debris
+heat_exchanger_leak_diagnosis.md,274,- Address unusual noises promptly
+heat_exchanger_leak_diagnosis.md,275,- Maintain proper pH levels in system water

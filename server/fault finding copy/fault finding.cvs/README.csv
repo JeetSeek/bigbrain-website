@@ -1,0 +1,94 @@
+filename,line_number,content
+README.md,1,# Heating System Fault Finding Collection
+README.md,2,
+README.md,3,## Overview
+README.md,4,
+README.md,5,"This comprehensive collection contains detailed diagnostic guides for heating system components, providing structured troubleshooting procedures for engineers and technicians. Each guide includes symptom recognition, testing procedures, causes of common faults, and detailed solutions."
+README.md,6,
+README.md,7,## Guide Categories
+README.md,8,
+README.md,9,### Boiler Systems
+README.md,10,
+README.md,11,- **[Boiler Fault Finding Guide](./boiler_fault_finding_guide.md)** - Comprehensive diagnostics for common boiler problems
+README.md,12,- **[Non-Condensing Boiler Components](./non_condensing_boiler_components.md)** - Specific fault finding for traditional boiler components
+README.md,13,- **[Condensing Boiler Faults](./condensing_boiler_faults.md)** - Specialized diagnostics for condensing technology issues
+README.md,14,- **[Component Blockage Diagnosis](./component_blockage_diagnosis_guide.md)** - Identifying and resolving blockages in heat exchangers and valves
+README.md,15,
+README.md,16,### Heat Distribution Systems
+README.md,17,
+README.md,18,- **[Radiator Fault Diagnosis](./radiator_fault_diagnosis.md)** - Troubleshooting radiator issues including airlocks and valve problems
+README.md,19,- **[Underfloor Heating Diagnosis](./underfloor_heating_diagnosis.md)** - Diagnosing water-based and electric underfloor heating systems
+README.md,20,- **[Motorized Valve Diagnosis](./motorized_valve_diagnosis.md)** - Testing and resolving issues with zone valves
+README.md,21,
+README.md,22,### Water Components
+README.md,23,
+README.md,24,- **[Hot Water Cylinder Diagnosis](./hot_water_cylinder_diagnosis.md)** - Vented and unvented cylinder fault finding
+README.md,25,- **[Heat Exchanger Leak Diagnosis](./heat_exchanger_leak_diagnosis.md)** - Identifying internal splits and leaks
+README.md,26,- **[Expansion Vessel Diagnosis](./expansion_vessel_diagnosis.md)** - Testing and repairing expansion vessel failures
+README.md,27,"- **[Water Quality Diagnosis](./water_quality_diagnosis.md)** - Addressing magnetite, corrosion, and chemical treatment issues"
+README.md,28,
+README.md,29,### Controls and Electrical
+README.md,30,
+README.md,31,"- **[Heating Controls Diagnosis](./heating_controls_diagnosis.md)** - Troubleshooting programmers, thermostats, and wiring centers"
+README.md,32,"- **[Circulation Pump Diagnostics](./circulation_pump_diagnostics.md)** - Advanced pump testing, including ECM and PWM technology"
+README.md,33,
+README.md,34,### System Types
+README.md,35,
+README.md,36,"- **[Open Vent System Diagnosis](./open_vent_system_diagnosis.md)** - Feed and expansion tank, vent pipe, and header tank issues"
+README.md,37,- **[Hybrid System Faults](./hybrid_system_faults.md)** - Diagnosing heat pump integration with traditional boilers
+README.md,38,
+README.md,39,### Gas Supply and Combustion
+README.md,40,
+README.md,41,"- **[Gas Supply Diagnosis](./gas_supply_diagnosis.md)** - Issues with ECVs, meters, governors, and pipe sizing"
+README.md,42,- **[Combustion Analysis Guide](./combustion_analysis_guide.md)** - Interpreting flue gas readings and combustion efficiency
+README.md,43,
+README.md,44,### Testing Methods
+README.md,45,
+README.md,46,- **[Multimeter Testing Guide](./multimeter_testing_guide.md)** - Using digital multimeters to test heating components
+README.md,47,- **[Analog Multimeter Boiler Testing](./analog_multimeter_boiler_testing.md)** - Specialized testing for older non-digital components
+README.md,48,- **[Flue System Diagnostics](./flue_system_diagnostics.md)** - Testing and diagnosing flue issues
+README.md,49,
+README.md,50,### Specialized Issues
+README.md,51,
+README.md,52,"- **[System Noise Diagnosis](./system_noise_diagnosis.md)** - Identifying and resolving water hammer, kettling, and other noises"
+README.md,53,
+README.md,54,## Using This Collection
+README.md,55,
+README.md,56,### Diagnostic Approach
+README.md,57,
+README.md,58,1. **Identify the symptom** - Use specific symptoms to locate relevant sections
+README.md,59,2. **Follow diagnostic procedures** - Each guide provides step-by-step testing methods
+README.md,60,3. **Determine causes** - Reference tables help match symptoms to likely causes
+README.md,61,4. **Implement solutions** - Detailed repair and resolution approaches for each fault
+README.md,62,
+README.md,63,### Reference Materials
+README.md,64,
+README.md,65,Each guide contains reference tables with:
+README.md,66,- Normal operating parameters
+README.md,67,- Common fault values
+README.md,68,- Manufacturer specifications
+README.md,69,- Testing procedures
+README.md,70,- Troubleshooting flowcharts
+README.md,71,
+README.md,72,## Maintenance and Updates
+README.md,73,
+README.md,74,This collection will be regularly updated to include:
+README.md,75,- New heating technologies
+README.md,76,- Updated testing procedures
+README.md,77,- Regulatory changes
+README.md,78,- Manufacturer-specific information
+README.md,79,- Additional specialized guides
+README.md,80,
+README.md,81,"Last updated: May 15, 2025"
+README.md,82,
+README.md,83,## Database Structure for LLM Integration
+README.md,84,
+README.md,85,This documentation is structured for easy integration with Large Language Models (LLMs) through:
+README.md,86,
+README.md,87,1. **Component-based organization** - Allows targeted retrieval of specific component information
+README.md,88,2. **Symptom-based indexing** - Enables diagnostic pathways from observed problems
+README.md,89,3. **Standardized procedure formatting** - Consistent testing method documentation
+README.md,90,"4. **Cross-referenced relationships** - Connections between symptoms, causes, and components"
+README.md,91,5. **Vector embedding compatibility** - Content is chunked appropriately for semantic search
+README.md,92,
+README.md,93,"For LLM database implementation details, see the database structure recommendations in the [README-LLM.md](./README-LLM.md) file."

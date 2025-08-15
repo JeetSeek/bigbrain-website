@@ -1,0 +1,389 @@
+filename,line_number,content
+condensing_boiler_faults.md,1,# Condensing Boiler Specific Fault Finding Guide
+condensing_boiler_faults.md,2,
+condensing_boiler_faults.md,3,"This comprehensive guide covers diagnostic procedures for components and issues specific to condensing boilers, including condensate systems, secondary heat exchangers, and efficiency-related faults."
+condensing_boiler_faults.md,4,
+condensing_boiler_faults.md,5,## PART 1: CONDENSATE SYSTEM ISSUES
+condensing_boiler_faults.md,6,
+condensing_boiler_faults.md,7,### Condensate Trap and Pipe Blockages
+condensing_boiler_faults.md,8,
+condensing_boiler_faults.md,9,**Symptoms:**
+condensing_boiler_faults.md,10,- Boiler lockout with condensate or drain error code
+condensing_boiler_faults.md,11,- Water leaking from pressure relief valve
+condensing_boiler_faults.md,12,- Gurgling noises from boiler
+condensing_boiler_faults.md,13,- Boiler shutdown during cold weather
+condensing_boiler_faults.md,14,- Water pooling around boiler base
+condensing_boiler_faults.md,15,- Error codes specific to condensate system
+condensing_boiler_faults.md,16,
+condensing_boiler_faults.md,17,**Diagnostic Procedures:**
+condensing_boiler_faults.md,18,
+condensing_boiler_faults.md,19,1. **Visual Inspection**
+condensing_boiler_faults.md,20,   - Examine condensate pipe for visible blockages
+condensing_boiler_faults.md,21,   - Check for proper fall on external pipework (minimum 2.5° slope)
+condensing_boiler_faults.md,22,"   - Inspect for kinks, bends, or damage to pipework"
+condensing_boiler_faults.md,23,   - Verify trap is filled with water
+condensing_boiler_faults.md,24,   - Look for signs of freezing in external sections
+condensing_boiler_faults.md,25,
+condensing_boiler_faults.md,26,2. **Trap Inspection**
+condensing_boiler_faults.md,27,   - Remove trap assembly according to manufacturer's guidance
+condensing_boiler_faults.md,28,"   - Check for debris, sludge, or blockages"
+condensing_boiler_faults.md,29,   - Verify correct reassembly with proper seals
+condensing_boiler_faults.md,30,   - Ensure trap holds adequate water seal depth
+condensing_boiler_faults.md,31,   - Test operation with small water volume
+condensing_boiler_faults.md,32,
+condensing_boiler_faults.md,33,3. **Pipe Testing**
+condensing_boiler_faults.md,34,   - Disconnect pipe at appropriate points
+condensing_boiler_faults.md,35,   - Test flow capability with warm water
+condensing_boiler_faults.md,36,   - Check for proper drainage
+condensing_boiler_faults.md,37,   - Verify termination point is unobstructed
+condensing_boiler_faults.md,38,   - Ensure no other appliances connect to condensate pipe
+condensing_boiler_faults.md,39,
+condensing_boiler_faults.md,40,**Common Faults and Solutions:**
+condensing_boiler_faults.md,41,
+condensing_boiler_faults.md,42,1. **Frozen Condensate Pipe**
+condensing_boiler_faults.md,43,"   - Symptoms: Winter breakdowns, pipe visibly frozen"
+condensing_boiler_faults.md,44,   - Cause: External pipework exposed to freezing temperatures
+condensing_boiler_faults.md,45,   - Solution:
+condensing_boiler_faults.md,46,"     * Short-term: Thaw with warm water, never boiling water"
+condensing_boiler_faults.md,47,     * Long-term: Insulate with waterproof lagging (minimum 13mm)
+condensing_boiler_faults.md,48,     * Consider internal termination where possible
+condensing_boiler_faults.md,49,     * Increase pipe diameter to 32mm for external runs
+condensing_boiler_faults.md,50,
+condensing_boiler_faults.md,51,2. **Blocked Trap**
+condensing_boiler_faults.md,52,"   - Symptoms: Water backing up into boiler, error codes"
+condensing_boiler_faults.md,53,"   - Cause: Debris accumulation, lack of maintenance"
+condensing_boiler_faults.md,54,   - Solution:
+condensing_boiler_faults.md,55,     * Dismantle and clean thoroughly
+condensing_boiler_faults.md,56,     * Reinstall with proper seals
+condensing_boiler_faults.md,57,     * Consider installing service access point
+condensing_boiler_faults.md,58,     * Annual cleaning during service
+condensing_boiler_faults.md,59,
+condensing_boiler_faults.md,60,3. **Improper Installation**
+condensing_boiler_faults.md,61,   - Symptoms: Persistent blockages despite cleaning
+condensing_boiler_faults.md,62,"   - Cause: Inadequate fall, excessive bends, improper termination"
+condensing_boiler_faults.md,63,   - Solution:
+condensing_boiler_faults.md,64,     * Redesign with minimum 2.5° continuous fall
+condensing_boiler_faults.md,65,"     * Limit bends to bare minimum, use 45° rather than 90°"
+condensing_boiler_faults.md,66,     * Ensure proper termination point
+condensing_boiler_faults.md,67,     * Verify compliance with building regulations
+condensing_boiler_faults.md,68,
+condensing_boiler_faults.md,69,### Condensate pH and System Damage
+condensing_boiler_faults.md,70,
+condensing_boiler_faults.md,71,**Understanding Condensate Chemistry:**
+condensing_boiler_faults.md,72,- Condensate is acidic (pH typically 3.5-5)
+condensing_boiler_faults.md,73,- Contains carbonic acid from CO₂ in flue gases
+condensing_boiler_faults.md,74,"- Can damage copper, aluminum and some concrete materials"
+condensing_boiler_faults.md,75,- Volume typically 2-3 liters per hour at full output
+condensing_boiler_faults.md,76,
+condensing_boiler_faults.md,77,**Diagnostic Procedures:**
+condensing_boiler_faults.md,78,
+condensing_boiler_faults.md,79,1. **pH Testing**
+condensing_boiler_faults.md,80,   - Collect sample of condensate
+condensing_boiler_faults.md,81,   - Test with pH strips or digital meter
+condensing_boiler_faults.md,82,   - Compare with normal range (3.5-5)
+condensing_boiler_faults.md,83,   - Abnormally low indicates possible issues
+condensing_boiler_faults.md,84,
+condensing_boiler_faults.md,85,2. **Material Inspection**
+condensing_boiler_faults.md,86,   - Check condensate pipework for damage
+condensing_boiler_faults.md,87,   - Inspect drain points for erosion
+condensing_boiler_faults.md,88,   - Examine any metal components in contact with condensate
+condensing_boiler_faults.md,89,   - Look for blue-green deposits (copper corrosion) or white powdery residue (aluminum corrosion)
+condensing_boiler_faults.md,90,
+condensing_boiler_faults.md,91,3. **Neutralizer Inspection (where fitted)**
+condensing_boiler_faults.md,92,   - Check limestone chips or neutralizing media
+condensing_boiler_faults.md,93,   - Verify flow is passing through neutralizer
+condensing_boiler_faults.md,94,   - Test pH before and after neutralizer
+condensing_boiler_faults.md,95,   - Check for bypassing or channeling through media
+condensing_boiler_faults.md,96,
+condensing_boiler_faults.md,97,**Common Issues and Solutions:**
+condensing_boiler_faults.md,98,
+condensing_boiler_faults.md,99,1. **Drain System Damage**
+condensing_boiler_faults.md,100,"   - Symptoms: Damaged drains, leaks at joins"
+condensing_boiler_faults.md,101,   - Cause: Long-term exposure to acidic condensate
+condensing_boiler_faults.md,102,   - Solution:
+condensing_boiler_faults.md,103,     * Install condensate neutralizer
+condensing_boiler_faults.md,104,"     * Use acid-resistant pipework (PVC, PP, PVDF)"
+condensing_boiler_faults.md,105,     * Repair damaged sections
+condensing_boiler_faults.md,106,     * Ensure proper dilution at termination
+condensing_boiler_faults.md,107,
+condensing_boiler_faults.md,108,2. **Metal Component Corrosion**
+condensing_boiler_faults.md,109,   - Symptoms: Premature failure of metal parts in contact with condensate
+condensing_boiler_faults.md,110,   - Cause: Chemical attack from acidic condensate
+condensing_boiler_faults.md,111,   - Solution:
+condensing_boiler_faults.md,112,     * Replace with appropriate materials
+condensing_boiler_faults.md,113,     * Install neutralization system
+condensing_boiler_faults.md,114,     * Ensure proper drainage to prevent pooling
+condensing_boiler_faults.md,115,
+condensing_boiler_faults.md,116,3. **Neutralizer Failure**
+condensing_boiler_faults.md,117,   - Symptoms: pH remains low after neutralizer
+condensing_boiler_faults.md,118,"   - Cause: Exhausted media, channeling, bypassing"
+condensing_boiler_faults.md,119,   - Solution:
+condensing_boiler_faults.md,120,     * Replace neutralizing media
+condensing_boiler_faults.md,121,     * Check for proper flow path
+condensing_boiler_faults.md,122,     * Resize if flow rate exceeds capacity
+condensing_boiler_faults.md,123,     * Schedule regular maintenance
+condensing_boiler_faults.md,124,
+condensing_boiler_faults.md,125,## PART 2: SECONDARY HEAT EXCHANGER ISSUES
+condensing_boiler_faults.md,126,
+condensing_boiler_faults.md,127,### Secondary Heat Exchanger Fouling
+condensing_boiler_faults.md,128,
+condensing_boiler_faults.md,129,**Symptoms:**
+condensing_boiler_faults.md,130,- Reduced boiler efficiency
+condensing_boiler_faults.md,131,- Higher flue gas temperature than specification
+condensing_boiler_faults.md,132,- Reduced condensate production
+condensing_boiler_faults.md,133,- Premature cycling
+condensing_boiler_faults.md,134,- High return temperatures to boiler
+condensing_boiler_faults.md,135,- Inadequate heating despite burner operation
+condensing_boiler_faults.md,136,
+condensing_boiler_faults.md,137,**Diagnostic Procedures:**
+condensing_boiler_faults.md,138,
+condensing_boiler_faults.md,139,1. **Temperature Differential Testing**
+condensing_boiler_faults.md,140,   - Measure flow and return temperatures
+condensing_boiler_faults.md,141,   - Calculate delta T (should be typically 20°C at full load)
+condensing_boiler_faults.md,142,   - Measure flue gas temperature (higher than spec indicates fouling)
+condensing_boiler_faults.md,143,   - Monitor condensate production rate
+condensing_boiler_faults.md,144,
+condensing_boiler_faults.md,145,2. **Visual Inspection (if accessible)**
+condensing_boiler_faults.md,146,   - Inspect for scale buildup
+condensing_boiler_faults.md,147,   - Look for restrictions in waterways
+condensing_boiler_faults.md,148,   - Check for soot accumulation on gas side
+condensing_boiler_faults.md,149,   - Inspect for signs of corrosion or pinholes
+condensing_boiler_faults.md,150,
+condensing_boiler_faults.md,151,3. **Performance Testing**
+condensing_boiler_faults.md,152,   - Measure fuel consumption versus heat output
+condensing_boiler_faults.md,153,   - Compare current efficiency with commissioned values
+condensing_boiler_faults.md,154,   - Check flue gas analysis results
+condensing_boiler_faults.md,155,   - Verify proper condensing operation at lower loads
+condensing_boiler_faults.md,156,
+condensing_boiler_faults.md,157,**Common Faults and Solutions:**
+condensing_boiler_faults.md,158,
+condensing_boiler_faults.md,159,1. **Limescale Buildup**
+condensing_boiler_faults.md,160,"   - Symptoms: Reduced heat transfer, high flue temperatures"
+condensing_boiler_faults.md,161,"   - Cause: Hard water, inadequate water treatment"
+condensing_boiler_faults.md,162,   - Solution:
+condensing_boiler_faults.md,163,     * Chemical cleaning with appropriate descaler
+condensing_boiler_faults.md,164,     * Installation of water treatment
+condensing_boiler_faults.md,165,     * System filter on return to boiler
+condensing_boiler_faults.md,166,     * Regular maintenance schedule
+condensing_boiler_faults.md,167,
+condensing_boiler_faults.md,168,2. **Combustion Deposits**
+condensing_boiler_faults.md,169,"   - Symptoms: Soot accumulation, efficiency loss"
+condensing_boiler_faults.md,170,"   - Cause: Incorrect air/gas ratio, poor combustion"
+condensing_boiler_faults.md,171,   - Solution:
+condensing_boiler_faults.md,172,     * Adjust combustion settings
+condensing_boiler_faults.md,173,     * Clean heat exchanger gas side
+condensing_boiler_faults.md,174,     * Check flue system for restrictions
+condensing_boiler_faults.md,175,     * Verify proper fan operation
+condensing_boiler_faults.md,176,
+condensing_boiler_faults.md,177,3. **Corrosion Issues**
+condensing_boiler_faults.md,178,"   - Symptoms: Pinholes, leaks, water discoloration"
+condensing_boiler_faults.md,179,"   - Cause: Condensate pooling, improper materials, low pH"
+condensing_boiler_faults.md,180,   - Solution:
+condensing_boiler_faults.md,181,     * Inspect for proper drainage
+condensing_boiler_faults.md,182,     * Check materials compatibility
+condensing_boiler_faults.md,183,     * Ensure adequate neutralization
+condensing_boiler_faults.md,184,     * Replace if severely damaged
+condensing_boiler_faults.md,185,
+condensing_boiler_faults.md,186,### Heat Exchanger Material-Specific Issues
+condensing_boiler_faults.md,187,
+condensing_boiler_faults.md,188,**Aluminum Heat Exchangers:**
+condensing_boiler_faults.md,189,- Susceptible to specific corrosion mechanisms
+condensing_boiler_faults.md,190,- Sensitive to pH extremes in system water
+condensing_boiler_faults.md,191,- Vulnerable to certain inhibitors
+condensing_boiler_faults.md,192,
+condensing_boiler_faults.md,193,**Diagnostic Procedures:**
+condensing_boiler_faults.md,194,
+condensing_boiler_faults.md,195,1. **Water Quality Analysis**
+condensing_boiler_faults.md,196,   - Test system water pH (should be 7.0-8.5 for aluminum)
+condensing_boiler_faults.md,197,   - Check inhibitor type and concentration
+condensing_boiler_faults.md,198,   - Look for signs of aluminum oxide (white powder)
+condensing_boiler_faults.md,199,   - Test for other metals in system water
+condensing_boiler_faults.md,200,
+condensing_boiler_faults.md,201,2. **Flow Pattern Analysis**
+condensing_boiler_faults.md,202,   - Check for cold spots using thermal imaging
+condensing_boiler_faults.md,203,   - Verify full circulation through exchanger
+condensing_boiler_faults.md,204,   - Look for signs of deposition at low flow points
+condensing_boiler_faults.md,205,   - Check for air accumulation
+condensing_boiler_faults.md,206,
+condensing_boiler_faults.md,207,3. **Pressure Testing**
+condensing_boiler_faults.md,208,   - Isolate and pressure test if leakage suspected
+condensing_boiler_faults.md,209,   - Check for pressure loss over time
+condensing_boiler_faults.md,210,   - Verify no cross-leakage between circuits
+condensing_boiler_faults.md,211,   - Look for external signs of water/gas leakage
+condensing_boiler_faults.md,212,
+condensing_boiler_faults.md,213,**Common Issues and Solutions:**
+condensing_boiler_faults.md,214,
+condensing_boiler_faults.md,215,1. **Galvanic Corrosion**
+condensing_boiler_faults.md,216,   - Symptoms: Premature aluminum deterioration
+condensing_boiler_faults.md,217,   - Cause: Mixed metals in system without proper inhibitor
+condensing_boiler_faults.md,218,   - Solution:
+condensing_boiler_faults.md,219,     * Use aluminum-compatible inhibitor
+condensing_boiler_faults.md,220,     * Install electrical isolation where needed
+condensing_boiler_faults.md,221,     * Maintain proper pH range
+condensing_boiler_faults.md,222,     * Consider system filter with magnet
+condensing_boiler_faults.md,223,
+condensing_boiler_faults.md,224,2. **Thermal Stress Cracking**
+condensing_boiler_faults.md,225,"   - Symptoms: Cracks at stress points, leakage"
+condensing_boiler_faults.md,226,"   - Cause: Rapid temperature changes, poor flow"
+condensing_boiler_faults.md,227,   - Solution:
+condensing_boiler_faults.md,228,     * Ensure minimum flow rates are maintained
+condensing_boiler_faults.md,229,     * Verify proper pump operation
+condensing_boiler_faults.md,230,     * Consider low loss header for system protection
+condensing_boiler_faults.md,231,     * Check bypass operation
+condensing_boiler_faults.md,232,
+condensing_boiler_faults.md,233,3. **Alumina Blockage**
+condensing_boiler_faults.md,234,"   - Symptoms: Restricted flow, cold areas on exchanger"
+condensing_boiler_faults.md,235,   - Cause: Aluminum corrosion products depositing in narrow waterways
+condensing_boiler_faults.md,236,   - Solution:
+condensing_boiler_faults.md,237,     * Chemical cleaning with aluminum-compatible cleaner
+condensing_boiler_faults.md,238,     * Correct system water treatment
+condensing_boiler_faults.md,239,     * Install system filter
+condensing_boiler_faults.md,240,     * Monitor pH regularly
+condensing_boiler_faults.md,241,
+condensing_boiler_faults.md,242,## PART 3: CONDENSING SPECIFIC CONTROL ISSUES
+condensing_boiler_faults.md,243,
+condensing_boiler_faults.md,244,### Low Temperature Operation Problems
+condensing_boiler_faults.md,245,
+condensing_boiler_faults.md,246,**Understanding Condensing Operation:**
+condensing_boiler_faults.md,247,- Maximum efficiency achieved when return water below dew point (54-56°C)
+condensing_boiler_faults.md,248,- Control systems must manage flow temperatures appropriately
+condensing_boiler_faults.md,249,- Weather compensation critical for optimizing condensing
+condensing_boiler_faults.md,250,- High return temperatures prevent condensing and reduce efficiency
+condensing_boiler_faults.md,251,
+condensing_boiler_faults.md,252,**Diagnostic Procedures:**
+condensing_boiler_faults.md,253,
+condensing_boiler_faults.md,254,1. **Control System Analysis**
+condensing_boiler_faults.md,255,   - Verify weather compensation functionality
+condensing_boiler_faults.md,256,   - Check return temperature sensor accuracy
+condensing_boiler_faults.md,257,   - Review compensation curve settings
+condensing_boiler_faults.md,258,   - Evaluate flow temperature control logic
+condensing_boiler_faults.md,259,
+condensing_boiler_faults.md,260,2. **System Balance Assessment**
+condensing_boiler_faults.md,261,   - Check for excessive flow rates (reducing delta T)
+condensing_boiler_faults.md,262,   - Verify radiator sizing is appropriate for condensing
+condensing_boiler_faults.md,263,   - Measure actual return temperatures during operation
+condensing_boiler_faults.md,264,   - Assess minimum load capability without cycling
+condensing_boiler_faults.md,265,
+condensing_boiler_faults.md,266,3. **Cycling Analysis**
+condensing_boiler_faults.md,267,   - Monitor burner on/off frequency
+condensing_boiler_faults.md,268,   - Check minimum modulation capability
+condensing_boiler_faults.md,269,   - Verify anti-cycle timing settings
+condensing_boiler_faults.md,270,   - Assess oversizing relative to load
+condensing_boiler_faults.md,271,
+condensing_boiler_faults.md,272,**Common Issues and Solutions:**
+condensing_boiler_faults.md,273,
+condensing_boiler_faults.md,274,1. **Poor Weather Compensation Setup**
+condensing_boiler_faults.md,275,"   - Symptoms: High return temperatures, reduced efficiency"
+condensing_boiler_faults.md,276,"   - Cause: Incorrect compensation curve, sensor issues"
+condensing_boiler_faults.md,277,   - Solution:
+condensing_boiler_faults.md,278,     * Adjust compensation curve to lower flow temperatures
+condensing_boiler_faults.md,279,     * Verify outdoor sensor location and operation
+condensing_boiler_faults.md,280,     * Set maximum flow temperature appropriately
+condensing_boiler_faults.md,281,     * Educate user on efficiency benefits
+condensing_boiler_faults.md,282,
+condensing_boiler_faults.md,283,2. **System Oversizing**
+condensing_boiler_faults.md,284,"   - Symptoms: Short cycling, high return temperatures"
+condensing_boiler_faults.md,285,   - Cause: Boiler capacity exceeds demand significantly
+condensing_boiler_faults.md,286,   - Solution:
+condensing_boiler_faults.md,287,     * Adjust burner pressure/input if possible
+condensing_boiler_faults.md,288,     * Increase minimum modulation with buffer vessel
+condensing_boiler_faults.md,289,     * Adjust boiler sequence for multiple boilers
+condensing_boiler_faults.md,290,     * Consider replacement with properly sized unit
+condensing_boiler_faults.md,291,
+condensing_boiler_faults.md,292,3. **Hydraulic Separation Issues**
+condensing_boiler_faults.md,293,   - Symptoms: High return temperatures despite controls
+condensing_boiler_faults.md,294,"   - Cause: Poor hydraulic separation, flow imbalance"
+condensing_boiler_faults.md,295,   - Solution:
+condensing_boiler_faults.md,296,     * Install/check low loss header operation
+condensing_boiler_faults.md,297,     * Verify pump sizing and operation
+condensing_boiler_faults.md,298,     * Balance system flows
+condensing_boiler_faults.md,299,     * Consider primary/secondary separation
+condensing_boiler_faults.md,300,
+condensing_boiler_faults.md,301,### Modulation Control Problems
+condensing_boiler_faults.md,302,
+condensing_boiler_faults.md,303,**Modulation Functionality:**
+condensing_boiler_faults.md,304,- Modern condensing boilers typically modulate down to 20-30% of maximum
+condensing_boiler_faults.md,305,- Control systems vary gas and air rates to match demand
+condensing_boiler_faults.md,306,- Proper modulation critical for efficiency and component longevity
+condensing_boiler_faults.md,307,- Issues often relate to feedback sensors and control algorithms
+condensing_boiler_faults.md,308,
+condensing_boiler_faults.md,309,**Diagnostic Procedures:**
+condensing_boiler_faults.md,310,
+condensing_boiler_faults.md,311,1. **Modulation Range Testing**
+condensing_boiler_faults.md,312,   - Observe actual modulation behavior under varying load
+condensing_boiler_faults.md,313,   - Compare with manufacturer's specifications
+condensing_boiler_faults.md,314,   - Check minimum stable output
+condensing_boiler_faults.md,315,   - Verify smooth transitions between rates
+condensing_boiler_faults.md,316,
+condensing_boiler_faults.md,317,2. **Sensor Verification**
+condensing_boiler_faults.md,318,   - Test flow temperature sensor accuracy
+condensing_boiler_faults.md,319,   - Verify return sensor readings
+condensing_boiler_faults.md,320,   - Check flame sensing values
+condensing_boiler_faults.md,321,   - Test modulation feedback mechanisms
+condensing_boiler_faults.md,322,
+condensing_boiler_faults.md,323,3. **Gas Valve Assessment**
+condensing_boiler_faults.md,324,   - Inspect gas valve modulation components
+condensing_boiler_faults.md,325,   - Check for smooth mechanical operation
+condensing_boiler_faults.md,326,   - Verify electrical signals to valve
+condensing_boiler_faults.md,327,   - Test gas pressure at different modulation rates
+condensing_boiler_faults.md,328,
+condensing_boiler_faults.md,329,**Common Issues and Solutions:**
+condensing_boiler_faults.md,330,
+condensing_boiler_faults.md,331,1. **Erratic Modulation**
+condensing_boiler_faults.md,332,"   - Symptoms: Unstable operation, flame failure, noise changes"
+condensing_boiler_faults.md,333,"   - Cause: Control issues, sensor problems, gas valve faults"
+condensing_boiler_faults.md,334,   - Solution:
+condensing_boiler_faults.md,335,     * Check sensor connections and values
+condensing_boiler_faults.md,336,     * Clean flame detection electrode
+condensing_boiler_faults.md,337,     * Verify gas valve operation
+condensing_boiler_faults.md,338,     * Update firmware if available
+condensing_boiler_faults.md,339,
+condensing_boiler_faults.md,340,2. **Limited Modulation Range**
+condensing_boiler_faults.md,341,"   - Symptoms: Unable to modulate properly, minimum too high"
+condensing_boiler_faults.md,342,"   - Cause: Gas valve issues, incorrect settings, air/gas ratio"
+condensing_boiler_faults.md,343,   - Solution:
+condensing_boiler_faults.md,344,     * Check minimum rate settings
+condensing_boiler_faults.md,345,     * Verify gas valve operation
+condensing_boiler_faults.md,346,     * Adjust air/gas ratio
+condensing_boiler_faults.md,347,     * Check for restrictions in air or gas supply
+condensing_boiler_faults.md,348,
+condensing_boiler_faults.md,349,3. **Control Board Issues**
+condensing_boiler_faults.md,350,"   - Symptoms: Unexpected modulation behavior, error codes"
+condensing_boiler_faults.md,351,"   - Cause: Firmware issues, board failure, wiring problems"
+condensing_boiler_faults.md,352,   - Solution:
+condensing_boiler_faults.md,353,     * Check for loose connections
+condensing_boiler_faults.md,354,     * Update firmware if available
+condensing_boiler_faults.md,355,     * Reset to factory settings if possible
+condensing_boiler_faults.md,356,     * Replace control board if necessary
+condensing_boiler_faults.md,357,
+condensing_boiler_faults.md,358,## PART 4: REFERENCE TABLES AND TROUBLESHOOTING GUIDES
+condensing_boiler_faults.md,359,
+condensing_boiler_faults.md,360,### Condensate System Reference Values
+condensing_boiler_faults.md,361,
+condensing_boiler_faults.md,362,| Component | Normal Range | Warning Signs |
+condensing_boiler_faults.md,363,|-----------|--------------|--------------|
+condensing_boiler_faults.md,364,| Condensate pH | 3.5-5.0 | Below 3.0 or above 5.5 |
+condensing_boiler_faults.md,365,| Condensate Production | 1.5-3 L/hour at full load | Significantly reduced or stopped |
+condensing_boiler_faults.md,366,"| Trap Water Seal | Minimum 75mm | Below minimum, gurgling sounds |"
+condensing_boiler_faults.md,367,| Pipe Fall | Minimum 2.5° continuous | Any sections with inadequate fall |
+condensing_boiler_faults.md,368,"| Pipe Internal Diameter | 21.5mm minimum (3/4"") | Below minimum, evidence of freezing |"
+condensing_boiler_faults.md,369,"| External Insulation | 13mm minimum | Inadequate, signs of freezing |"
+condensing_boiler_faults.md,370,
+condensing_boiler_faults.md,371,### Heat Exchanger Inspection Guide
+condensing_boiler_faults.md,372,
+condensing_boiler_faults.md,373,| Material | Cleaning Method | Inspection Points | Warning Signs |
+condensing_boiler_faults.md,374,|----------|----------------|-------------------|--------------|
+condensing_boiler_faults.md,375,"| Aluminum | Aluminum-compatible cleaner | Oxide deposits, stress points | White powder, crystalline deposits |"
+condensing_boiler_faults.md,376,"| Stainless Steel | Stainless-compatible descaler | Weld joints, stress cracks | Brown staining, pitting |"
+condensing_boiler_faults.md,377,"| Cast Iron | Specific cast iron cleaner | Sections joints, internal surfaces | Orange deposits, section cracks |"
+condensing_boiler_faults.md,378,"| Copper | Copper-safe descaler | Brazed joints, flow paths | Blue-green deposits, erosion near joints |"
+condensing_boiler_faults.md,379,
+condensing_boiler_faults.md,380,### Condensing Boiler Efficiency Troubleshooting
+condensing_boiler_faults.md,381,
+condensing_boiler_faults.md,382,| Issue | Symptoms | Diagnostic Check | Solution |
+condensing_boiler_faults.md,383,|-------|----------|-----------------|----------|
+condensing_boiler_faults.md,384,"| High Return Temperature | Reduced efficiency, less condensate | Measure return temp (should be <54°C) | Lower flow temp, balance system, check controls |"
+condensing_boiler_faults.md,385,"| Poor Condensing | Low condensate volume, high flue temp | Check flue gas/return water temps | Adjust flow temperature, verify hydraulic separation |"
+condensing_boiler_faults.md,386,"| Improper Modulation | Cycling, temperature swings | Monitor modulation behavior | Check sensors, update controls, verify gas valve |"
+condensing_boiler_faults.md,387,"| Heat Exchanger Fouling | Rising flue gas temp, reduced efficiency | Flue gas analysis, visual inspection | Clean heat exchanger, water treatment |"
+condensing_boiler_faults.md,388,"| System Oversizing | Short cycling, high return temps | Calculate load vs. boiler capacity | Adjust burner rate, modify controls, buffer vessel |"

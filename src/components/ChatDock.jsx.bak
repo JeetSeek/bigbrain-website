@@ -1,0 +1,328 @@
+import React, { useState, useRef, useEffect } from 'react';
+
+// DeepSeek API endpoint and API key fallback chain
+const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
+const DEEPSEEK_API_KEYS = [
+
+  import.meta.env.VITE_DEEPSEEK_API_KEY_1,
+  import.meta.env.VITE_DEEPSEEK_API_KEY_2,
+  import.meta.env.VITE_DEEPSEEK_API_KEY_3,
+  import.meta.env.VITE_DEEPSEEK_API_KEY_4,
+  import.meta.env.VITE_DEEPSEEK_API_KEY_5
+].filter(Boolean); // Remove any undefined/empty
+
+// Fallback example answers if API fails
+const EXAMPLE_ANSWERS = [
+  "Sure! Let me check that for you...",
+  "Boiler Brain is thinking...",
+  "Here's a helpful tip: Try resetting your boiler if it won't start.",
+  "You can find the manual in the 'Manual Finder' tab.",
+  "Please provide more details about your issue.",
+  "Your subscription is active and your last payment was successful.",
+  "I'm here to help you with any boiler questions!"
+];
+
+function getRandomExampleAnswer() {
+  return EXAMPLE_ANSWERS[Math.floor(Math.random() * EXAMPLE_ANSWERS.length)];
+}
+
+// Try each DeepSeek API key in order until one succeeds
+async function fetchDeepSeekResponse(history) {
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ history })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.response) return data.response;
+    } else {
+      const errorText = await res.text();
+      console.warn(`[DeepSeek Proxy] Error response: ${errorText}`);
+    }
+  } catch (err) {
+    console.error('[DeepSeek Proxy] Network/JS error:', err);
+  }
+  // Fallback if proxy fails
+  return getRandomExampleAnswer();
+}
+
+
+const ChatDock = ({ embedMode = false, userName }) => {
+  // Unified Voice Chat state
+  const [voiceChatEnabled, setVoiceChatEnabled] = useState(false);
+  const [voiceInputActive, setVoiceInputActive] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState([]);
+  const [selectedVoice, setSelectedVoice] = useState('');
+  const recognitionRef = useRef(null);
+
+  // Load voices for speech synthesis
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        setAvailableVoices(voices);
+        if (voices.length && !selectedVoice) {
+          setSelectedVoice(voices.find(v => v.lang.startsWith('en'))?.voiceURI || voices[0].voiceURI);
+        }
+      };
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+      loadVoices();
+    }
+  }, [selectedVoice]);
+
+  // Start/stop speech recognition
+  const handleVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Sorry, your browser does not support speech recognition.');
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.lang = 'en-GB';
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
+      recognitionRef.current.onresult = event => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+        setVoiceInputActive(false);
+      };
+      recognitionRef.current.onerror = () => {
+        setVoiceInputActive(false);
+      };
+      recognitionRef.current.onend = () => {
+        setVoiceInputActive(false);
+      };
+    }
+    setVoiceInputActive(true);
+    recognitionRef.current.start();
+  };
+
+  // Speak text using Speech Synthesis
+  const speak = text => {
+    if (!('speechSynthesis' in window)) return;
+    const utter = new window.SpeechSynthesisUtterance(text);
+    utter.lang = 'en-GB';
+    utter.rate = 1;
+    const voice = availableVoices.find(v => v.voiceURI === selectedVoice);
+    if (voice) utter.voice = voice;
+    window.speechSynthesis.speak(utter);
+  };
+
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState('');
+  const [history, setHistory] = useState([
+    { sender: 'ai', text: userName ? `Hi ${userName}! I'm Boiler Brain. How can I help you today?` : "Hi! I'm Boiler Brain. How can I help you today?" }
+  ]);
+  const [waiting, setWaiting] = useState(false);
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [history, open]);
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    const userMsg = { sender: 'user', text: input };
+    setHistory(h => [...h, userMsg]);
+    setInput('');
+    setWaiting(true);
+    // Use DeepSeek API for AI response
+    const aiMsg = await fetchDeepSeekResponse([...history, userMsg]);
+    setHistory(h => {
+      const newHistory = [...h, { sender: 'ai', text: aiMsg }];
+      // Only speak AI response ONCE per new reply
+      if (voiceChatEnabled && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        if (window.lastSpoken !== aiMsg) {
+          speak(aiMsg);
+          window.lastSpoken = aiMsg;
+        }
+      }
+      // Automatically start listening for user speech input if voice chat is enabled
+      if (voiceChatEnabled) {
+        setTimeout(() => handleVoiceInput(), 500);
+      }
+      return newHistory;
+    });
+    setWaiting(false);
+  };
+
+  // Prevent repeated speaking of the same AI message (cleanup on unmount)
+  useEffect(() => {
+    return () => {
+      if (window.lastSpoken) delete window.lastSpoken;
+    };
+  }, []);
+
+  // When a message is sent (user side), also auto-listen if voice chat is enabled
+  useEffect(() => {
+    if (voiceChatEnabled && !waiting && !voiceInputActive && input === '') {
+      // Only auto-listen if not already listening, not waiting for AI, and input is empty
+      setTimeout(() => handleVoiceInput(), 500);
+    }
+    // eslint-disable-next-line
+  }, [voiceChatEnabled, waiting]);
+
+
+
+  // If in embedMode, render as a panel (not floating)
+  if (embedMode) {
+    return (
+      <div className="w-full max-w-2xl mx-auto bg-white/95 rounded-xl shadow-2xl flex flex-col border-2 border-blue-700 min-h-[340px]">
+        <div className="px-4 py-3 border-b border-blue-100 bg-blue-700 text-white rounded-t-xl font-bold flex items-center gap-2">
+          <span className="text-lg">Boiler Brain Chat</span>
+          <span className="animate-pulse text-green-300 text-xs">● online</span>
+        </div>
+        <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2 bg-gradient-to-br from-blue-50 via-white to-blue-100" style={{ minHeight: 180, maxHeight: 260 }}>
+          {history.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.sender === 'ai' ? 'justify-start' : 'justify-end'} items-start`}>
+              {msg.sender === 'ai' && (
+                <span className="mr-2 mt-1 text-2xl select-none" title="Boiler Brain">🧠</span>
+              )}
+              <div className={`px-3 py-2 rounded-lg text-sm max-w-[80%] shadow ${msg.sender === 'ai' ? 'bg-blue-100 text-blue-900' : 'bg-blue-100 text-black'}`}>
+                {msg.text}
+              </div>
+              {msg.sender === 'user' && (
+                <span className="ml-2 mt-1 text-2xl select-none" title="Engineer">🔧</span>
+              )}
+            </div>
+          ))}
+          {waiting && (
+            <div className="flex justify-start"><div className="px-3 py-2 rounded-lg text-sm bg-blue-100 text-blue-900 max-w-[80%] opacity-80 italic animate-pulse">Boiler Brain is thinking...</div></div>
+          )}
+          <div ref={chatEndRef} />
+        </div>
+        <form className="flex gap-2 p-3 border-t border-blue-100 bg-blue-50 rounded-b-xl" onSubmit={handleSend}>
+          {/* Unified Voice Chat Button and Voice Selector */}
+          <button
+            type="button"
+            onClick={() => setVoiceChatEnabled(v => !v)}
+            className={`rounded-full flex items-center gap-2 px-3 py-2 ${voiceChatEnabled ? 'bg-[#30d158]/20 border border-[#30d158]/30' : 'bg-[#2c2c2e] border border-[#3c3c3e]'} shadow-sm text-white hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-[#0a84ff] transition-all`}
+            aria-label={voiceChatEnabled ? 'Voice chat on' : 'Voice chat off'}
+            title={voiceChatEnabled ? 'Voice chat enabled' : 'Enable voice chat'}
+            style={{ minWidth: 110, height: 42, marginRight: 4 }}
+          >
+            <span className="text-xl">🎤</span>
+            <span className="text-sm font-medium">Voice</span>
+            {voiceChatEnabled && <span className="ml-1 text-xs text-[#30d158]">ON</span>}
+          </button>
+          {voiceChatEnabled && (
+            <select
+              className="rounded-xl bg-[#2c2c2e] border-none px-2 py-1 text-sm text-white focus:outline-none focus:ring-1 focus:ring-[#0a84ff]"
+              value={selectedVoice}
+              onChange={e => setSelectedVoice(e.target.value)}
+              style={{ minWidth: 90, maxWidth: 140, height: 38, marginRight: 4 }}
+              aria-label="Select voice type"
+              title="Select voice type"
+            >
+              {availableVoices.map(v => (
+                <option key={v.voiceURI} value={v.voiceURI}>{v.name.slice(0, 12)}{v.name.length > 12 ? '...' : ''}</option>
+              ))}
+            </select>
+          )}
+          {/* When voice chat is enabled, clicking send or pressing enter uses voice input for user, and AI responses are spoken automatically. */}
+
+          <textarea
+            className="flex-grow rounded-2xl px-4 py-2 bg-[#2c2c2e] border-none text-white focus:outline-none focus:ring-1 focus:ring-[#0a84ff] resize-none leading-relaxed placeholder-gray-500"
+            placeholder="Message"
+            value={input}
+            onChange={e => {
+              setInput(e.target.value);
+              e.target.style.height = '38px'; // reset
+              e.target.style.height = Math.min(e.target.scrollHeight, 180) + 'px';
+            }}
+            disabled={waiting}
+            aria-label="Type your message"
+            rows={1}
+            style={{ minWidth: 80, minHeight: 38, maxHeight: 180, marginRight: 4, overflow: 'auto', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', fontSize: '15px' }}
+            onInput={e => {
+              e.target.style.height = '38px';
+              e.target.style.height = Math.min(e.target.scrollHeight, 180) + 'px';
+            }}
+          />
+          <button
+            type="submit"
+            className="bg-[#0a84ff] text-white rounded-full w-10 h-10 flex items-center justify-center hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-white disabled:opacity-50"
+            disabled={waiting || !input.trim()}
+            style={{ minWidth: 40, height: 40 }}
+          >
+            →
+          </button>
+
+  }
+  // eslint-disable-next-line
+}, [voiceChatEnabled, waiting]);
+
+
+// If in embedMode, render as a panel (not floating)
+if (embedMode) {
+  return (
+    <div className="w-full max-w-2xl mx-auto bg-white/95 rounded-xl shadow-2xl flex flex-col border-2 border-blue-700 min-h-[340px]">
+                    </div>
+                  )}
+                  <div 
+                    className={`px-3 py-2 text-sm max-w-[80%] sm:max-w-[70%] ${msg.sender === 'ai'
+                      ? `bg-[#1c1c1e] text-gray-200 ${isFirstMessage ? 'ml-7 rounded-t-2xl rounded-br-2xl rounded-bl-md' : isLastMessage ? 'ml-7 rounded-b-2xl rounded-tr-2xl rounded-tl-md' : 'ml-7 rounded-r-2xl rounded-l-md'}`
+                      : `bg-[#0c84ff] text-white ${isFirstMessage ? 'rounded-t-2xl rounded-bl-2xl rounded-br-md' : isLastMessage ? 'rounded-b-2xl rounded-tl-2xl rounded-tr-md' : 'rounded-l-2xl rounded-r-md'}`
+                    } leading-relaxed shadow-sm my-0.5`} 
+                    style={{ fontFamily: 'SF Pro Text, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif', letterSpacing: '-0.03em', fontWeight: '400' }}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              );
+            })}
+            {waiting && (
+              <div className="flex justify-start relative">
+                <div className="absolute left-0 top-0 h-6 w-6 rounded-full bg-gradient-to-br from-[#0A84FF] to-[#3DD1FF] flex items-center justify-center overflow-hidden text-white text-xs font-bold z-10">
+                  🧠
+                </div>
+                <div className="ml-7 px-3 py-2 rounded-t-2xl rounded-br-2xl rounded-bl-md text-sm bg-[#1c1c1e] text-gray-300 max-w-[70%] shadow-sm" style={{ fontFamily: 'SF Pro Text, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+                  <div className="flex space-x-1 h-6 items-center justify-center py-0.5">
+                    <div className="h-2.5 w-2.5 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                    <div className="h-2.5 w-2.5 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                    <div className="h-2.5 w-2.5 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+          <form className="p-2 bg-[#000000]" onSubmit={handleSend} style={{ fontFamily: 'SF Pro Text, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+            <div className="flex bg-[#1c1c1e] rounded-full px-4 py-2 items-center">
+              <input
+                className="flex-1 bg-transparent border-none text-white focus:outline-none placeholder-gray-500"
+                type="text"
+                placeholder="iMessage"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                disabled={waiting}
+                aria-label="Type your message"
+                style={{ fontFamily: 'SF Pro Text, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif', fontSize: '16px', letterSpacing: '-0.03em', fontWeight: '400' }}
+              />
+              {input.trim() && (
+                <button
+                  type="submit"
+                  className="ml-2 text-white p-0 rounded-full flex items-center justify-center focus:outline-none disabled:opacity-50"
+                  disabled={waiting}
+                >
+                  <div className="w-8 h-8 bg-[#0c84ff] rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <polyline points="19 12 12 5 5 12"></polyline>
+                    </svg>
+                  </div>
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ChatDock;

@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "manufacturer": "Baxi",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Baxi Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "E01",
+      "description": "Ignition lockout",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue for blockages. Reset boiler.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas valve", "ignition electrode", "flue", "PCB"]
+    },
+    {
+      "code": "E02",
+      "description": "Flame failure",
+      "troubleshooting_steps": "Check flame sensing electrode. Check gas valve. Check flue for blockages.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["flame sensing electrode", "gas valve", "flue"]
+    },
+    {
+      "code": "E03",
+      "description": "Overheat lockout",
+      "troubleshooting_steps": "Check pump operation. Check for blockages in system. Check overheat thermostat.",
+      "safety_warning": "Allow the system to cool before handling components.",
+      "components": ["pump", "overheat thermostat", "flow sensor"]
+    },
+    {
+      "code": "E04",
+      "description": "No water flow",
+      "troubleshooting_steps": "Check system pressure. Check pump operation. Check flow sensor.",
+      "safety_warning": null,
+      "components": ["pump", "flow sensor", "pressure sensor"]
+    },
+    {
+      "code": "E05",
+      "description": "Flue problem",
+      "troubleshooting_steps": "Check flue for blockages. Check air pressure switch. Check fan operation.",
+      "safety_warning": "Ensure flue system is properly installed to prevent carbon monoxide poisoning.",
+      "components": ["flue", "air pressure switch", "fan"]
+    },
+    {
+      "code": "E06",
+      "description": "Flow NTC fault",
+      "troubleshooting_steps": "Check flow NTC sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "E07",
+      "description": "Return NTC fault",
+      "troubleshooting_steps": "Check return NTC sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["return NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "E08",
+      "description": "DHW NTC fault",
+      "troubleshooting_steps": "Check DHW NTC sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["DHW NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "E10",
+      "description": "PCB fault",
+      "troubleshooting_steps": "Reset boiler. If fault persists, replace PCB.",
+      "safety_warning": "Disconnect power before replacing components.",
+      "components": ["PCB"]
+    },
+    {
+      "code": "E35",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "pressure relief valve"]
+    },
+    {
+      "code": "E40",
+      "description": "Gas valve fault",
+      "troubleshooting_steps": "Check gas valve connections. Check PCB. Possibly replace gas valve.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas valve", "PCB", "wiring"]
+    },
+    {
+      "code": "E77",
+      "description": "Low main supply voltage",
+      "troubleshooting_steps": "Check electrical supply to boiler. Check for fluctuating supply.",
+      "safety_warning": "Electrical issues should be addressed by a qualified electrician.",
+      "components": ["electrical supply", "PCB", "wiring"]
+    }
+  ]
+}

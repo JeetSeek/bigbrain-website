@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "manufacturer": "Worcester Bosch",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Worcester Bosch Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "E207",
+      "description": "Ignition Failure",
+      "models": ["Greenstar i", "Greenstar CDi", "Greenstar Si"],
+      "severity": "major",
+      "troubleshooting_steps": "1. Check the gas supply is on and pressure is correct (19-20mbar). 2. Inspect the ignition electrode for damage or carbon buildup. 3. Check the electrode gap is 3.5-4.5mm. 4. Inspect the ignition lead for damage. 5. Check resistance of ignition lead (should be 1-5kΩ). 6. Test gas valve operation. 7. Check for blockages in the burner.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["ignition electrode", "ignition lead", "gas valve", "burner", "PCB"],
+      "repair": [
+        "If ignition electrode is damaged: Replace ignition electrode and gasket (part no. 8-716-142-100-0)",
+        "If ignition lead is faulty: Replace ignition lead (part no. 8-716-142-101-0)",
+        "If gas pressure is insufficient: Check gas meter and supply",
+        "If gas valve is faulty: Replace gas valve (part no. 8-716-142-412-0)"
+      ],
+      "symptoms": ["Boiler fails to ignite", "Error code E207 displayed on screen", "Reset button may be illuminated", "No heating or hot water"]
+    },
+    {
+      "code": "E438",
+      "description": "Flow Sensor Fault",
+      "models": ["Greenstar i", "Greenstar CDi", "Greenstar Si", "Greenstar Compact"],
+      "severity": "major",
+      "troubleshooting_steps": "1. Check electrical connections to the flow sensor. 2. Measure resistance across flow sensor terminals (should be 10kΩ at 25°C). 3. Check for limescale buildup in the heat exchanger. 4. Verify water pressure is between 1-2 bar. 5. Check pump is operating correctly. 6. Test PCB outputs to flow sensor.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow sensor", "heat exchanger", "pump", "PCB"],
+      "repair": [
+        "If connections are loose: Clean and secure connections",
+        "If sensor is faulty: Replace flow temperature sensor (part no. 8-716-142-301-0)",
+        "If limescale present: Flush system with descaler",
+        "If PCB is faulty: Replace PCB (part no. 8-748-300-556)"
+      ],
+      "symptoms": ["Intermittent operation", "Boiler shuts down during operation", "Error code E438 on display", "Unstable temperature readings"]
+    },
+    {
+      "code": "E441",
+      "description": "External Controls Communication Fault",
+      "models": ["Greenstar CDi", "Greenstar Si", "Greenstar Compact"],
+      "severity": "minor",
+      "troubleshooting_steps": "1. Check all wiring connections between boiler and controls. 2. Verify power supply to external controls. 3. Check DIP switch settings match the installed controller type. 4. Test for continuity in control cables. 5. Test voltage across EMS terminals (should be 12-24V DC).",
+      "safety_warning": "Disconnect power before handling electrical components.",
+      "components": ["external controls", "wiring", "DIP switches", "PCB"],
+      "repair": [
+        "If wiring is damaged: Replace control cables",
+        "If external control is faulty: Replace external controller",
+        "If DIP switches are incorrect: Set to correct configuration",
+        "If interference is detected: Install ferrite cores on cables"
+      ],
+      "symptoms": ["Erratic heating control", "No response to programmer/timer", "Error code E441 displayed", "System running on default settings"]
+    },
+    {
+      "code": "EA",
+      "description": "Ignition fault",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue for blockages.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["ignition electrode", "gas valve", "PCB"]
+    },
+    {
+      "code": "A1",
+      "description": "Pump fault",
+      "troubleshooting_steps": "Check pump connection. Check pump for blockages. Check pump operation.",
+      "safety_warning": "Disconnect power before handling electrical components.",
+      "components": ["pump", "PCB", "wiring"]
+    },
+    {
+      "code": "C1",
+      "description": "Fan speed too low",
+      "troubleshooting_steps": "Check fan connection. Check fan impeller. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "C6",
+      "description": "Fan speed too high",
+      "troubleshooting_steps": "Check fan connection. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "F0",
+      "description": "Internal PCB fault",
+      "troubleshooting_steps": "Reset boiler. If fault persists, replace PCB.",
+      "safety_warning": "Disconnect power before replacing components.",
+      "components": ["PCB"]
+    },
+    {
+      "code": "F7",
+      "description": "Low water pressure",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "pressure relief valve"]
+    }
+  ]
+}

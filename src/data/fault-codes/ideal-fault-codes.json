@@ -1,0 +1,221 @@
+{
+  "manufacturer": "Ideal",
+  "fault_codes": [
+    {
+      "fault_code": "F1",
+      "description": "Low water pressure",
+      "solutions": [
+        "Check system pressure (should be 1-1.5 bar)",
+        "Repressurise system using filling loop",
+        "Check for leaks in the system"
+      ]
+    },
+    {
+      "fault_code": "F2",
+      "description": "Flame loss",
+      "solutions": [
+        "Check gas supply",
+        "Ensure there are no blockages in the flue",
+        "Check ignition electrode and lead",
+        "Reset boiler"
+      ]
+    },
+    {
+      "fault_code": "F3",
+      "description": "Fan fault",
+      "solutions": [
+        "Check fan connections",
+        "Check fan for blockages",
+        "Replace fan if necessary"
+      ]
+    },
+    {
+      "fault_code": "F4",
+      "description": "Flow thermistor fault",
+      "solutions": [
+        "Check flow thermistor connections",
+        "Replace flow thermistor"
+      ]
+    },
+    {
+      "fault_code": "F5",
+      "description": "Return thermistor fault",
+      "solutions": [
+        "Check return thermistor connections",
+        "Replace return thermistor"
+      ]
+    },
+    {
+      "fault_code": "F6",
+      "description": "Outside sensor fault",
+      "solutions": [
+        "Check outside sensor connections",
+        "Replace outside sensor"
+      ]
+    },
+    {
+      "fault_code": "F7",
+      "description": "Low mains voltage",
+      "solutions": [
+        "Check mains supply to the boiler",
+        "Reset the boiler",
+        "Contact an electrician if problem persists"
+      ]
+    },
+    {
+      "fault_code": "F9",
+      "description": "PCB fault",
+      "solutions": [
+        "Reset boiler",
+        "Replace PCB if fault persists"
+      ]
+    },
+    {
+      "fault_code": "L1",
+      "description": "Flow temperature overheat",
+      "solutions": [
+        "Check pump operation",
+        "Ensure radiators are bled",
+        "Check for blockages in the heating system"
+      ]
+    },
+    {
+      "fault_code": "L2",
+      "description": "Ignition lockout",
+      "solutions": [
+        "Check gas supply",
+        "Check ignition electrode and lead",
+        "Check flue for blockages",
+        "Reset boiler"
+      ]
+    },
+    {
+      "fault_code": "L6",
+      "description": "False flame lockout",
+      "solutions": [
+        "Check flame sensing electrode",
+        "Check for moisture on PCB",
+        "Reset boiler"
+      ]
+    },
+    {
+      "fault_code": "LC",
+      "description": "5 resets within 15 minutes",
+      "solutions": [
+        "Turn boiler off for 10 minutes then restart",
+        "Check for recurring fault codes"
+      ]
+    },
+    {
+      "fault_code": "U2",
+      "description": "Flow/Return reversed",
+      "solutions": [
+        "Check correct pipe connection",
+        "Ensure flow and return pipes are not reversed"
+      ]
+    },
+    {
+      "fault_code": "U3",
+      "description": "No water flow",
+      "solutions": [
+        "Check pump operation",
+        "Ensure isolation valves are open",
+        "Check for system blockages"
+      ]
+    },
+    {
+      "fault_code": "FU",
+      "description": "Low water flow",
+      "solutions": [
+        "Check pump operation",
+        "Ensure radiator valves are open",
+        "Clean system filters"
+      ]
+    },
+    {
+      "fault_code": "F0",
+      "description": "PCB fault",
+      "solutions": [
+        "Reset boiler",
+        "Replace PCB if fault persists"
+      ]
+    },
+    {
+      "fault_code": "F8",
+      "description": "DHW thermistor fault",
+      "solutions": [
+        "Check DHW thermistor connections",
+        "Replace DHW thermistor"
+      ]
+    },
+    {
+      "fault_code": "H1 - H9",
+      "description": "Various PCB faults",
+      "solutions": [
+        "Reset boiler",
+        "Replace PCB if fault persists"
+      ]
+    },
+    {
+      "fault_code": "L9",
+      "description": "PCB fault",
+      "solutions": [
+        "Reset boiler",
+        "Replace PCB if fault persists"
+      ]
+    },
+    {
+      "fault_code": "L3",
+      "description": "Circulation fault",
+      "solutions": [
+        "Check pump operation",
+        "Ensure adequate water flow",
+        "Bleed radiators completely"
+      ]
+    },
+    {
+      "fault_code": "L4",
+      "description": "Flow thermistor overheat",
+      "solutions": [
+        "Check pump operation",
+        "Check for system blockages",
+        "Ensure all radiator valves are open"
+      ]
+    },
+    {
+      "fault_code": "L5",
+      "description": "Flow/Return thermistor mismatch",
+      "solutions": [
+        "Check both thermistor connections",
+        "Replace faulty thermistor(s)"
+      ]
+    },
+    {
+      "fault_code": "L7",
+      "description": "Return thermistor overheat",
+      "solutions": [
+        "Check pump operation",
+        "Check for blockages in the system",
+        "Ensure adequate water circulation"
+      ]
+    },
+    {
+      "fault_code": "L8",
+      "description": "5 ignition attempts",
+      "solutions": [
+        "Check gas supply",
+        "Check ignition electrode",
+        "Check flue for blockages",
+        "Reset boiler"
+      ]
+    },
+    {
+      "fault_code": "FA",
+      "description": "PCB memory fault",
+      "solutions": [
+        "Reset boiler",
+        "Replace PCB if fault persists"
+      ]
+    }
+  ]
+}

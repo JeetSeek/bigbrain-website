@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "manufacturer": "Vaillant",
+    "schema_version": "1.0.0",
+    "last_updated": "2025-06-25",
+    "source": "Vaillant Technical Documentation"
+  },
+  "fault_codes": [
+    {
+      "code": "F.00",
+      "description": "Flow NTC interruption",
+      "troubleshooting_steps": "Check flow NTC sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.01",
+      "description": "Return NTC interruption",
+      "troubleshooting_steps": "Check return NTC sensor. Check wiring. Check PCB connections.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["return NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.10",
+      "description": "Flow NTC short circuit",
+      "troubleshooting_steps": "Check flow NTC sensor. Check wiring for damage. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flow NTC sensor", "wiring", "PCB"]
+    },
+    {
+      "code": "F.20",
+      "description": "Safety temperature limiter triggered",
+      "troubleshooting_steps": "Check pump operation. Check system circulation. Check safety temp limiter and connections.",
+      "safety_warning": "Allow system to cool before handling components.",
+      "components": ["pump", "safety temp limiter", "heating circuit"]
+    },
+    {
+      "code": "F.22",
+      "description": "Water pressure too low",
+      "troubleshooting_steps": "Check system pressure. Re-pressurize system. Check for leaks. Check pressure sensor.",
+      "safety_warning": null,
+      "components": ["pressure sensor", "expansion vessel", "heating circuit"]
+    },
+    {
+      "code": "F.23",
+      "description": "Water deficiency (temp difference flow/return too high)",
+      "troubleshooting_steps": "Check pump operation. Check for blockages. Check flow and return NTC sensors.",
+      "safety_warning": null,
+      "components": ["pump", "flow NTC", "return NTC", "heating circuit"]
+    },
+    {
+      "code": "F.24",
+      "description": "Water deficiency (temp rise flow too rapid)",
+      "troubleshooting_steps": "Check pump operation. Check for blockages. Check system pressure.",
+      "safety_warning": null,
+      "components": ["pump", "heating circuit", "expansion vessel"]
+    },
+    {
+      "code": "F.27",
+      "description": "Flame simulation fault",
+      "troubleshooting_steps": "Check flame sensing electrode. Check moisture on PCB. Check PCB.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["flame sensing electrode", "PCB", "gas valve"]
+    },
+    {
+      "code": "F.28",
+      "description": "No ignition",
+      "troubleshooting_steps": "Check gas supply. Check ignition electrode and lead. Check flue system. Check gas valve. Check PCB.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas supply", "ignition electrode", "gas valve", "PCB"]
+    },
+    {
+      "code": "F.29",
+      "description": "Flame loss during operation",
+      "troubleshooting_steps": "Check gas supply. Check flue system. Check flame sensing electrode. Check PCB.",
+      "safety_warning": "Ensure gas supply is turned off before checking gas components.",
+      "components": ["gas supply", "flue system", "flame sensing electrode", "gas valve"]
+    },
+    {
+      "code": "F.32",
+      "description": "Fan fault",
+      "troubleshooting_steps": "Check fan electrical connection. Check PCB. Check fan for blockage or damage.",
+      "safety_warning": "Disconnect power before checking electrical components.",
+      "components": ["fan", "PCB", "wiring"]
+    },
+    {
+      "code": "F.36",
+      "description": "Flue gas or air inlet issue",
+      "troubleshooting_steps": "Check entire flue system. Check air inlet. Check sensor.",
+      "safety_warning": "Ensure flue system is properly installed to prevent carbon monoxide poisoning.",
+      "components": ["flue system", "air inlet", "flue sensor"]
+    }
+  ]
+}
