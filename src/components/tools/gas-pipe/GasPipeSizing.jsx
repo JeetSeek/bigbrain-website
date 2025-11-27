@@ -17,24 +17,25 @@ const GasPipeSizing = () => {
   
   const [result, setResult] = useState(null);
 
-  // UK Gas pipe sizing table (BS 6891)
+  // UK Gas pipe sizing table (BS 6891) - Max m³/h at 1 mbar drop
+  // Copper pipe sizes: 15mm (13.6mm ID), 22mm (20.2mm ID), 28mm (26.2mm ID), 35mm (32.6mm ID)
   const copperTable = {
-    3:  { 15: 3.96, 22: 14.80, 28: 33.50 },
-    6:  { 15: 2.68, 22: 10.04, 28: 22.73 },
-    9:  { 15: 2.14, 22: 8.00, 28: 18.12 },
-    12: { 15: 1.82, 22: 6.82, 28: 15.44 },
-    15: { 15: 1.61, 22: 6.03, 28: 13.66 },
-    20: { 15: 1.37, 22: 5.14, 28: 11.64 },
-    25: { 15: 1.21, 22: 4.54, 28: 10.28 },
-    30: { 15: 1.09, 22: 4.10, 28: 9.28 },
+    3:  { 15: 1.98, 22: 7.40, 28: 16.77, 35: 32.50 },
+    6:  { 15: 1.34, 22: 5.02, 28: 11.37, 35: 22.03 },
+    9:  { 15: 1.07, 22: 4.00, 28: 9.06,  35: 17.56 },
+    12: { 15: 0.91, 22: 3.41, 28: 7.72,  35: 14.96 },
+    15: { 15: 0.81, 22: 3.02, 28: 6.83,  35: 13.24 },
+    20: { 15: 0.69, 22: 2.57, 28: 5.82,  35: 11.28 },
+    25: { 15: 0.61, 22: 2.27, 28: 5.14,  35: 9.97 },
+    30: { 15: 0.55, 22: 2.05, 28: 4.64,  35: 8.99 },
   };
 
-  // Conversions to m³/h
+  // Conversions to m³/h (natural gas CV = 39.3 MJ/m³ gross)
   const toM3h = (value, unit) => {
     const v = parseFloat(value) || 0;
     switch (unit) {
-      case 'kW': return (v * 3.6) / 39.3;
-      case 'BTU': return (v * 0.000293071) / 10.83; // BTU/h to m³/h
+      case 'kW': return (v * 3.6) / 39.3; // kW × 3.6 MJ/kWh ÷ 39.3 MJ/m³
+      case 'BTU': return v / 37800; // BTU/h ÷ 37,800 BTU/m³
       case 'm³/h': return v;
       default: return v;
     }
@@ -115,15 +116,19 @@ const GasPipeSizing = () => {
 
       const capacities = interpolate(effectiveLength, copperTable);
       
-      let recommended = 28;
-      for (const size of [15, 22, 28]) {
+      // Find minimum pipe size that can handle the load
+      let recommended = 35;
+      for (const size of [15, 22, 28, 35]) {
         if (capacities[size] >= totalRate) {
           recommended = size;
           break;
         }
       }
 
-      const estimatedDrop = (totalRate / capacities[recommended]) * 1;
+      // Pressure drop varies with square of flow rate (Darcy-Weisbach)
+      // At max capacity = 1 mbar, so: drop = (Q/Qmax)² × 1 mbar
+      const flowRatio = totalRate / capacities[recommended];
+      const estimatedDrop = Math.pow(flowRatio, 2) * 1;
 
       return {
         length,
@@ -137,6 +142,7 @@ const GasPipeSizing = () => {
           15: capacities[15]?.toFixed(2),
           22: capacities[22]?.toFixed(2),
           28: capacities[28]?.toFixed(2),
+          35: capacities[35]?.toFixed(2),
         },
       };
     }).filter(Boolean);
@@ -350,11 +356,11 @@ const GasPipeSizing = () => {
                   </div>
 
                   {/* All Sizes */}
-                  <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                    {[15, 22, 28].map(size => (
+                  <div className="grid grid-cols-4 gap-2 text-center text-sm">
+                    {[15, 22, 28, 35].map(size => (
                       <div key={size} className={`rounded p-2 ${parseFloat(run.capacities[size]) >= parseFloat(result.totalRate) ? 'bg-green-100' : 'bg-white'}`}>
                         <div className="font-bold text-gray-700">{size}mm</div>
-                        <div className="text-xs text-gray-500">{run.capacities[size]} m³/h</div>
+                        <div className="text-xs text-gray-500">{run.capacities[size]}</div>
                       </div>
                     ))}
                   </div>
