@@ -2,28 +2,35 @@ import React, { useState } from 'react';
 
 /**
  * Gas Meter Diversity Calculator
- * Calculates diversified gas load per BS 6891 and determines meter sizing
+ * Calculates diversified gas load per BS 6400-1 Annex A and determines meter sizing
  * 
- * Rules:
- * - 1st largest appliance: 100%
- * - 2nd largest appliance: 70%
- * - All remaining: 40%
- * - Convert kW to m³/h: kW ÷ 10.8
- * - U6 meter: max 6.0 m³/h (~65 kW)
- * - U16 meter: max 16.0 m³/h (~172 kW)
+ * UK Standard Diversity Factors (BS 6400-1):
+ * - Central heating boilers: 1.0 (no diversity - may run simultaneously)
+ * - Instantaneous water heaters: 1.0
+ * - Gas fires: 0.5
+ * - Cooking appliances: 0.6
+ * - Storage water heaters: 0.5
+ * - Tumble dryers: 0.3
+ * 
+ * Convert kW to m³/h: kW ÷ 10.76 (CV of natural gas)
+ * U6 meter: max 6.0 m³/h (~65 kW)
+ * U16 meter: max 16.0 m³/h (~172 kW)
  */
 
 const applianceTypes = [
-  { type: 'Boiler - Combi', icon: '🔥', defaultKw: 30 },
-  { type: 'Boiler - System', icon: '🔥', defaultKw: 24 },
-  { type: 'Boiler - Regular', icon: '🔥', defaultKw: 18 },
-  { type: 'Gas Fire', icon: '🔶', defaultKw: 5 },
-  { type: 'Hob', icon: '🍳', defaultKw: 8 },
-  { type: 'Cooker', icon: '🍳', defaultKw: 12 },
-  { type: 'Range Cooker', icon: '🍳', defaultKw: 18 },
-  { type: 'Water Heater', icon: '💧', defaultKw: 10 },
-  { type: 'Tumble Dryer', icon: '👕', defaultKw: 3 },
-  { type: 'Other', icon: '⚡', defaultKw: 10 },
+  { type: 'Boiler - Combi', icon: '🔥', defaultKw: 30, diversityFactor: 1.0, category: 'heating' },
+  { type: 'Boiler - System', icon: '🔥', defaultKw: 24, diversityFactor: 1.0, category: 'heating' },
+  { type: 'Boiler - Regular', icon: '🔥', defaultKw: 18, diversityFactor: 1.0, category: 'heating' },
+  { type: 'Gas Fire', icon: '🔶', defaultKw: 5, diversityFactor: 0.5, category: 'fire' },
+  { type: 'Decorative Fire', icon: '🔶', defaultKw: 3, diversityFactor: 0.5, category: 'fire' },
+  { type: 'Hob', icon: '🍳', defaultKw: 8, diversityFactor: 0.6, category: 'cooking' },
+  { type: 'Cooker', icon: '🍳', defaultKw: 12, diversityFactor: 0.6, category: 'cooking' },
+  { type: 'Range Cooker', icon: '🍳', defaultKw: 18, diversityFactor: 0.6, category: 'cooking' },
+  { type: 'Built-in Oven', icon: '🍳', defaultKw: 4, diversityFactor: 0.6, category: 'cooking' },
+  { type: 'Water Heater - Instantaneous', icon: '💧', defaultKw: 20, diversityFactor: 1.0, category: 'water' },
+  { type: 'Water Heater - Storage', icon: '💧', defaultKw: 3, diversityFactor: 0.5, category: 'water' },
+  { type: 'Tumble Dryer', icon: '👕', defaultKw: 3, diversityFactor: 0.3, category: 'other' },
+  { type: 'Other', icon: '⚡', defaultKw: 10, diversityFactor: 1.0, category: 'other' },
 ];
 
 // Constants
@@ -41,6 +48,8 @@ const GasMeterDiversity = () => {
     type: '',
     kw: '',
     icon: '⚡',
+    diversityFactor: 1.0,
+    category: 'other',
   });
 
   const addAppliance = () => {
@@ -58,7 +67,14 @@ const GasMeterDiversity = () => {
       if (a.id !== id) return a;
       if (field === 'type') {
         const typeInfo = applianceTypes.find(t => t.type === value);
-        return { ...a, type: value, icon: typeInfo?.icon || '⚡', kw: typeInfo?.defaultKw || '' };
+        return { 
+          ...a, 
+          type: value, 
+          icon: typeInfo?.icon || '⚡', 
+          kw: typeInfo?.defaultKw || '',
+          diversityFactor: typeInfo?.diversityFactor || 1.0,
+          category: typeInfo?.category || 'other',
+        };
       }
       return { ...a, [field]: value };
     }));
@@ -71,25 +87,29 @@ const GasMeterDiversity = () => {
       return;
     }
 
-    // Sort appliances by kW (highest first)
-    const sorted = [...appliances]
-      .map(a => ({ ...a, kw: parseFloat(a.kw) }))
-      .sort((a, b) => b.kw - a.kw);
+    // Process appliances with their type-specific diversity factors (BS 6400-1)
+    const processed = appliances.map(a => {
+      const typeInfo = applianceTypes.find(t => t.type === a.type);
+      return {
+        ...a,
+        kw: parseFloat(a.kw),
+        diversityFactor: typeInfo?.diversityFactor || 1.0,
+        category: typeInfo?.category || 'other',
+      };
+    });
+
+    // Sort by kW for display (highest first)
+    const sorted = [...processed].sort((a, b) => b.kw - a.kw);
 
     // Calculate total connected load
     const totalConnected = sorted.reduce((sum, a) => sum + a.kw, 0);
 
-    // Apply diversity percentages
-    const diversified = sorted.map((a, i) => {
-      let percentage;
-      if (i === 0) percentage = 1.0;      // 100% for largest
-      else if (i === 1) percentage = 0.7; // 70% for second
-      else percentage = 0.4;               // 40% for rest
-      
+    // Apply BS 6400-1 Annex A diversity factors by appliance TYPE
+    const diversified = sorted.map(a => {
       return {
         ...a,
-        percentage: percentage * 100,
-        diversifiedKw: a.kw * percentage,
+        percentage: a.diversityFactor * 100,
+        diversifiedKw: a.kw * a.diversityFactor,
       };
     });
 
@@ -301,12 +321,15 @@ const GasMeterDiversity = () => {
 
           {/* Info Box */}
           <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-            <h4 className="font-bold text-blue-900 mb-2">📚 BS 6891 Diversity Rule</h4>
+            <h4 className="font-bold text-blue-900 mb-2">📚 BS 6400-1 Annex A Diversity Factors</h4>
             <div className="text-sm text-blue-800 space-y-1">
-              <p><span className="font-medium">• 1st Largest:</span> Count at 100%</p>
-              <p><span className="font-medium">• 2nd Largest:</span> Count at 70%</p>
-              <p><span className="font-medium">• All Others:</span> Count at 40%</p>
-              <p className="mt-2 text-xs">This accounts for the fact that domestic appliances rarely all run simultaneously at full capacity.</p>
+              <p><span className="font-medium">• Boilers (Combi/System/Regular):</span> 100% - No diversity</p>
+              <p><span className="font-medium">• Instantaneous Water Heaters:</span> 100%</p>
+              <p><span className="font-medium">• Cooking (Hob/Cooker/Oven):</span> 60%</p>
+              <p><span className="font-medium">• Gas Fires:</span> 50%</p>
+              <p><span className="font-medium">• Storage Water Heaters:</span> 50%</p>
+              <p><span className="font-medium">• Tumble Dryers:</span> 30%</p>
+              <p className="mt-2 text-xs">Boilers use 100% as they may run simultaneously. Other appliances are reduced based on typical intermittent use.</p>
             </div>
           </div>
 
@@ -344,14 +367,14 @@ const GasMeterDiversity = () => {
       {/* Header */}
       <div className="bg-slate-700 text-white px-4 py-4 sticky top-0 z-10">
         <h1 className="text-lg font-medium text-center">Gas Meter Diversity</h1>
-        <p className="text-xs text-center text-slate-300 mt-1">BS 6891 Diversity Calculation</p>
+        <p className="text-xs text-center text-slate-300 mt-1">BS 6400-1 Annex A Calculation</p>
       </div>
 
       <div className="p-4 space-y-4">
         {/* Info Banner */}
         <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
           <p className="text-sm text-blue-800">
-            <span className="font-bold">Add all gas appliances</span> at the property. The calculator will apply BS 6891 diversity rules to determine if a meter upgrade is required.
+            <span className="font-bold">Add all gas appliances</span> at the property. Each appliance type has a specific diversity factor per BS 6400-1 (e.g., boilers = 100%, cookers = 60%, fires = 50%).
           </p>
         </div>
 
@@ -370,6 +393,15 @@ const GasMeterDiversity = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-2xl">{app.icon}</span>
                     <span className="font-medium text-gray-700">Appliance {idx + 1}</span>
+                    {app.type && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        app.diversityFactor === 1.0 ? 'bg-green-100 text-green-700' :
+                        app.diversityFactor >= 0.6 ? 'bg-amber-100 text-amber-700' :
+                        'bg-blue-100 text-blue-700'
+                      }`}>
+                        {(app.diversityFactor * 100).toFixed(0)}%
+                      </span>
+                    )}
                   </div>
                   <button onClick={() => removeAppliance(app.id)} className="text-red-500 text-sm font-medium">
                     Remove
@@ -387,7 +419,9 @@ const GasMeterDiversity = () => {
                       >
                         <option value="">Select appliance type...</option>
                         {applianceTypes.map(t => (
-                          <option key={t.type} value={t.type}>{t.icon} {t.type}</option>
+                          <option key={t.type} value={t.type}>
+                            {t.icon} {t.type} ({(t.diversityFactor * 100).toFixed(0)}%)
+                          </option>
                         ))}
                       </select>
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
