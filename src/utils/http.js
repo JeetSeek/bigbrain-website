@@ -40,6 +40,7 @@ const mapPathToFunction = (path) => {
   // Map /api/xxx to Edge Function name
   const pathMappings = {
     '/api/chat': '/chat',
+    '/api/agent/chat': '/chat',
     '/api/manuals': '/manuals',
     '/api/manufacturers': '/manufacturers',
     '/api/sessions': '/sessions',
