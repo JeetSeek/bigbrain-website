@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import SignaturePad from './SignaturePad';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
 // Move these outside the component to prevent re-creation
 const applianceTypes = [
@@ -35,6 +37,8 @@ const CP12Form = () => {
   const [engineerSignature, setEngineerSignature] = useState(null);
   const [customerSignature, setCustomerSignature] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const certificateRef = useRef(null);
 
   const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
   
@@ -58,10 +62,44 @@ const CP12Form = () => {
     updateField('nextInspectionDate', date.toISOString().split('T')[0]);
   };
 
-  const handleEmail = () => {
+  const generatePDF = async () => {
+    if (!certificateRef.current) return null;
+    setGenerating(true);
+    try {
+      const canvas = await html2canvas(certificateRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+      });
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      return pdf;
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      return null;
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const downloadPDF = async () => {
+    const pdf = await generatePDF();
+    if (pdf) {
+      const filename = `CP12_${formData.installAddress.replace(/[^a-zA-Z0-9]/g, '_')}_${formData.inspectionDate}.pdf`;
+      pdf.save(filename);
+    }
+  };
+
+  const handleEmailWithPDF = async () => {
     if (!formData.clientEmail) { alert('Please enter client email'); return; }
+    // First download the PDF
+    await downloadPDF();
+    // Then open email
     const subject = `CP12 Gas Safety Record - ${formData.installAddress}`;
-    const body = `Landlord Gas Safety Record\n\nProperty: ${formData.installAddress}, ${formData.installPostcode}\nInspection Date: ${formData.inspectionDate}\nNext Due: ${formData.nextInspectionDate}\n\nContractor: ${formData.contractorName}\nGas Safe: ${formData.contractorGasSafeNo}\nPhone: ${formData.contractorPhone}\n\nAppliances Checked: ${formData.appliances.length}\n\n${formData.appliances.map((a, i) => `${i+1}. ${a.type} - ${a.make} ${a.model} @ ${a.location} - ${a.applianceSafe === 'Pass' ? 'SAFE' : a.applianceSafe === 'Fail' ? 'UNSAFE' : 'N/A'}`).join('\n')}\n\nGas Supply:\n- Emergency Control: ${formData.emergencyControlAccessible || 'N/A'}\n- Pipework: ${formData.pipeworkCondition || 'N/A'}\n- Tightness Test: ${formData.gasTightnessTest || 'N/A'}\n\nSafety Devices:\n- CO Alarm: ${formData.coAlarmTest || 'N/A'}\n- Smoke Alarm: ${formData.smokeAlarmTest || 'N/A'}\n\n${formData.additionalComments ? `Notes: ${formData.additionalComments}` : ''}\n\nEngineer: ${formData.engineerName}\nReceived by: ${formData.customerName}`;
+    const body = `Dear ${formData.clientName},\n\nPlease find attached your Landlord Gas Safety Record (CP12).\n\nProperty: ${formData.installAddress}, ${formData.installPostcode}\nInspection Date: ${formData.inspectionDate}\nNext Inspection Due: ${formData.nextInspectionDate}\n\nContractor: ${formData.contractorName}\nGas Safe Registration: ${formData.contractorGasSafeNo}\nPhone: ${formData.contractorPhone}\n\nPlease attach the downloaded PDF to this email before sending.\n\nKind regards,\n${formData.engineerName}`;
     window.location.href = `mailto:${formData.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -110,10 +148,10 @@ const CP12Form = () => {
         
         {/* Certificate Content */}
         <div className="p-4 bg-gray-100">
-          <div className="bg-white border border-gray-300 shadow-sm">
+          <div ref={certificateRef} className="bg-white border-2 border-gray-400 shadow-sm">
             {/* Header */}
             <div className="border-b-2 border-gray-400 p-3 flex justify-between items-start bg-gradient-to-r from-yellow-50 to-white">
-              <div className="text-xs text-gray-500 max-w-[50%]">
+              <div className="text-xs text-gray-700 max-w-[50%]">
                 Registered Gas/Engineer details can be verified at www.gassaferegister.co.uk or by calling 0800 408 5577
               </div>
               <div className="text-right">
@@ -127,43 +165,43 @@ const CP12Form = () => {
             </div>
 
             {/* Record Info */}
-            <div className="grid grid-cols-3 text-sm border-b border-gray-300">
+            <div className="grid grid-cols-3 text-sm border-b-2 border-gray-400">
               <div className="p-2 border-r border-gray-300">
-                <span className="text-gray-500 text-xs">Record issued for:</span>
-                <div className="font-medium">Gas Safety Check</div>
+                <span className="text-gray-600 text-xs font-medium">Record issued for:</span>
+                <div className="font-bold text-black">Gas Safety Check</div>
               </div>
               <div className="p-2 border-r border-gray-300">
-                <span className="text-gray-500 text-xs">Date:</span>
-                <div className="font-medium">{formData.inspectionDate}</div>
+                <span className="text-gray-600 text-xs font-medium">Date:</span>
+                <div className="font-bold text-black">{formData.inspectionDate}</div>
               </div>
               <div className="p-2">
-                <span className="text-gray-500 text-xs">Next inspection:</span>
-                <div className="font-medium">{formData.nextInspectionDate}</div>
+                <span className="text-gray-600 text-xs font-medium">Next inspection:</span>
+                <div className="font-bold text-black">{formData.nextInspectionDate}</div>
               </div>
             </div>
 
             {/* Addresses */}
-            <div className="grid grid-cols-3 border-b border-gray-300">
-              <div className="p-2 border-r border-gray-300 bg-yellow-50">
-                <div className="text-xs font-bold text-gray-700 mb-1 bg-yellow-200 px-1 inline-block">Contractor</div>
-                <div className="text-xs space-y-0.5">
-                  <div className="font-medium">{formData.contractorName || '-'}</div>
+            <div className="grid grid-cols-3 border-b-2 border-gray-400">
+              <div className="p-3 border-r border-gray-300 bg-yellow-50">
+                <div className="text-xs font-bold text-gray-800 mb-2 bg-yellow-300 px-2 py-0.5 inline-block rounded">Contractor</div>
+                <div className="text-xs space-y-1 text-gray-900">
+                  <div className="font-bold">{formData.contractorName || '-'}</div>
                   <div>{formData.contractorAddress || '-'}</div>
                   <div>Tel: {formData.contractorPhone || '-'}</div>
-                  <div className="font-medium">Gas Safe: {formData.contractorGasSafeNo || '-'}</div>
+                  <div className="font-bold">Gas Safe: {formData.contractorGasSafeNo || '-'}</div>
                 </div>
               </div>
-              <div className="p-2 border-r border-gray-300 bg-yellow-50">
-                <div className="text-xs font-bold text-gray-700 mb-1 bg-yellow-200 px-1 inline-block">Installation Address</div>
-                <div className="text-xs space-y-0.5">
-                  <div className="font-medium">{formData.installAddress || '-'}</div>
-                  <div>{formData.installPostcode || '-'}</div>
+              <div className="p-3 border-r border-gray-300 bg-yellow-50">
+                <div className="text-xs font-bold text-gray-800 mb-2 bg-yellow-300 px-2 py-0.5 inline-block rounded">Installation Address</div>
+                <div className="text-xs space-y-1 text-gray-900">
+                  <div className="font-bold">{formData.installAddress || '-'}</div>
+                  <div className="font-medium">{formData.installPostcode || '-'}</div>
                 </div>
               </div>
-              <div className="p-2 bg-yellow-50">
-                <div className="text-xs font-bold text-gray-700 mb-1 bg-yellow-200 px-1 inline-block">Client/Landlord</div>
-                <div className="text-xs space-y-0.5">
-                  <div className="font-medium">{formData.clientName || '-'}</div>
+              <div className="p-3 bg-yellow-50">
+                <div className="text-xs font-bold text-gray-800 mb-2 bg-yellow-300 px-2 py-0.5 inline-block rounded">Client/Landlord</div>
+                <div className="text-xs space-y-1 text-gray-900">
+                  <div className="font-bold">{formData.clientName || '-'}</div>
                   <div>{formData.clientAddress || '-'}</div>
                   <div>{formData.clientPostcode || '-'}</div>
                 </div>
@@ -171,33 +209,33 @@ const CP12Form = () => {
             </div>
 
             {/* Appliances */}
-            <div className="border-b border-gray-300">
-              <div className="bg-gray-100 px-2 py-1 text-xs font-bold border-b border-gray-300">Appliances Inspected</div>
+            <div className="border-b-2 border-gray-400">
+              <div className="bg-gray-200 px-3 py-2 text-xs font-bold text-gray-900 border-b border-gray-300">Appliances Inspected</div>
               {formData.appliances.length === 0 ? (
                 <div className="p-3 text-center text-gray-400 text-sm">No appliances added</div>
               ) : (
                 <table className="w-full text-xs">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-100">
                     <tr>
-                      <th className="p-1.5 text-left border-b border-r border-gray-200">#</th>
-                      <th className="p-1.5 text-left border-b border-r border-gray-200">Location</th>
-                      <th className="p-1.5 text-left border-b border-r border-gray-200">Type</th>
-                      <th className="p-1.5 text-left border-b border-r border-gray-200">Make/Model</th>
-                      <th className="p-1.5 text-center border-b border-r border-gray-200">Flue</th>
-                      <th className="p-1.5 text-center border-b border-r border-gray-200">Pressure</th>
-                      <th className="p-1.5 text-center border-b border-gray-200">Safe?</th>
+                      <th className="p-2 text-left border-b-2 border-r border-gray-300 text-gray-900 font-bold">#</th>
+                      <th className="p-2 text-left border-b-2 border-r border-gray-300 text-gray-900 font-bold">Location</th>
+                      <th className="p-2 text-left border-b-2 border-r border-gray-300 text-gray-900 font-bold">Type</th>
+                      <th className="p-2 text-left border-b-2 border-r border-gray-300 text-gray-900 font-bold">Make/Model</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Flue</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Pressure</th>
+                      <th className="p-2 text-center border-b-2 border-gray-300 text-gray-900 font-bold">Safe?</th>
                     </tr>
                   </thead>
                   <tbody>
                     {formData.appliances.map((app, i) => (
-                      <tr key={app.id} className="border-b border-gray-200">
-                        <td className="p-1.5 border-r border-gray-200 font-medium">{i + 1}</td>
-                        <td className="p-1.5 border-r border-gray-200">{app.location || '-'}</td>
-                        <td className="p-1.5 border-r border-gray-200">{app.type || '-'}</td>
-                        <td className="p-1.5 border-r border-gray-200">{app.make} {app.model}</td>
-                        <td className="p-1.5 border-r border-gray-200 text-center">{app.flueType?.match(/\(([^)]+)\)/)?.[1] || '-'}</td>
-                        <td className="p-1.5 border-r border-gray-200 text-center">{app.operatingPressure || '-'}</td>
-                        <td className={`p-1.5 text-center font-bold ${app.applianceSafe === 'Pass' ? 'text-green-600 bg-green-50' : app.applianceSafe === 'Fail' ? 'text-red-600 bg-red-50' : ''}`}>
+                      <tr key={app.id} className="border-b border-gray-300">
+                        <td className="p-2 border-r border-gray-200 font-bold text-gray-900">{i + 1}</td>
+                        <td className="p-2 border-r border-gray-200 text-gray-900">{app.location || '-'}</td>
+                        <td className="p-2 border-r border-gray-200 text-gray-900">{app.type || '-'}</td>
+                        <td className="p-2 border-r border-gray-200 text-gray-900 font-medium">{app.make} {app.model}</td>
+                        <td className="p-2 border-r border-gray-200 text-center text-gray-900">{app.flueType?.match(/\(([^)]+)\)/)?.[1] || '-'}</td>
+                        <td className="p-2 border-r border-gray-200 text-center text-gray-900">{app.operatingPressure || '-'}</td>
+                        <td className={`p-2 text-center font-bold ${app.applianceSafe === 'Pass' ? 'text-green-700 bg-green-100' : app.applianceSafe === 'Fail' ? 'text-red-700 bg-red-100' : 'text-gray-900'}`}>
                           {app.applianceSafe === 'Pass' ? '✓ Yes' : app.applianceSafe === 'Fail' ? '✗ No' : '-'}
                         </td>
                       </tr>
@@ -209,36 +247,36 @@ const CP12Form = () => {
 
             {/* Safety Results */}
             {formData.appliances.length > 0 && (
-              <div className="border-b border-gray-300">
-                <div className="bg-gray-100 px-2 py-1 text-xs font-bold border-b border-gray-300">Safety Check Results</div>
+              <div className="border-b-2 border-gray-400">
+                <div className="bg-gray-200 px-3 py-2 text-xs font-bold text-gray-900 border-b border-gray-300">Safety Check Results</div>
                 <table className="w-full text-xs">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-100">
                     <tr>
-                      <th className="p-1 text-center border-b border-r border-gray-200">#</th>
-                      <th className="p-1 text-center border-b border-r border-gray-200">Safety Dev</th>
-                      <th className="p-1 text-center border-b border-r border-gray-200">Vent</th>
-                      <th className="p-1 text-center border-b border-r border-gray-200">Flue Perf</th>
-                      <th className="p-1 text-center border-b border-r border-gray-200">Flue Cond</th>
-                      <th className="p-1 text-left border-b border-gray-200">Defects</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">#</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Safety Dev</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Vent</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Flue Perf</th>
+                      <th className="p-2 text-center border-b-2 border-r border-gray-300 text-gray-900 font-bold">Flue Cond</th>
+                      <th className="p-2 text-left border-b-2 border-gray-300 text-gray-900 font-bold">Defects</th>
                     </tr>
                   </thead>
                   <tbody>
                     {formData.appliances.map((app, i) => (
-                      <tr key={app.id} className="border-b border-gray-200">
-                        <td className="p-1 text-center border-r border-gray-200">{i + 1}</td>
-                        <td className={`p-1 text-center border-r border-gray-200 ${app.safetyDeviceOperation === 'Pass' ? 'text-green-600' : app.safetyDeviceOperation === 'Fail' ? 'text-red-600' : ''}`}>
+                      <tr key={app.id} className="border-b border-gray-300">
+                        <td className="p-2 text-center border-r border-gray-200 font-bold text-gray-900">{i + 1}</td>
+                        <td className={`p-2 text-center border-r border-gray-200 font-bold ${app.safetyDeviceOperation === 'Pass' ? 'text-green-700' : app.safetyDeviceOperation === 'Fail' ? 'text-red-700' : 'text-gray-900'}`}>
                           {app.safetyDeviceOperation === 'Pass' ? '✓' : app.safetyDeviceOperation === 'Fail' ? '✗' : '-'}
                         </td>
-                        <td className={`p-1 text-center border-r border-gray-200 ${app.ventilation === 'Pass' ? 'text-green-600' : app.ventilation === 'Fail' ? 'text-red-600' : ''}`}>
+                        <td className={`p-2 text-center border-r border-gray-200 font-bold ${app.ventilation === 'Pass' ? 'text-green-700' : app.ventilation === 'Fail' ? 'text-red-700' : 'text-gray-900'}`}>
                           {app.ventilation === 'Pass' ? '✓' : app.ventilation === 'Fail' ? '✗' : '-'}
                         </td>
-                        <td className={`p-1 text-center border-r border-gray-200 ${app.fluePerformance === 'Pass' ? 'text-green-600' : app.fluePerformance === 'Fail' ? 'text-red-600' : ''}`}>
+                        <td className={`p-2 text-center border-r border-gray-200 font-bold ${app.fluePerformance === 'Pass' ? 'text-green-700' : app.fluePerformance === 'Fail' ? 'text-red-700' : 'text-gray-900'}`}>
                           {app.fluePerformance === 'Pass' ? '✓' : app.fluePerformance === 'Fail' ? '✗' : '-'}
                         </td>
-                        <td className={`p-1 text-center border-r border-gray-200 ${app.visualConditionFlue === 'Pass' ? 'text-green-600' : app.visualConditionFlue === 'Fail' ? 'text-red-600' : ''}`}>
+                        <td className={`p-2 text-center border-r border-gray-200 font-bold ${app.visualConditionFlue === 'Pass' ? 'text-green-700' : app.visualConditionFlue === 'Fail' ? 'text-red-700' : 'text-gray-900'}`}>
                           {app.visualConditionFlue === 'Pass' ? '✓' : app.visualConditionFlue === 'Fail' ? '✗' : '-'}
                         </td>
-                        <td className="p-1 text-red-600">{app.defects || 'None'}</td>
+                        <td className="p-2 text-red-700 font-medium">{app.defects || 'None'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -247,48 +285,48 @@ const CP12Form = () => {
             )}
 
             {/* Gas Supply & Safety */}
-            <div className="grid grid-cols-2 border-b border-gray-300">
-              <div className="p-2 border-r border-gray-300 bg-yellow-50">
-                <div className="text-xs font-bold text-gray-700 mb-2 bg-yellow-200 px-1 inline-block">Gas Supply & Pipework</div>
-                <div className="text-xs space-y-1">
-                  <div className="flex justify-between"><span>Emergency control:</span><span className="font-medium">{formData.emergencyControlAccessible || '-'}</span></div>
-                  <div className="flex justify-between"><span>Pipework condition:</span><span className="font-medium">{formData.pipeworkCondition || '-'}</span></div>
-                  <div className="flex justify-between"><span>Tightness test:</span><span className="font-medium">{formData.gasTightnessTest || '-'}</span></div>
+            <div className="grid grid-cols-2 border-b-2 border-gray-400">
+              <div className="p-3 border-r border-gray-300 bg-yellow-50">
+                <div className="text-xs font-bold text-gray-800 mb-2 bg-yellow-300 px-2 py-0.5 inline-block rounded">Gas Supply & Pipework</div>
+                <div className="text-xs space-y-1 text-gray-900">
+                  <div className="flex justify-between"><span>Emergency control:</span><span className="font-bold">{formData.emergencyControlAccessible || '-'}</span></div>
+                  <div className="flex justify-between"><span>Pipework condition:</span><span className="font-bold">{formData.pipeworkCondition || '-'}</span></div>
+                  <div className="flex justify-between"><span>Tightness test:</span><span className="font-bold">{formData.gasTightnessTest || '-'}</span></div>
                 </div>
               </div>
-              <div className="p-2 bg-yellow-50">
-                <div className="text-xs font-bold text-gray-700 mb-2 bg-yellow-200 px-1 inline-block">Safety Devices</div>
-                <div className="text-xs space-y-1">
-                  <div className="flex justify-between"><span>CO Alarm:</span><span className="font-medium">{formData.coAlarmTest || '-'}</span></div>
-                  <div className="flex justify-between"><span>Smoke Alarm:</span><span className="font-medium">{formData.smokeAlarmTest || '-'}</span></div>
+              <div className="p-3 bg-yellow-50">
+                <div className="text-xs font-bold text-gray-800 mb-2 bg-yellow-300 px-2 py-0.5 inline-block rounded">Safety Devices</div>
+                <div className="text-xs space-y-1 text-gray-900">
+                  <div className="flex justify-between"><span>CO Alarm:</span><span className="font-bold">{formData.coAlarmTest || '-'}</span></div>
+                  <div className="flex justify-between"><span>Smoke Alarm:</span><span className="font-bold">{formData.smokeAlarmTest || '-'}</span></div>
                 </div>
               </div>
             </div>
 
             {/* Comments */}
             {formData.additionalComments && (
-              <div className="p-2 border-b border-gray-300 text-xs">
-                <div className="font-bold text-gray-700 mb-1">Additional Comments:</div>
-                <div>{formData.additionalComments}</div>
+              <div className="p-3 border-b-2 border-gray-400 text-xs">
+                <div className="font-bold text-gray-900 mb-1">Additional Comments:</div>
+                <div className="text-gray-900">{formData.additionalComments}</div>
               </div>
             )}
 
             {/* Signatures */}
             <div className="grid grid-cols-2">
               <div className="p-3 border-r border-gray-300">
-                <div className="text-xs text-gray-500 mb-1">Engineer: <span className="font-medium text-black">{formData.engineerName || '-'}</span></div>
+                <div className="text-xs text-gray-700 mb-1 font-medium">Engineer: <span className="font-bold text-black">{formData.engineerName || '-'}</span></div>
                 {engineerSignature ? (
-                  <img src={engineerSignature} alt="Engineer signature" className="h-12 max-w-full" />
+                  <img src={engineerSignature} alt="Engineer signature" className="h-14 max-w-full" />
                 ) : (
-                  <div className="h-12 border-b-2 border-gray-400 border-dashed" />
+                  <div className="h-14 border-b-2 border-gray-500 border-dashed" />
                 )}
               </div>
               <div className="p-3">
-                <div className="text-xs text-gray-500 mb-1">Received by: <span className="font-medium text-black">{formData.customerName || '-'}</span></div>
+                <div className="text-xs text-gray-700 mb-1 font-medium">Received by: <span className="font-bold text-black">{formData.customerName || '-'}</span></div>
                 {customerSignature ? (
-                  <img src={customerSignature} alt="Customer signature" className="h-12 max-w-full" />
+                  <img src={customerSignature} alt="Customer signature" className="h-14 max-w-full" />
                 ) : (
-                  <div className="h-12 border-b-2 border-gray-400 border-dashed" />
+                  <div className="h-14 border-b-2 border-gray-500 border-dashed" />
                 )}
               </div>
             </div>
@@ -296,13 +334,19 @@ const CP12Form = () => {
         </div>
 
         {/* Actions */}
-        <div className="sticky bottom-0 bg-white border-t p-3 flex gap-3 rounded-b-xl">
-          <button onClick={() => setShowPreview(false)} className="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg">
-            Edit
+        <div className="sticky bottom-0 bg-white border-t p-3 space-y-2 rounded-b-xl">
+          <div className="flex gap-2">
+            <button onClick={() => setShowPreview(false)} className="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg">
+              Edit
+            </button>
+            <button onClick={downloadPDF} disabled={generating} className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 disabled:opacity-50">
+              {generating ? 'Generating...' : '📄 Download PDF'}
+            </button>
+          </div>
+          <button onClick={handleEmailWithPDF} disabled={generating} className="w-full py-3 bg-emerald-500 text-white font-medium rounded-lg flex items-center justify-center gap-2 disabled:opacity-50">
+            <span>📧</span> Download & Email
           </button>
-          <button onClick={handleEmail} className="flex-1 py-3 bg-emerald-500 text-white font-medium rounded-lg flex items-center justify-center gap-2">
-            <span>📧</span> Email Certificate
-          </button>
+          <p className="text-xs text-gray-500 text-center">PDF will download first, then attach to your email</p>
         </div>
       </div>
     </div>
