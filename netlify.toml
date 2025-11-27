@@ -47,13 +47,4 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Compression for text files
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Content-Encoding = "gzip"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-    Content-Encoding = "gzip"
+# Note: Netlify handles gzip compression automatically - no manual headers needed
