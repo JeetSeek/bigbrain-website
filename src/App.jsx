@@ -23,6 +23,7 @@ import KnowledgeManagement from './components/KnowledgeManagement';
 import GasRateCalculator from './components/tools/gas-rate/GasRateCalculator';
 import RoomBtuCalculator from './components/tools/room-btu/RoomBtuCalculator';
 import GasPipeSizing from './components/tools/gas-pipe/GasPipeSizing';
+import GasMeterDiversity from './components/tools/gas-diversity/GasMeterDiversity';
 import CP12Form from './components/tools/forms/CP12Form';
 import WarningNotice from './components/tools/forms/WarningNotice';
 import ToolsPage from './components/ToolsPage';
@@ -168,6 +169,7 @@ const Dashboard = () => {
       [TAB_IDS.GAS_RATE]: 'Gas Rate Calculator',
       [TAB_IDS.ROOM_BTU]: 'BTU Calculator',
       [TAB_IDS.GAS_PIPE]: 'Gas Pipe Sizing',
+      [TAB_IDS.GAS_DIVERSITY]: 'Meter Diversity',
       [TAB_IDS.CP12_FORM]: 'CP12 Gas Safety',
       [TAB_IDS.WARNING_NOTICE]: 'Warning Notice',
       [TAB_IDS.TOOLS]: 'Engineering Tools',
@@ -254,6 +256,16 @@ const Dashboard = () => {
                     <ErrorBoundary componentName="Gas Pipe Sizing">
                       <Suspense fallback={<LoadingFallback componentName="Gas Pipe Sizing" />}>
                         <GasPipeSizing />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.GAS_DIVERSITY && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="Meter Diversity">
+                      <Suspense fallback={<LoadingFallback componentName="Meter Diversity" />}>
+                        <GasMeterDiversity />
                       </Suspense>
                     </ErrorBoundary>
                   </div>

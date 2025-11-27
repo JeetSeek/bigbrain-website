@@ -138,6 +138,7 @@ export const TAB_IDS = {
   GAS_RATE: 'gasRateCalculator', // Gas Rate Calculator tool
   ROOM_BTU: 'roomBtuCalculator', // Room BTU Calculator tool
   GAS_PIPE: 'gasPipeSizing', // UK Gas Pipe Sizing (BS 6891)
+  GAS_DIVERSITY: 'gasMeterDiversity', // Gas Meter Diversity Calculator
   CP12_FORM: 'cp12Form', // CP12 Landlord Gas Safety Record
   WARNING_NOTICE: 'warningNotice', // Gas Warning/Defect Notice
 };

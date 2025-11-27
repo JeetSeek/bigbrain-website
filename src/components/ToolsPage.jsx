@@ -28,6 +28,13 @@ const ToolsPage = ({ onNavigate }) => {
       icon: '📏',
       color: 'from-yellow-500 to-orange-500',
     },
+    {
+      id: TAB_IDS.GAS_DIVERSITY,
+      title: 'Meter Diversity',
+      description: 'Calculate diversified load & meter sizing',
+      icon: '⚡',
+      color: 'from-purple-500 to-indigo-500',
+    },
   ];
 
   const forms = [
