@@ -144,16 +144,16 @@ const GasRateCalculator = () => {
     <div className="max-w-4xl mx-auto p-4 bg-white">
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">Gas Rate Calculator</h1>
-              <p className="text-blue-100 text-sm">Professional gas consumption analysis</p>
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 sm:p-6 rounded-t-lg">
+          <div className="flex items-start sm:items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">Gas Rate Calculator</h1>
+              <p className="text-blue-100 text-xs sm:text-sm">Professional gas consumption analysis</p>
             </div>
-            <div className="text-right">
-              <div className="text-sm opacity-75">Current Gas Type</div>
-              <div className="text-lg font-semibold">{getCurrentGasType().name}</div>
-              <div className="text-xs opacity-75">{getCurrentGasType().cvMJ} MJ/m³</div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-xs opacity-75 hidden sm:block">Current Gas Type</div>
+              <div className="text-sm sm:text-lg font-semibold">{getCurrentGasType().name}</div>
+              <div className="text-[10px] sm:text-xs opacity-75">{getCurrentGasType().cvMJ} MJ/m³</div>
             </div>
           </div>
         </div>
@@ -185,40 +185,40 @@ const GasRateCalculator = () => {
 
           {/* Gas Type Selection */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Gas Type</h3>
-            <div className="flex rounded-xl border border-gray-200 overflow-hidden">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3">Gas Type</h3>
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:rounded-xl sm:border sm:border-gray-200 sm:overflow-hidden sm:gap-0">
               <button
-                className={`flex-1 py-3 px-4 text-sm font-medium transition-all ${
+                className={`py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium transition-all rounded-lg sm:rounded-none sm:flex-1 ${
                   gasType === 'natural'
                     ? 'bg-blue-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-blue-50'
+                    : 'bg-gray-100 sm:bg-white text-gray-700 hover:bg-blue-50'
                 }`}
                 onClick={() => setGasType('natural')}
               >
-                Natural Gas
-                <div className="text-xs opacity-75 mt-1">39.5 MJ/m³</div>
+                <span className="block">Natural</span>
+                <span className="block text-[10px] sm:text-xs opacity-75 mt-0.5">39.5 MJ/m³</span>
               </button>
               <button
-                className={`flex-1 py-3 px-4 text-sm font-medium transition-all border-l border-gray-200 ${
+                className={`py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium transition-all rounded-lg sm:rounded-none sm:border-l sm:border-gray-200 sm:flex-1 ${
                   gasType === 'lpg'
                     ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-orange-50'
+                    : 'bg-gray-100 sm:bg-white text-gray-700 hover:bg-orange-50'
                 }`}
                 onClick={() => setGasType('lpg')}
               >
-                LPG (Propane)
-                <div className="text-xs opacity-75 mt-1">95.0 MJ/m³</div>
+                <span className="block">LPG</span>
+                <span className="block text-[10px] sm:text-xs opacity-75 mt-0.5">95.0 MJ/m³</span>
               </button>
               <button
-                className={`flex-1 py-3 px-4 text-sm font-medium transition-all border-l border-gray-200 ${
+                className={`py-2 sm:py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium transition-all rounded-lg sm:rounded-none sm:border-l sm:border-gray-200 sm:flex-1 ${
                   gasType === 'butane'
                     ? 'bg-red-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-red-50'
+                    : 'bg-gray-100 sm:bg-white text-gray-700 hover:bg-red-50'
                 }`}
                 onClick={() => setGasType('butane')}
               >
-                Butane
-                <div className="text-xs opacity-75 mt-1">121.0 MJ/m³</div>
+                <span className="block">Butane</span>
+                <span className="block text-[10px] sm:text-xs opacity-75 mt-0.5">121.0 MJ/m³</span>
               </button>
             </div>
           </div>

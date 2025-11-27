@@ -204,14 +204,18 @@ export const MobileHeader = ({ title, leftAction, rightAction }) => {
 export const MobileContainer = ({ children, hasTabBar = true, hasHeader = true }) => {
   return (
     <div 
-      className="ios-safe-area w-full h-full overflow-hidden"
+      className="w-full h-full overflow-hidden"
       style={{
-        paddingTop: hasHeader ? '44px' : '0',
-        paddingBottom: hasTabBar ? '49px' : '0',
+        // Account for header + safe area (notch)
+        paddingTop: hasHeader ? 'calc(44px + env(safe-area-inset-top, 0px))' : 'env(safe-area-inset-top, 0px)',
+        // Account for tab bar + safe area (home indicator)
+        paddingBottom: hasTabBar ? 'calc(49px + env(safe-area-inset-bottom, 0px))' : 'env(safe-area-inset-bottom, 0px)',
+        paddingLeft: 'env(safe-area-inset-left, 0px)',
+        paddingRight: 'env(safe-area-inset-right, 0px)',
         backgroundColor: 'var(--ios-bg-grouped-primary)'
       }}
     >
-      <div className="h-full overflow-y-auto">
+      <div className="h-full overflow-y-auto overscroll-contain">
         {children}
       </div>
     </div>
