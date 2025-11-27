@@ -1,9 +1,21 @@
 // Unified HTTP client with base URL, auth, timeouts, and JSON helpers
+// Supports both local Express backend and Supabase Edge Functions
 
 const DEFAULT_TIMEOUT = 30000; // 30s
 
+// Deployment modes
+const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE || 'local'; // 'local' | 'supabase'
+
 const getBaseUrl = () => {
-  // Use environment variable for API URL in production, localhost in development
+  // Supabase Edge Functions mode
+  if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    if (supabaseUrl) {
+      return `${supabaseUrl}/functions/v1`;
+    }
+  }
+  
+  // Local Express backend mode
   if (import.meta.env.PROD) {
     return import.meta.env.VITE_API_URL || '/api';
   }
@@ -11,8 +23,40 @@ const getBaseUrl = () => {
 };
 
 const getAuthHeaders = () => {
-  // Remove Supabase auth headers for local development
+  // Add Supabase auth headers for Edge Functions
+  if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (anonKey) {
+      return {
+        'apikey': anonKey,
+        'Authorization': `Bearer ${anonKey}`,
+      };
+    }
+  }
   return {};
+};
+
+// Map API paths to Edge Function names
+const mapPathToFunction = (path) => {
+  if (DEPLOYMENT_MODE !== 'supabase' && !import.meta.env.PROD) {
+    return path; // Keep original path for local dev
+  }
+  
+  // Map /api/xxx to Edge Function name
+  const pathMappings = {
+    '/api/chat': '/chat',
+    '/api/manuals': '/manuals',
+    '/api/manufacturers': '/manufacturers',
+    '/api/sessions': '/sessions',
+  };
+  
+  for (const [apiPath, funcName] of Object.entries(pathMappings)) {
+    if (path.startsWith(apiPath)) {
+      return funcName + path.slice(apiPath.length);
+    }
+  }
+  
+  return path;
 };
 
 async function request(path, { method = 'GET', headers = {}, body, timeout = DEFAULT_TIMEOUT, signal } = {}) {
@@ -20,7 +64,8 @@ async function request(path, { method = 'GET', headers = {}, body, timeout = DEF
   const timer = setTimeout(() => controller.abort(), timeout);
 
   const base = getBaseUrl();
-  const url = path.startsWith('http') ? path : `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+  const mappedPath = mapPathToFunction(path);
+  const url = path.startsWith('http') ? path : `${base}${mappedPath.startsWith('/') ? '' : '/'}${mappedPath}`;
 
   const finalHeaders = {
     'Content-Type': 'application/json',
