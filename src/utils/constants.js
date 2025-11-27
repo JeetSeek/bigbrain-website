@@ -137,6 +137,8 @@ export const TAB_IDS = {
   KNOWLEDGE_MGMT: 'knowledgeManagement', // Knowledge Management tab
   GAS_RATE: 'gasRateCalculator', // Gas Rate Calculator tool
   ROOM_BTU: 'roomBtuCalculator', // Room BTU Calculator tool
+  PIPE_SIZING: 'pipeSizing', // Pipe Sizing Calculator
+  PRESSURE_DROP: 'pressureDrop', // Pressure Drop Calculator
 };
 
 // Sorting options

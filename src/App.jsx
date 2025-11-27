@@ -22,6 +22,8 @@ import ChatDock from './components/ChatDock';
 import KnowledgeManagement from './components/KnowledgeManagement';
 import GasRateCalculator from './components/tools/gas-rate/GasRateCalculator';
 import RoomBtuCalculator from './components/tools/room-btu/RoomBtuCalculator';
+import PipeSizingCalculator from './components/tools/pipe-sizing/PipeSizingCalculator';
+import PressureDropCalculator from './components/tools/pressure-drop/PressureDropCalculator';
 import ToolsPage from './components/ToolsPage';
 
 // Import pages
@@ -164,6 +166,8 @@ const Dashboard = () => {
       [TAB_IDS.CHAT]: 'Fault Finder Chat',
       [TAB_IDS.GAS_RATE]: 'Gas Rate Calculator',
       [TAB_IDS.ROOM_BTU]: 'BTU Calculator',
+      [TAB_IDS.PIPE_SIZING]: 'Pipe Sizing',
+      [TAB_IDS.PRESSURE_DROP]: 'Pressure Drop',
       [TAB_IDS.TOOLS]: 'Engineering Tools',
       [TAB_IDS.SUPPORT]: 'Support',
       [TAB_IDS.FEEDBACK]: 'Feedback',
@@ -238,6 +242,26 @@ const Dashboard = () => {
                     <ErrorBoundary componentName="Room BTU Calculator">
                       <Suspense fallback={<LoadingFallback componentName="Room BTU Calculator" />}>
                         <RoomBtuCalculator />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.PIPE_SIZING && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="Pipe Sizing Calculator">
+                      <Suspense fallback={<LoadingFallback componentName="Pipe Sizing Calculator" />}>
+                        <PipeSizingCalculator />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.PRESSURE_DROP && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="Pressure Drop Calculator">
+                      <Suspense fallback={<LoadingFallback componentName="Pressure Drop Calculator" />}>
+                        <PressureDropCalculator />
                       </Suspense>
                     </ErrorBoundary>
                   </div>
