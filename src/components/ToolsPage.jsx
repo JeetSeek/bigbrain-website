@@ -22,18 +22,11 @@ const ToolsPage = ({ onNavigate }) => {
       color: 'from-blue-500 to-cyan-500',
     },
     {
-      id: TAB_IDS.PIPE_SIZING,
-      title: 'Pipe Sizing',
-      description: 'Copper pipe sizing for heating',
+      id: TAB_IDS.GAS_PIPE,
+      title: 'Gas Pipe Sizing',
+      description: 'BS 6891 pipe sizing & pressure drop',
       icon: '📏',
-      color: 'from-purple-500 to-purple-600',
-    },
-    {
-      id: TAB_IDS.PRESSURE_DROP,
-      title: 'Pressure Drop',
-      description: 'Friction losses in pipework',
-      icon: '📉',
-      color: 'from-teal-500 to-teal-600',
+      color: 'from-yellow-500 to-orange-500',
     },
   ];
 
