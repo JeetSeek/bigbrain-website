@@ -204,14 +204,14 @@ const GasPipeSizing = () => {
                     value={app.name}
                     onChange={(e) => updateAppliance(app.id, 'name', e.target.value)}
                     placeholder={`Appliance ${idx + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500"
                   />
                   <input
                     type="number"
                     value={app.value}
                     onChange={(e) => updateAppliance(app.id, 'value', e.target.value)}
                     placeholder={inputUnit}
-                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm text-right focus:ring-2 focus:ring-orange-500"
+                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-right focus:ring-2 focus:ring-orange-500"
                   />
                   <span className="text-xs text-gray-400 w-10">{inputUnit}</span>
                   {appliances.length > 1 && (
@@ -260,7 +260,7 @@ const GasPipeSizing = () => {
                         value={run.length}
                         onChange={(e) => updatePipeRun(run.id, 'length', e.target.value)}
                         placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
                     <div>
@@ -270,7 +270,7 @@ const GasPipeSizing = () => {
                         value={run.elbows}
                         onChange={(e) => updatePipeRun(run.id, 'elbows', e.target.value)}
                         placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
                     <div>
@@ -280,7 +280,7 @@ const GasPipeSizing = () => {
                         value={run.tees}
                         onChange={(e) => updatePipeRun(run.id, 'tees', e.target.value)}
                         placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-orange-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
                       />
                     </div>
                   </div>
