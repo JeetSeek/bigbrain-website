@@ -325,20 +325,20 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     return (
       <ChatErrorBoundary>
         <div className={`bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full min-h-0 max-h-full ${className}`}>
-          <header className="bg-gradient-to-b from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex items-center justify-between shadow-lg">
-            <div className="flex items-center space-x-3">
-              <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-8 h-8 drop-shadow-md" />
-              <div className="flex flex-col">
-                <h3 className="font-bold text-base tracking-tight">BoilerBrain Assistant</h3>
-                <div className="flex items-center space-x-2 text-xs mt-0.5">
-                  <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full font-medium">Gas Safe</span>
+          <header className="bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shadow-lg flex-shrink-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+              <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-md flex-shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <h3 className="font-bold text-sm sm:text-base tracking-tight truncate">BoilerBrain</h3>
+                <div className="flex items-center space-x-1.5 sm:space-x-2 text-xs mt-0.5">
+                  <span className="bg-white/20 backdrop-blur-sm px-1.5 sm:px-2 py-0.5 rounded-full font-medium text-[10px] sm:text-xs">Gas Safe</span>
                   <div className="flex items-center space-x-1">
-                    <div className={`w-2 h-2 rounded-full shadow-sm ${
+                    <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shadow-sm ${
                       connectionStatus === 'connected' ? 'bg-green-400 shadow-green-300' :
                       connectionStatus === 'reconnecting' ? 'bg-yellow-400 animate-pulse shadow-yellow-300' :
                       'bg-red-400 shadow-red-300'
                     }`}></div>
-                    <span className="text-xs opacity-95 font-medium">
+                    <span className="text-[10px] sm:text-xs opacity-95 font-medium">
                       {connectionStatus === 'connected' ? 'Online' :
                        connectionStatus === 'reconnecting' ? 'Reconnecting...' :
                        'Offline'}
@@ -359,12 +359,12 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                   setShowQuickStart(true);
                 }
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-sm font-medium"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-xs sm:text-sm font-medium flex-shrink-0"
               title="Start new chat"
               aria-label="Start new chat"
             >
-              <span className="text-base">🔄</span>
-              <span>New Chat</span>
+              <span className="text-sm sm:text-base">🔄</span>
+              <span className="hidden xs:inline sm:inline">New</span>
             </button>
           </header>
           
