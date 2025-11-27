@@ -223,7 +223,9 @@ export const useChatSession = (userName) => {
 
     try {
       const wantsDetail = /(diagnos|procedure|step|walkthrough|how to|detailed|full)/i.test(messageText);
-      if (wantsDetail) {
+      if (wantsDetail && !import.meta.env.PROD) {
+        // SSE streaming only works in development with Express backend
+        // In production, we use standard POST to Supabase Edge Functions
         const placeholder = addMessage({ sender: 'assistant', text: '' });
         const sseBase = 'http://localhost:3204';
         const es = new EventSource(`${sseBase}/api/agent/chat/stream?message=${encodeURIComponent(messageText.trim())}&sessionId=${encodeURIComponent(sessionId)}&detail=true`);
