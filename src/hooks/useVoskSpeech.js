@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { createModel } from 'vosk-browser';
+
+// Disable Vosk for production deployment to reduce bundle size
+const loadVosk = async () => {
+  console.warn('Vosk speech recognition disabled in production build');
+  return null;
+};
 
 /**
  * useVoskSpeech – React hook providing offline speech-to-text via Vosk-browser.

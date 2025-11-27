@@ -18,16 +18,17 @@ export default defineConfig({
   // Build optimization for production
   build: {
     // Reduce chunk size warning limit
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
     // Enable code splitting and tree shaking
     rollupOptions: {
       output: {
-        // Manual chunk splitting to reduce bundle size
+        // More aggressive chunk splitting to reduce bundle size
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           icons: ['react-icons'],
           supabase: ['@supabase/supabase-js', '@supabase/auth-ui-react'],
+          utils: ['uuid', 'js-yaml'],
         },
       },
     },
@@ -43,16 +44,24 @@ export default defineConfig({
   
   // Development server configuration
   server: {
-    // Fixed port to prevent multiple server instances on different ports
+    // Fixed port and host to ensure consistent HMR WS endpoint
     port: 5176,
+    host: true,
+    strictPort: true,
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 5176,
+      clientPort: 5176
+    },
     // Proxy configuration for API requests during development
     // Forwards requests to appropriate backend services
     proxy: {
-      // Main API endpoint proxy
+      // Main API endpoint proxy - now points to Supabase Edge Function
       '/api': {
         target: 'http://localhost:3204',
         changeOrigin: true,
-        secure: false,
+        secure: false
       },
       // Manuals service proxy - redirects to separate manuals service
       '/manuals': {

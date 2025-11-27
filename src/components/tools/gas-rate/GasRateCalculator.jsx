@@ -48,6 +48,23 @@ const GasRateCalculator = () => {
     }
   };
 
+  const resetAll = () => {
+    // Reset timer
+    setIsTimerRunning(false);
+    setTimeElapsed(0);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    
+    // Reset all input fields
+    setInitialReading('');
+    setFinalReading('');
+    setDialValue('');
+    
+    // Clear results
+    setResult(null);
+  };
+
   // Format time display
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -215,6 +232,37 @@ const GasRateCalculator = () => {
                   />
                 </div>
               </div>
+
+              {/* Timer Display for Metric Mode */}
+              <div className="text-center mb-6">
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Test Timer</h4>
+                  <div className="text-2xl font-light text-gray-900 mb-2">
+                    {formatTime(timeElapsed)}
+                  </div>
+                  <div className="text-xs text-gray-500 mb-3">mm:ss</div>
+                  
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={isTimerRunning ? pauseTimer : startTimer}
+                      className={`px-4 py-1.5 text-white font-medium rounded transition-colors text-xs ${
+                        isTimerRunning 
+                          ? 'bg-red-500 hover:bg-red-600' 
+                          : 'bg-green-500 hover:bg-green-600'
+                      }`}
+                    >
+                      {isTimerRunning ? 'Stop' : 'Start'}
+                    </button>
+                    <button
+                      onClick={resetAll}
+                      className="px-4 py-1.5 bg-gray-500 text-white font-medium rounded hover:bg-gray-600 transition-colors text-xs"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div className="text-center">
                 <button
                   onClick={handleCalculate}
@@ -268,37 +316,36 @@ const GasRateCalculator = () => {
 
               {/* Timer Display */}
               <div className="text-center mb-6">
-                <div className="text-6xl font-light text-gray-900 mb-2">
-                  {formatTime(timeElapsed)}
-                </div>
-                <div className="text-sm text-gray-500 mb-6">seconds</div>
-                
-                <div className="flex justify-center space-x-4 mb-6">
-                  <button
-                    onClick={startTimer}
-                    disabled={isTimerRunning}
-                    className="px-8 py-3 bg-green-500 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-600 transition-colors"
-                  >
-                    Start
-                  </button>
-                  <button
-                    onClick={pauseTimer}
-                    disabled={!isTimerRunning}
-                    className="px-8 py-3 bg-yellow-500 text-white font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-yellow-600 transition-colors"
-                  >
-                    Pause
-                  </button>
-                  <button
-                    onClick={resetTimer}
-                    className="px-8 py-3 bg-gray-500 text-white font-semibold rounded-xl hover:bg-gray-600 transition-colors"
-                  >
-                    Reset
-                  </button>
+                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Test Timer</h4>
+                  <div className="text-2xl font-light text-gray-900 mb-2">
+                    {formatTime(timeElapsed)}
+                  </div>
+                  <div className="text-xs text-gray-500 mb-3">mm:ss</div>
+                  
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={isTimerRunning ? pauseTimer : startTimer}
+                      className={`px-4 py-1.5 text-white font-medium rounded transition-colors text-xs ${
+                        isTimerRunning 
+                          ? 'bg-red-500 hover:bg-red-600' 
+                          : 'bg-green-500 hover:bg-green-600'
+                      }`}
+                    >
+                      {isTimerRunning ? 'Stop' : 'Start'}
+                    </button>
+                    <button
+                      onClick={resetAll}
+                      className="px-4 py-1.5 bg-gray-500 text-white font-medium rounded hover:bg-gray-600 transition-colors text-xs"
+                    >
+                      Reset
+                    </button>
+                  </div>
                 </div>
 
                 <button
                   onClick={handleCalculate}
-                  className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                  className="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Calculate
                 </button>
@@ -317,7 +364,7 @@ const GasRateCalculator = () => {
                   <div className="px-4 py-3 text-center text-red-600">Net</div>
                 </div>
                 <div className="grid grid-cols-3 bg-white">
-                  <div className="px-4 py-4 text-center font-medium">kW/Hour</div>
+                  <div className="px-4 py-4 text-center font-semibold text-gray-900">kW/Hour</div>
                   <div className="px-4 py-4 text-center text-blue-600 font-semibold">
                     {result.grossKW}
                   </div>
@@ -326,7 +373,7 @@ const GasRateCalculator = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-3 bg-gray-50">
-                  <div className="px-4 py-4 text-center font-medium">BTU/Hour</div>
+                  <div className="px-4 py-4 text-center font-semibold text-gray-900">BTU/Hour</div>
                   <div className="px-4 py-4 text-center text-blue-600 font-semibold">
                     {result.btuPerHour}
                   </div>

@@ -8,17 +8,32 @@
  * @returns {Promise<string>} The CSRF token
  */
 export const fetchCsrfToken = async () => {
+  // Skip CSRF token for development - return a dummy token
+  if (import.meta.env.MODE === 'development') {
+    return 'dev-csrf-token';
+  }
+  
   try {
-    const response = await fetch('/api/csrf-token');
-    const data = await response.json();
-
-    if (data.csrfToken) {
-      // Store token in localStorage for reuse
-      localStorage.setItem('csrfToken', data.csrfToken);
-      return data.csrfToken;
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/api/csrf-token`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-
-    throw new Error('No CSRF token returned');
+    
+    const data = await response.json();
+    if (!data.token) {
+      throw new Error('No CSRF token returned');
+    }
+    
+    // Store token in localStorage for reuse
+    localStorage.setItem('csrfToken', data.token);
+    return data.token;
   } catch (error) {
     console.error('Failed to fetch CSRF token:', error);
     throw error;

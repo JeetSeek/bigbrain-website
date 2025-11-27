@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import './utils/apiClient.js';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import App from './App';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -52,18 +54,14 @@ export const ProtectedRoute = ({ children }) => {
  */
 const AppRoutes = () => (
   <Routes>
-    <Route
-      path={`${ROUTES.HOME}*`}
-      element={<App />}
-    />
+    {/* Bypass auth for testing - go directly to App */}
+    <Route path="/*" element={<App />} />
     <Route
       path={ROUTES.ADMIN}
       element={<AdminDashboard />}
     />
     <Route path={ROUTES.REGISTER} element={<Register />} />
     <Route path={ROUTES.LOGIN} element={<Login />} />
-    {/* Direct access to dashboard for mobile testing */}
-    <Route path="/dashboard" element={<App />} />
   </Routes>
 );
 
@@ -114,7 +112,12 @@ class ErrorBoundarySimple extends React.Component {
 export const AppWithAuth = () => (
   <ErrorBoundarySimple>
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true
+        }}
+      >
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>

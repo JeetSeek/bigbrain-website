@@ -1,0 +1,58 @@
+name: Deploy BoilerBrain (Simple)
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Netlify & Railway
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      # Deploy Backend to Railway
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+      
+      - name: Deploy Backend to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          cd server
+          railway link ${{ secrets.RAILWAY_PROJECT_ID }}
+          railway up --detach
+      
+      # Build and Deploy Frontend to Netlify
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Update API URLs
+        run: |
+          sed -i "s|http://localhost:3204|https://${{ secrets.BACKEND_URL }}|g" src/utils/http.js
+          sed -i "s|http://localhost:3204|https://${{ secrets.BACKEND_URL }}|g" src/components/chat/MessageBubble.jsx
+      
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 5

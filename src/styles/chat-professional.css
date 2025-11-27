@@ -1,0 +1,406 @@
+/**
+ * Professional Chat Interface Styles
+ * Apple Messages-inspired design with modern polish
+ */
+
+/* ============================================
+   Message Bubbles - Professional Grade
+   ============================================ */
+
+.chat-message-user {
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  max-width: 75%;
+  word-wrap: break-word;
+  animation: message-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: auto;
+}
+
+.chat-message-ai {
+  background: #F2F2F7;
+  color: #000000;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08),
+              0 1px 2px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  max-width: 80%;
+  word-wrap: break-word;
+  animation: message-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .chat-message-ai {
+    background: #1C1C1E;
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Message groups */
+.chat-message-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 12px;
+}
+
+.chat-message-group.user {
+  align-items: flex-end;
+}
+
+.chat-message-group.ai {
+  align-items: flex-start;
+}
+
+/* ============================================
+   Input Area - Professional Grade
+   ============================================ */
+
+.chat-input-container {
+  background: #FFFFFF;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 12px 16px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-input-container {
+    background: rgba(28, 28, 30, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F2F2F7;
+  border-radius: 24px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.chat-input-wrapper:focus-within {
+  border-color: #007AFF;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+  background: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-input-wrapper {
+    background: #2C2C2E;
+  }
+  
+  .chat-input-wrapper:focus-within {
+    background: #3A3A3C;
+  }
+}
+
+.chat-input-field {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 8px;
+  font-size: 16px;
+  line-height: 1.4;
+  color: inherit;
+  outline: none;
+  resize: none;
+  max-height: 120px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.chat-input-field::placeholder {
+  color: rgba(60, 60, 67, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-input-field::placeholder {
+    color: rgba(235, 235, 245, 0.3);
+  }
+}
+
+/* Send button */
+.chat-send-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 122, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.chat-send-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.chat-send-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.chat-send-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #8E8E93;
+  box-shadow: none;
+}
+
+/* ============================================
+   Quick Replies - Professional Grade
+   ============================================ */
+
+.chat-quick-replies {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background: linear-gradient(to bottom, transparent 0%, rgba(242, 242, 247, 0.8) 100%);
+}
+
+.chat-quick-replies::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-quick-reply-button {
+  background: #FFFFFF;
+  border: 1px solid #E5E5EA;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #007AFF;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.chat-quick-reply-button:hover {
+  background: #F2F2F7;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-quick-reply-button:active {
+  transform: scale(0.96);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-quick-reply-button {
+    background: #2C2C2E;
+    border-color: #48484A;
+    color: #0A84FF;
+  }
+  
+  .chat-quick-reply-button:hover {
+    background: #3A3A3C;
+  }
+}
+
+/* ============================================
+   Typing Indicator - Professional Grade
+   ============================================ */
+
+.chat-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background: #F2F2F7;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+  width: fit-content;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.chat-typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #8E8E93;
+  animation: typing-dot 1.4s infinite ease-in-out;
+}
+
+.chat-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-typing-indicator {
+    background: #2C2C2E;
+  }
+}
+
+/* ============================================
+   Empty State - Professional Grade
+   ============================================ */
+
+.chat-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  animation: fade-in 0.5s ease-out;
+}
+
+.chat-empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.chat-empty-state-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ios-label-primary);
+  margin-bottom: 8px;
+}
+
+.chat-empty-state-subtitle {
+  font-size: 15px;
+  color: var(--ios-label-secondary);
+  line-height: 1.4;
+}
+
+/* ============================================
+   Safety Alerts - Professional Grade
+   ============================================ */
+
+.chat-safety-alert {
+  background: linear-gradient(135deg, #FF3B30 0%, #D32F2F 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 12px 16px;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chat-safety-alert-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.chat-safety-alert-content {
+  flex: 1;
+}
+
+.chat-safety-alert-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.chat-safety-alert-message {
+  font-size: 15px;
+  line-height: 1.4;
+  opacity: 0.95;
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-messages-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .chat-messages-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-width: 640px) {
+  .chat-message-user,
+  .chat-message-ai {
+    max-width: 85%;
+  }
+  
+  .chat-input-container {
+    padding: 10px 12px;
+  }
+}
+
+/* ============================================
+   Accessibility Enhancements
+   ============================================ */
+
+.chat-message-user:focus,
+.chat-message-ai:focus {
+  outline: 2px solid #007AFF;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chat-message-user,
+  .chat-message-ai,
+  .chat-typing-dot,
+  .chat-safety-alert {
+    animation: none;
+  }
+  
+  .chat-send-button,
+  .chat-quick-reply-button,
+  .chat-input-wrapper {
+    transition: none;
+  }
+}

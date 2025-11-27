@@ -16,17 +16,18 @@ export const getOpenAIReasoner = ({ model = 'gpt-3.5-turbo', systemPrompt = '' }
    * 
    * @param {string} query - User query
    * @param {Array} conversationHistory - Previous conversation history
+   * @param {Object} options - Additional options { sessionId?: string }
    * @returns {Promise<string>} AI response
    */
-  return async (query, conversationHistory = []) => {
+  return async (query, conversationHistory = [], options = {}) => {
     if (!query || typeof query !== 'string') {
       throw new Error('Invalid query provided to OpenAI reasoner');
     }
 
     try {
-      // API URL for server-side proxy to OpenAI
-      const apiUrl = '/api/chat';
-      
+      // Provider toggle (default to server-routed OpenAI for security)
+      const provider = (import.meta.env.VITE_LLM_PROVIDER || 'openai').toLowerCase();
+
       // Prepare the messages array
       const messages = [
         { role: 'system', content: systemPrompt || 'You are a helpful assistant.' }
@@ -40,19 +41,47 @@ export const getOpenAIReasoner = ({ model = 'gpt-3.5-turbo', systemPrompt = '' }
       // Add the current query as the user message
       messages.push({ role: 'user', content: query });
 
-      // Make the API request
-      const response = await fetch(apiUrl, {
+      if (provider === 'openai') {
+        // Route through backend to protect API keys and leverage reliability layers
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: query,
+            sessionId: options?.sessionId || null,
+            systemPrompt: (options?.systemPromptOverride || systemPrompt || 'You are a helpful assistant.')
+          })
+        });
+
+        if (!resp.ok) {
+          const errorData = await resp.json().catch(() => ({}));
+          throw new Error(errorData.message || `Chat API failed with status ${resp.status}`);
+        }
+        const json = await resp.json();
+        if (typeof json.response === 'string' && json.response.length > 0) {
+          return json.response;
+        }
+        throw new Error('Invalid response format from /api/chat');
+      }
+
+      // Fallback to DeepSeek direct from frontend when explicitly chosen
+      const apiKey = import.meta.env.VITE_DEEPSEEK_API_KEY_1;
+      if (!apiKey) {
+        throw new Error('DeepSeek API key not found in environment variables');
+      }
+
+      const response = await fetch('https://api.deepseek.com/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model,
+          model: 'deepseek-chat',
           messages,
           temperature: 0.7,
           max_tokens: 500,
-          presence_penalty: 0.3,
-          frequency_penalty: 0.3,
+          stream: false,
         }),
       });
 
@@ -62,15 +91,12 @@ export const getOpenAIReasoner = ({ model = 'gpt-3.5-turbo', systemPrompt = '' }
       }
 
       const data = await response.json();
-      
-      // Extract the assistant's response
       if (data.choices && data.choices[0] && data.choices[0].message) {
         return data.choices[0].message.content;
       }
-      
-      throw new Error('Invalid response format from OpenAI API');
+      throw new Error('Invalid response format from DeepSeek API');
     } catch (error) {
-      console.error('Error in OpenAI reasoner:', error);
+      console.error('Error in DeepSeek reasoner:', error);
       throw error;
     }
   };

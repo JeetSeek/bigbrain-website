@@ -3,7 +3,7 @@
  * Provides common database operations and error handling
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/supabaseClient';
 
 class BaseRepository {
   constructor(tableName) {
@@ -12,10 +12,8 @@ class BaseRepository {
     }
     
     this.tableName = tableName;
-    this.supabase = createClient(
-      process.env.REACT_APP_SUPABASE_URL || process.env.SUPABASE_URL,
-      process.env.REACT_APP_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
-    );
+    // Use shared client so tests can mock it via src/__mocks__/supabaseClient.js
+    this.supabase = supabase;
     
     // Cache for frequently accessed data
     this.cache = new Map();

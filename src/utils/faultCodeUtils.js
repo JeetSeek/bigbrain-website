@@ -14,6 +14,7 @@ export const extractFaultCodes = (text) => {
   // Look for common fault code patterns
   // Examples: F1, E01, EA, H20, 0A, etc.
   const faultCodePatterns = [
+    /\b([A-Z]{1,3}-\d{1,4})\b/i,        // E.g., EA-123
     /\b([A-Z]\d{1,2})\b/i,             // E.g., F1, E01, H20
     /\b(\d{1,2}[A-Z])\b/i,             // E.g., 0A, 5F
     /fault\s+code\s+([A-Za-z0-9]{1,3})/i,  // E.g., "fault code F1"

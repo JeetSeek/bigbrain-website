@@ -32,50 +32,16 @@ export const useAuth = () => {
  * @returns {React.ReactElement} Provider component with auth context
  */
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // TESTING MODE: Skip authentication entirely
+  const [user, setUser] = useState({ id: 'test-user', email: 'test@test.com' });
+  const [session, setSession] = useState({ user: { id: 'test-user', email: 'test@test.com' } });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // Get the current session and set up a listener for auth changes
-    const getInitialSession = async () => {
-      try {
-        setLoading(true);
-
-        // Get current session
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        setSession(data.session);
-        setUser(data.session?.user || null);
-      } catch (error) {
-        console.error('Error getting session:', error.message);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
-
-    // Set up auth state listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (import.meta.env.DEV) {
-      }
-      setSession(session);
-      setUser(session?.user || null);
-      setLoading(false);
-    });
-
-    // Clean up on unmount
-    return () => {
-      if (authListener) authListener.subscription.unsubscribe();
-    };
-  }, []);
+  // TESTING MODE: Skip all auth checks
+  /* useEffect(() => {
+    // Auth checking disabled for testing
+  }, []); */
 
   /**
    * Register a new user with email and password

@@ -22,13 +22,32 @@ export function ManualFinder() {
   const [downloadingId, setDownloadingId] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [manufacturerSearch, setManufacturerSearch] = useState('');
   const searchRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   /**
    * Focus search bar on component mount
    */
   useEffect(() => {
     if (searchRef.current) searchRef.current.focus();
+  }, []);
+
+  /**
+   * Close dropdown when clicking outside
+   */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   /**
@@ -78,6 +97,22 @@ export function ManualFinder() {
   }, [debouncedQuery, selectedManufacturer, sortBy, sortOrder]);
 
   /**
+   * Filter manufacturers based on search input
+   */
+  const filteredManufacturers = manufacturers.filter(manufacturer =>
+    manufacturer.toLowerCase().includes(manufacturerSearch.toLowerCase())
+  );
+
+  /**
+   * Handle manufacturer selection
+   */
+  const handleManufacturerSelect = (manufacturer) => {
+    setSelectedManufacturer(manufacturer);
+    setManufacturerSearch('');
+    setIsDropdownOpen(false);
+  };
+
+  /**
    * Download a manual using demo service
    * @param {string} id - ID of the manual to download
    */
@@ -113,12 +148,12 @@ export function ManualFinder() {
       <h1 className="text-3xl md:text-4xl font-bold text-center mb-6 mt-2 text-blue-900">
         Find a 🧠 Boiler Brain Manual
       </h1>
-      <div className="w-full max-w-2xl flex flex-col items-center">
+      <div className="w-full max-w-5xl flex flex-col items-center">
         {/* Search and filters section */}
-        <div className="w-full bg-white rounded-xl shadow-md border border-blue-100 p-5 mb-6">
+        <div className="w-full bg-white rounded-xl shadow-md border border-blue-100 p-10 mb-12">
           <input
             ref={searchRef}
-            className="w-full text-black text-lg px-5 py-3 rounded-xl border-2 border-blue-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 mb-4"
+            className="w-full text-black text-2xl px-8 py-6 rounded-xl border-2 border-blue-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 mb-8"
             type="text"
             placeholder="Search by model or description..."
             value={query}
@@ -126,36 +161,78 @@ export function ManualFinder() {
             aria-label="Search for boiler manual"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
             {/* Manufacturer filter */}
-            <div className="flex flex-col">
-              <label htmlFor="manufacturer" className="text-sm font-medium text-blue-800 mb-1">
+            <div className="flex flex-col relative z-20" ref={dropdownRef}>
+              <label htmlFor="manufacturer" className="text-lg font-medium text-blue-800 mb-2">
                 Manufacturer
               </label>
-              <select
-                id="manufacturer"
-                className="px-3 py-2 bg-blue-50 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                value={selectedManufacturer}
-                onChange={e => setSelectedManufacturer(e.target.value)}
-              >
-                <option value="">All Manufacturers</option>
-                {manufacturers.map(manufacturer => (
-                  <option key={manufacturer} value={manufacturer}>
-                    {manufacturer}
-                  </option>
-                ))}
-              </select>
+              <div className="relative z-20">
+                <button
+                  type="button"
+                  className="w-full flex justify-between items-center px-6 py-4 text-lg text-left bg-blue-50 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 hover:bg-blue-100"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  aria-haspopup="listbox"
+                  aria-expanded={isDropdownOpen}
+                >
+                  <span className="truncate">
+                    {selectedManufacturer || 'All Manufacturers'}
+                  </span>
+                  <span className="ml-2 flex-shrink-0 text-blue-600">
+                    {isDropdownOpen ? '▲' : '▼'}
+                  </span>
+                </button>
+                
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-blue-200 rounded-lg shadow-lg z-[9999] max-h-64 overflow-hidden">
+                    <div className="p-2 border-b border-blue-100">
+                      <input
+                        type="text"
+                        placeholder="Search manufacturers..."
+                        className="w-full px-3 py-2 text-sm border border-blue-200 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        value={manufacturerSearch}
+                        onChange={(e) => setManufacturerSearch(e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                    <div className="max-h-48 overflow-y-auto">
+                      <button
+                        type="button"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                        onClick={() => handleManufacturerSelect('')}
+                      >
+                        All Manufacturers
+                      </button>
+                      {filteredManufacturers.map(manufacturer => (
+                        <button
+                          key={manufacturer}
+                          type="button"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                          onClick={() => handleManufacturerSelect(manufacturer)}
+                        >
+                          {manufacturer}
+                        </button>
+                      ))}
+                      {filteredManufacturers.length === 0 && manufacturerSearch && (
+                        <div className="px-3 py-2 text-sm text-gray-500">
+                          No manufacturers found
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Sort options */}
             <div className="flex flex-col">
-              <label htmlFor="sortby" className="text-sm font-medium text-blue-800 mb-1">
+              <label htmlFor="sortby" className="text-lg font-medium text-blue-800 mb-2">
                 Sort By
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-4">
                 <select
                   id="sortby"
-                  className="flex-1 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="flex-1 px-6 py-4 text-lg bg-blue-50 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value)}
                 >
@@ -170,7 +247,7 @@ export function ManualFinder() {
                         : SORT_OPTIONS.ORDER.ASC
                     )
                   }
-                  className="px-3 py-2 bg-blue-100 text-blue-800 rounded-lg border border-blue-200 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="px-6 py-4 text-lg bg-blue-100 text-blue-800 rounded-lg border border-blue-200 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                   title={sortOrder === SORT_OPTIONS.ORDER.ASC ? 'Ascending' : 'Descending'}
                 >
                   {sortOrder === SORT_OPTIONS.ORDER.ASC ? '↑' : '↓'}

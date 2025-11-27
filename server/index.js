@@ -1,1849 +1,2048 @@
-/**
- * BoilerBrain API Server
- * 
- * This Express server handles all backend functionality for BoilerBrain including:
- * - Chat API with AI-powered diagnostic assistance
- * - Manual and document retrieval
- * - Vector-based knowledge search
- * - Fault code lookup
- * 
- * Built with modern Node.js features and optimized for performance.
- */
-
-// Core dependencies
+import express from 'express';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
+import morgan from 'morgan';
+import { adminAuth, userAuth } from './authMiddleware.js';
 import dotenv from 'dotenv';
-import path from 'path';
 import { fileURLToPath } from 'url';
-import EnvironmentValidator from './utils/envValidator.js';
-import performanceMonitor from './services/PerformanceMonitor.js';
+import path from 'path';
+import { createClient } from '@supabase/supabase-js';
+import fetch from 'node-fetch';
 import logger from './utils/logger.js';
-import { runProductionChecks, securityHeadersMiddleware } from './utils/productionChecks.js';
-import { sessionMiddleware, csrfMiddleware } from './utils/secureSession.js';
-import cookieParser from 'cookie-parser';
+import EnhancedFaultCodeService from './services/EnhancedFaultCodeService.js';
+import SessionManager from './services/SessionManager.js';
+import AgentTools from './services/AgentTools.js';
+import { randomUUID } from 'crypto';
+import { validateChatMessage, validateManualSearch, validateRequest } from './middleware/inputValidation.js';
+import * as CONSTANTS from './constants/index.js';
 
+// Get directory name for the current module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from server/.env
-dotenv.config({ path: path.join(__dirname, '.env') });
+// Load .env file from the server directory
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-// Validate environment variables at startup
-EnvironmentValidator.validateAtStartup();
+// Initialize Supabase client (backend uses SERVICE_KEY for full access)
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
-// Initialize performance monitoring
-performanceMonitor.startMonitoring();
-
-// Run production readiness checks
-if (process.env.NODE_ENV === 'production') {
-  runProductionChecks().then(results => {
-    if (!results.ready) {
-      logger.error('Production readiness checks failed - server may not be ready for production use');
-      console.error('❌ Production readiness issues found:');
-      results.critical.forEach(issue => console.error(`  - ${issue}`));
-      
-      if (process.env.STRICT_PRODUCTION_CHECKS === 'true') {
-        process.exit(1);
-      }
-    } else {
-      logger.info('✅ Production readiness checks passed');
-    }
-  }).catch(error => {
-    logger.error('Production checks failed to run', { error: error.message });
-  });
-}
-import express from 'express';
-import cors from 'cors';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
-import net from 'net';
-import { supabase } from './supabaseClient.js';
-import sessionStore from './sessionStore.js';
-import contextRecoveryService from './services/ContextRecoveryService.js';
-import { csrfProtection, generateCSRFTokenEndpoint } from './middleware/csrfProtection.js';
-
-import EnhancedHybridDiagnosticService from './services/EnhancedHybridDiagnosticService.js';
-import ProfessionalDiagnosticService from './services/ProfessionalDiagnosticService.js';
-import InteractiveDiagnosticWorkflow from './services/InteractiveDiagnosticWorkflow.js';
-import EnhancedIntegrationService from './services/EnhancedIntegrationService.js';
-import ReliabilityGuaranteeService from './services/ReliabilityGuaranteeService.js';
-import LLMDataSourceMonitor from './services/LLMDataSourceMonitor.js';
-import { createChatEndpoint } from './chat_endpoint_clean.js';
-
-// Import route modules
-import videoSearchRoutes from './routes/videoSearch.js';
-import knowledgeManagementRoutes from './routes/knowledgeManagement.js';
-
-// Local dependencies
-import boilerKnowledge from './boilerKnowledgeService.js';
-import { SERVER, AI, VECTOR_SEARCH, PATTERNS, FUNCTION_DECLARATIONS } from './constants.js';
-
-// Access constants from the centralized file
-const { PORT } = SERVER;
-const { MAX_RETRIES, RETRY_DELAY_MS } = SERVER;
-const { MAX_TOKENS } = AI;
-const { SIMILARITY_THRESHOLD, MAX_KNOWLEDGE_SNIPPETS } = VECTOR_SEARCH;
-
-// __filename and __dirname already declared above for dotenv config
-
-// Initialize Express app
 const app = express();
 
-// Configure middleware
-// Security headers first
-app.use(securityHeadersMiddleware);
+// Railway detection and PORT configuration
+// CRITICAL: Railway dynamically assigns PORT, but we may have manually set it to 3204
+// We need to detect Railway's actual assigned port from RAILWAY_STATIC_URL or use a different strategy
+let PORT;
+if (process.env.RAILWAY_STATIC_URL) {
+  // We're on Railway
+  // Railway provides PORT in the environment, but if we manually set it to 3204, that's wrong
+  // Railway's actual port is what the platform assigns (usually in the 3000-9000 range)
+  // The issue: we can't detect Railway's "real" port if we've overridden it
+  // Solution: Use a port that Railway will accept - typically they expose on standard ports
+  // and map internally. We should listen on the PORT they provide, even if it's 3204.
+  PORT = parseInt(process.env.PORT) || 3000;
+  console.log(`[Railway] Environment detected. Listening on PORT: ${PORT}`);
+  console.log(`[Railway] RAILWAY_STATIC_URL: ${process.env.RAILWAY_STATIC_URL}`);
+} else {
+  // Local development
+  PORT = process.env.PORT || CONSTANTS.DEFAULT_PORT;
+  console.log(`[Local] Development mode. PORT: ${PORT}`);
+}
 
-// Cookie parser for secure sessions
-app.use(cookieParser());
+// Rate limiting configuration using constants
+const apiLimiter = rateLimit({
+  windowMs: CONSTANTS.RATE_LIMIT_WINDOW_MS,
+  max: CONSTANTS.RATE_LIMIT_MAX_REQUESTS,
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Session management
-app.use(sessionMiddleware);
+const chatLimiter = rateLimit({
+  windowMs: CONSTANTS.CHAT_RATE_LIMIT_WINDOW_MS,
+  max: CONSTANTS.CHAT_RATE_LIMIT_MAX_REQUESTS,
+  message: 'Too many chat requests, please slow down.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// CORS configuration for production security
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+// HTTP request logging
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.info(message.trim())
+  }
+}));
+
+// CORS configuration with origin whitelist
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+  : ['http://localhost:5176', 'http://localhost:5177'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:5176',
-      'http://localhost:3000',
-      'http://127.0.0.1:5176',
-      'http://127.0.0.1:3000',
-      // Add your production domain here
-      process.env.FRONTEND_URL || 'https://your-production-domain.com'
-    ];
-    
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.warn(`CORS blocked request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // Allow cookies and authorization headers
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: [
-    'Origin',
-    'X-Requested-With',
-    'Content-Type',
-    'Accept',
-    'Authorization',
-    'X-CSRF-Token'
-  ],
-  exposedHeaders: ['X-CSRF-Token'],
-  maxAge: 86400 // 24 hours preflight cache
-};
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400 // 24 hours
+}));
 
-app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' })); // Increase payload limit
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-
-// Configure server timeouts for stability
-app.use((req, res, next) => {
-  // Set server timeout to 90 seconds to handle heavy processing
-  req.setTimeout(90000);
-  res.setTimeout(90000);
-  next();
-});
-
-// Note: Static file serving moved to end of file to ensure API routes are handled first
-
-// CSRF Protection
-const csrfTokens = new Map(); // Store for valid tokens
-
-// Generate a CSRF token and store it
-app.get('/api/csrf-token', (req, res) => {
-  const token = crypto.randomBytes(16).toString('hex');
-  csrfTokens.set(token, Date.now() + 3600000); // Valid for 1 hour
-  res.json({ csrfToken: token });
-});
-
-// CSRF token validation middleware
-const validateCsrf = (req, res, next) => {
-  // Skip validation for GET requests
-  if (req.method === 'GET') return next();
-  
-  const token = req.headers['x-csrf-token'];
-  
-  if (!token || !csrfTokens.has(token)) {
-    return res.status(403).json({ error: 'Missing or invalid CSRF token' });
-  }
-  
-  const expiry = csrfTokens.get(token);
-  if (Date.now() > expiry) {
-    csrfTokens.delete(token);
-    return res.status(403).json({ error: 'CSRF token expired' });
-  }
-  
-  next();
-};
-
-// Cleanup expired tokens periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [token, expiry] of csrfTokens.entries()) {
-    if (now > expiry) csrfTokens.delete(token);
-  }
-}, 3600000); // Clean up every hour
-
-// Initialize Supabase client
-// Initialize professional diagnostic service and monitoring
-const professionalDiagnosticService = new ProfessionalDiagnosticService();
-const hybridDiagnosticService = new EnhancedHybridDiagnosticService();
-const llmMonitor = new LLMDataSourceMonitor();
-const enhancedIntegration = new EnhancedIntegrationService();
-const interactiveWorkflow = new InteractiveDiagnosticWorkflow();
-const reliabilityGuarantee = new ReliabilityGuaranteeService();
-// Supabase client is imported from supabaseClient.js
-// No need to recreate it here
-
-// Use real API keys from .env file instead of mock testing mode
-const TESTING_MODE = false;
-
-// Collect API keys
-const deepseekApiKeys = [
-  process.env.DEEPSEEK_API_KEY_1,
-  process.env.DEEPSEEK_API_KEY_2,
-  process.env.DEEPSEEK_API_KEY_3,
-  process.env.DEEPSEEK_API_KEY_4,
-  process.env.DEEPSEEK_API_KEY_5,
-  process.env.DEEPSEEK_API_KEY_6,
-  // Add mock key for testing if no real keys available
-  TESTING_MODE ? 'mock-deepseek-api-key-for-testing' : null
-].filter(Boolean);
-
-// Set up mock OpenAI key if needed
-if (TESTING_MODE && !process.env.OPENAI_API_KEY) {
-  process.env.OPENAI_API_KEY = 'mock-openai-api-key-for-testing';
-}
-
-if (deepseekApiKeys.length === 0 && !TESTING_MODE) {
-  console.error('⚠️ WARNING: No DeepSeek API keys configured! Chat functionality will fail.');
-} else if (TESTING_MODE && deepseekApiKeys.length === 1 && deepseekApiKeys[0].startsWith('mock-')) {
-}
-
-/**
- * Admin authentication middleware
- * Verifies that the request is from an authenticated admin user
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-const adminAuth = async (req, res, next) => {
-  try {
-    // Get JWT from Authorization header
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        error: 'Unauthorized', 
-        message: 'Missing or invalid authorization token' 
-      });
+// HTTPS enforcement in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https') {
+      res.redirect(301, `https://${req.header('host')}${req.url}`);
+    } else {
+      next();
     }
-    
-    const token = authHeader.split(' ')[1];
-    
-    // Handle demo tokens for development/testing
-    if (token === 'admin-token') {
-      // Demo admin token - validate against environment variables
-      const adminEmail = process.env.ADMIN_EMAIL || 'mark@boilerbrain.com';
-      req.user = {
-        id: 'admin-user',
-        email: adminEmail,
-        app_metadata: { role: 'admin' },
-        isDemoUser: true
-      };
-      return next();
-    }
-    
-    if (token === 'demo-token') {
-      return res.status(403).json({ 
-        error: 'Forbidden', 
-        message: 'Admin access required - demo user detected' 
-      });
-    }
-    
-    // Verify the JWT token with Supabase for real users
-    const { data, error } = await supabase.auth.getUser(token);
-    
-    if (error || !data.user) {
-      console.error('Admin auth error:', error);
-      return res.status(401).json({ 
-        error: 'Unauthorized', 
-        message: 'Invalid or expired token' 
-      });
-    }
-    
-    // Check if user has admin role
-    const adminEmail = process.env.ADMIN_EMAIL || 'mark@boilerbrain.com';
-    const isAdmin = data.user.app_metadata?.role === 'admin' || 
-                   data.user.email === adminEmail;
-    
-    if (!isAdmin) {
-      return res.status(403).json({ 
-        error: 'Forbidden', 
-        message: 'Admin access required' 
-      });
-    }
-    
-    // Add user to request object
-    req.user = data.user;
-    next();
-  } catch (error) {
-    console.error('Admin auth error:', error);
-    res.status(500).json({ error: 'Server error', message: 'Authentication verification failed' });
-  }
-};
-
-// OpenAI embeddings creation
-async function createEmbedding(text) {
-  if (!text || typeof text !== 'string') {
-    throw new Error('Invalid input for embedding');
-  }
-  
-  const response = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'text-embedding-ada-002',
-      input: text
-    })
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(`OpenAI API error: ${error.error?.message || response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.data[0].embedding;
 }
 
-// Find relevant knowledge snippets using vector similarity search
-async function findRelevantKnowledge(query, tag = null) {
-  try {
-    // Create embedding for the user query
-    const embedding = await createEmbedding(query);
-    
-    // Query the database for similar embeddings
-    const { data, error } = await supabase.rpc(
-      'find_similar_knowledge',
-      {
-        query_embedding: embedding,
-        match_threshold: VECTOR_SEARCH.SIMILARITY_THRESHOLD,
-        match_count: VECTOR_SEARCH.MAX_KNOWLEDGE_SNIPPETS,
-        filter_tag: tag
-      }
-    );
-    
-    if (error) throw error;
-    return data;
-  } catch (error) {
-    console.error(`[Knowledge Search] Error: ${error.message}`);
-    return []; // Return empty array on error
-  }
-}
+app.use(express.json());
+app.use('/api', validateRequest); // Apply general request validation
+app.use('/api', apiLimiter); // Apply rate limiting to all API routes
 
-// Extract boiler information from text using regex patterns
-function extractBoilerInfo(text) {
-  const result = {
-    manufacturer: null,
-    model: null,
-    faultCodes: [],
-    hasSafetyConcern: false,
-    heatingSystemType: null,
-    systemComponents: [],
-    systemTypeProbability: {}
-  };
-  
-  const lowerText = text.toLowerCase();
-  
-  // Check for manufacturer
-  const manufacturerMatches = lowerText.match(PATTERNS.MANUFACTURER);
-  if (manufacturerMatches && manufacturerMatches.length > 0) {
-    result.manufacturer = manufacturerMatches[0].trim();
-  }
-  
-  // PRIORITIZE FAULT CODES FIRST to avoid misclassification
-  const foundFaultCodes = new Set();
-  for (const pattern of PATTERNS.FAULT_CODES) {
-    let match;
-    while ((match = pattern.exec(lowerText)) !== null) {
-      if (match[1]) {
-        foundFaultCodes.add(match[1].trim());
-      }
-    }
-  }
-  result.faultCodes = Array.from(foundFaultCodes);
-  
-  // Check for model - EXCLUDE any strings that were identified as fault codes
-  const modelMatches = lowerText.match(PATTERNS.MODEL);
-  if (modelMatches && modelMatches.length > 0) {
-    // Filter out any matches that were already identified as fault codes
-    const validModels = modelMatches.filter(match => {
-      const cleanMatch = match.trim();
-      return !foundFaultCodes.has(cleanMatch);
-    });
-    if (validModels.length > 0) {
-      result.model = validModels[0].trim();
-    }
-  }
+// Admin auth middleware is imported from authMiddleware.js
 
-  
-  // Check for safety concerns
-  for (const pattern of PATTERNS.SAFETY_CONCERNS) {
-    if (pattern.test(lowerText)) {
-      result.hasSafetyConcern = true;
-      break;
-    }
-  }
-  
-  // Detect heating system type based on keywords
-  const systemTypeCounts = {
-    combi: 0,
-    system: 0,
-    heatOnly: 0,
-    backBoiler: 0
-  };
-  
-  // Check for explicit heating system type mentions
-  if (PATTERNS.HEATING_SYSTEM_TYPES.COMBI.test(lowerText)) {
-    systemTypeCounts.combi += 2; // Stronger signal for explicit mention
-  }
-  if (PATTERNS.HEATING_SYSTEM_TYPES.SYSTEM.test(lowerText)) {
-    systemTypeCounts.system += 2;
-  }
-  if (PATTERNS.HEATING_SYSTEM_TYPES.HEAT_ONLY.test(lowerText)) {
-    systemTypeCounts.heatOnly += 2;
-  }
-  if (PATTERNS.HEATING_SYSTEM_TYPES.BACK_BOILER.test(lowerText)) {
-    systemTypeCounts.backBoiler += 2;
-  }
-  
-  // Check for system components that hint at system type
-  if (PATTERNS.SYSTEM_COMPONENTS.CYLINDER.test(lowerText)) {
-    systemTypeCounts.system += 1;
-    systemTypeCounts.heatOnly += 1;
-    result.systemComponents.push('hot water cylinder');
-  }
-  if (PATTERNS.SYSTEM_COMPONENTS.PLATE_HEAT_EXCHANGER.test(lowerText)) {
-    systemTypeCounts.combi += 1;
-    result.systemComponents.push('plate heat exchanger');
-  }
-  if (PATTERNS.SYSTEM_COMPONENTS.DIVERTER_VALVE.test(lowerText)) {
-    systemTypeCounts.combi += 0.5;
-    systemTypeCounts.system += 0.5;
-    result.systemComponents.push('diverter valve');
-  }
-  if (PATTERNS.SYSTEM_COMPONENTS.EXPANSION_VESSEL.test(lowerText)) {
-    // All system types have expansion vessels, but it's mentioned more with system boilers
-    systemTypeCounts.combi += 0.5;
-    systemTypeCounts.system += 0.5;
-    result.systemComponents.push('expansion vessel');
-  }
-  
-  // Calculate probabilities
-  const totalScore = Object.values(systemTypeCounts).reduce((sum, val) => sum + val, 0);
-  if (totalScore > 0) {
-    result.systemTypeProbability = {
-      combi: systemTypeCounts.combi / totalScore,
-      system: systemTypeCounts.system / totalScore,
-      heatOnly: systemTypeCounts.heatOnly / totalScore,
-      backBoiler: systemTypeCounts.backBoiler / totalScore
-    };
-    
-    // Determine most likely heating system type
-    const mostLikelyType = Object.entries(systemTypeCounts)
-      .reduce((max, [type, count]) => count > max[1] ? [type, count] : max, ['unknown', 0]);
-    
-    if (mostLikelyType[1] > 0) {
-      // Convert camelCase to proper format
-      const typeMapping = {
-        combi: 'combi',
-        system: 'system',
-        heatOnly: 'heat-only',
-        backBoiler: 'back boiler'
-      };
-      result.heatingSystemType = typeMapping[mostLikelyType[0]] || null;
-    }
-  }
-  
-  // Remove duplicates from system components
-  result.systemComponents = [...new Set(result.systemComponents)];
-  
-  return result;
-}
-
-// Summarize conversation to reduce token usage
-async function summarizeConversation(messages) {
-  if (messages.length < AI.CONVERSATION_SUMMARY_LENGTH) return null; // No need to summarize short conversations
-  
-  try {
-    const messagesToSummarize = messages.slice(0, -4); // Keep the last 4 messages unsummarized
-    const conversationText = messagesToSummarize
-      .map(msg => `${msg.sender === 'user' ? 'User' : 'Assistant'}: ${msg.text}`)
-      .join('\n');
-    
-    // Use DeepSeek to generate a summary
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${deepseekApiKeys[0]}` // Use first key for summaries
-      },
-      body: JSON.stringify({
-        model: 'deepseek-chat',
-        messages: [
-          {
-            role: 'system',
-            content: `You are a summarization assistant. Create a concise summary of the following heating engineer support conversation. 
-            Focus on extracting key facts about the boiler manufacturer, model, fault codes, symptoms described, and advice given.`
-          },
-          {
-            role: 'user',
-            content: `Summarize this conversation: \n${conversationText}`
-          }
-        ],
-        max_tokens: AI.SUMMARY_MAX_TOKENS,
-        temperature: AI.SUMMARY_TEMPERATURE
-      })
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`DeepSeek API error: ${errorText}`);
-    }
-    
-    const data = await response.json();
-    return data?.choices?.[0]?.message?.content || null;
-    
-  } catch (error) {
-    console.error(`[Summarization] Error: ${error.message}`);
-    return null; // Return null on error
-  }
-}
-
-// Function declarations imported from constants.js
-const functionDeclarations = FUNCTION_DECLARATIONS;
-
-// Function call handlers
-async function handleFunctionCall(functionCall) {
-  
-  switch(functionCall.name) {
-    case 'getFaultCodeInfo':
-      try {
-        const { manufacturer, faultCode } = JSON.parse(functionCall.arguments);
-        const info = boilerKnowledge.findFaultCode(manufacturer, faultCode);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: info ? JSON.stringify(info) : JSON.stringify({ error: 'Fault code not found' })
-        };
-      } catch (error) {
-        console.error(`[Function] Error handling getFaultCodeInfo: ${error.message}`);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: JSON.stringify({ error: error.message })
-        };
-      }
-      
-    case 'getSymptomInfo':
-      try {
-        const { symptom } = JSON.parse(functionCall.arguments);
-        const info = boilerKnowledge.getSymptomHelp(symptom);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: info ? JSON.stringify(info) : JSON.stringify({ error: 'Symptom information not found' })
-        };
-      } catch (error) {
-        console.error(`[Function] Error handling getSymptomInfo: ${error.message}`);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: JSON.stringify({ error: error.message })
-        };
-      }
-      
-    case 'getSafetyInformation':
-      try {
-        const { concern } = JSON.parse(functionCall.arguments);
-        const info = boilerKnowledge.getSafetyWarning(concern);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: info ? JSON.stringify(info) : JSON.stringify({ error: 'Safety information not found' })
-        };
-      } catch (error) {
-        console.error(`[Function] Error handling getSafetyInformation: ${error.message}`);
-        return {
-          role: 'function',
-          name: functionCall.name,
-          content: JSON.stringify({ error: error.message })
-        };
-      }
-      
-    default:
-      return {
-        role: 'function',
-        name: functionCall.name,
-        content: JSON.stringify({ error: 'Unknown function' })
-      };
-  }
-}
-
-// Sleep function for retries
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Make ChatCompletion request with retry logic
-async function makeChatCompletionRequest(messages, sessionId = null, retries = MAX_RETRIES) {
-  // Add request timestamp for performance tracking
-  const requestStartTime = Date.now();
-  // Determine which API to use based on environment variable
-  const useModel = process.env.USE_MODEL?.toLowerCase() || 'openai';
-  
-  // Validate messages before sending to prevent null content errors
-  for (const msg of messages) {
-    if (msg.content === null || msg.content === undefined) {
-      console.warn('[LLM] Found null/undefined content in message, setting to empty string');
-      msg.content = '';
-    }
-  }
-  
-  if (useModel === 'openai') {
-    return await makeOpenAIRequest(messages, sessionId, retries);
-  } else {
-    try {
-      return await makeDeepSeekRequest(messages, sessionId, retries);
-    } catch (error) {
-      console.warn(`[DeepSeek] Failed with error: ${error.message}. Falling back to OpenAI...`);
-      return await makeOpenAIRequest(messages, sessionId, retries);
-    }
-  }
-}
-
-// Get all available OpenAI API keys (cached to prevent infinite loops)
-let cachedApiKeys = null;
-function getOpenAIAPIKeys() {
-  // Return cached keys to prevent repeated calls
-  if (cachedApiKeys !== null) {
-    return cachedApiKeys;
-  }
-  
-  const keys = [];
-  
-  // Get all API keys (supports up to 5 keys)
-  if (process.env.OPENAI_API_KEY) keys.push(process.env.OPENAI_API_KEY);
-  if (process.env.OPENAI_API_KEY_2) keys.push(process.env.OPENAI_API_KEY_2);
-  if (process.env.OPENAI_API_KEY_3) keys.push(process.env.OPENAI_API_KEY_3);
-  if (process.env.OPENAI_API_KEY_4) keys.push(process.env.OPENAI_API_KEY_4);
-  if (process.env.OPENAI_API_KEY_5) keys.push(process.env.OPENAI_API_KEY_5);
-  
-  // Cache the keys to prevent repeated calls
-  cachedApiKeys = keys;
-  
-  return keys;
-}
-
-// Store last successful key index to optimize subsequent calls
-let lastSuccessfulKeyIndex = 0;
-
-// Make request to OpenAI API with key rotation and context recovery
-async function makeOpenAIRequest(messages, sessionId = null, retries = MAX_RETRIES) {
-  const apiKeys = getOpenAIAPIKeys();
-  
-  if (apiKeys.length === 0) {
-    throw new Error('No valid OpenAI API keys available');
-  }
-  
-  // Validate messages before sending to avoid null content issues
-  const validatedMessages = messages.map(msg => {
-    if (msg.content === null || msg.content === undefined) {
-      console.warn('[LLM] Found null/undefined content in message, setting to empty string');
-      return { ...msg, content: '' };
-    }
-    return msg;
-  });
-  
-  // If session exists, mark that we're starting a critical operation
-  if (sessionId) {
-    try {
-      // Create a recovery point before API call in case of failure
-      const session = await sessionStore.getSession(sessionId);
-      await contextRecoveryService.createRecoveryPoint(sessionId, session);
-    } catch (err) {
-      // Non-fatal, continue with request
-      console.warn(`[LLM] Failed to create recovery point: ${err.message}`);
-    }
-  }
-  
-  // Try all api keys in random order
-  const keyOrder = Array.from({length: apiKeys.length}, (_, i) => i);
-  // Shuffle for load balancing
-  for (let i = keyOrder.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [keyOrder[i], keyOrder[j]] = [keyOrder[j], keyOrder[i]];
-  }
-  
-  const keyErrors = [];
-  const requestStartTime = Date.now();
-  
-  // Try each key with multiple attempts
-  for (const keyIndex of keyOrder) {
-    const apiKey = apiKeys[keyIndex];
-    
-    // Try multiple times with each key
-    for (let attempt = 0; attempt < retries; attempt++) {
-      try {
-        
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            messages: validatedMessages,
-            model: AI.OPENAI_MODELS.CHAT,
-            temperature: 0.3,
-            max_tokens: 1000,
-          })
-        });
-        
-        // Handle rate limiting and server errors with retries
-        if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
-          console.warn(`[OpenAI] Rate limit or server error (${response.status}) for key ${keyIndex + 1}. Retrying...`);
-          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000)); // Exponential backoff
-          continue;
-        }
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-          const errorText = data.error?.message || 'Unknown error';
-          keyErrors.push(`Key ${keyIndex + 1}: ${errorText}`);
-          throw new Error(`OpenAI API error (${response.status}): ${errorText}`);
-        }
-        
-        // Return the full completion object so chat handler can access completion.choices[0].message.content
-        console.log('[Chat] Successfully generated response in ' + (Date.now() - requestStartTime) + 'ms');
-        return data;
-      } catch (error) {
-        console.warn(`[OpenAI] Error with key ${keyIndex + 1}: ${error.message}. Retrying...`);
-        // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 500)); // Exponential backoff
-      }
-    }
-  }
-  
-  // If we get here, all keys and attempts have failed
-  const errorMsg = `All OpenAI API keys failed: ${keyErrors.join(', ')}`;
-  console.error(errorMsg);
-  
-  // Try to recover session context if possible
-  if (sessionId) {
-    try {
-      await contextRecoveryService.recoverContext(sessionId);
-    } catch (recoveryErr) {
-      console.error(`[LLM] Context recovery also failed: ${recoveryErr.message}`);
-    }
-  }
-  
-  throw new Error(errorMsg);
-}
-
-// Make request to DeepSeek API
-async function makeDeepSeekRequest(messages, sessionId = null, retries = MAX_RETRIES) {
-  for (let attempt = 0; attempt < retries + 1; attempt++) {
-    try {
-      // Simple round-robin key selection
-      const keyIndex = attempt % deepseekApiKeys.length;
-      const apiKey = deepseekApiKeys[keyIndex];
-      
-      if (!apiKey) {
-        throw new Error('No valid DeepSeek API key available');
-      }
-      
-      
-      // Handle testing mode with mock API key
-      if (TESTING_MODE && apiKey.startsWith('mock-')) {
-        
-        // Extract the last user message to generate a relevant mock response
-        const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
-        const userInput = lastUserMessage.toLowerCase();
-        
-        // Generate mock response based on user input
-        let mockResponse = "I'm BoilerBrain, your boiler diagnostic assistant. How can I help you today?";
-        
-        if (userInput.includes('worcester')) {
-          mockResponse = "I see you're working with a Worcester boiler. These are quite common in UK homes. What model is it, and what fault are you experiencing?";
-        } else if (userInput.includes('fault') || userInput.includes('error')) {
-          mockResponse = "That fault code could indicate several issues. First, check if the gas supply is adequate. Then verify the pressure is between 1-2 bar. If both are fine, it might be a sensor issue.";
-        } else if (userInput.includes('thank')) {
-          mockResponse = "You're welcome! If you have any more questions about the boiler, feel free to ask.";
-        }
-        
-        // Return mock completion response object
-        return {
-          choices: [{
-            message: {
-              content: mockResponse,
-              role: 'assistant'
-            },
-            finish_reason: 'stop'
-          }]
-        };
-      }
-      
-      // Real API request
-      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages,
-          max_tokens: MAX_TOKENS,
-          temperature: 0.4,
-          functions: functionDeclarations,
-          user: sessionId || uuidv4(),
-          stream: false
-        })
-      });
-      
-      // Handle rate limits and server errors with retries
-      if (response.status === 429 || (response.status >= 500 && response.status < 600)) {
-        console.warn(`[DeepSeek] Rate limit or server error (${response.status}). Retrying...`);
-        await sleep(RETRY_DELAY_MS * Math.pow(2, attempt)); // Exponential backoff
-        continue;
-      }
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`DeepSeek API error (${response.status}): ${errorText}`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      console.error(`[DeepSeek] Request error on attempt ${attempt + 1}:`, error.message);
-      
-      if (attempt >= retries) {
-        throw error; // Re-throw after all retries
-      }
-      
-      await sleep(RETRY_DELAY_MS * Math.pow(2, attempt)); // Exponential backoff
-    }
-  }
-}
-
-// --- API Routes ---
-
-// Register route modules
-app.use('/api/video', videoSearchRoutes);
-app.use('/api/knowledge', knowledgeManagementRoutes);
-
-// Manual API endpoints
-// List all manuals
-app.get('/api/manuals', async (req, res) => {
-  try {
-    const search = req.query.search || '';
-    const manufacturer = req.query.manufacturer || '';
-    const sortBy = req.query.sort || 'name';
-    const order = req.query.order === 'asc' ? 'ASC' : 'DESC';
-    
-    
-    // Query the real boiler_manuals database table using admin client to bypass RLS
-    console.log('[Manual API] Querying boiler_manuals table from database');
-    
-    // Create admin client with service key to bypass RLS
-    const adminClient = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
-    
-    let query = adminClient
-      .from('boiler_manuals')
-      .select('*');
-
-    // Apply manufacturer filter if provided
-    if (manufacturer) {
-      query = query.ilike('manufacturer', manufacturer);
-    }
-
-    // Apply search filter if provided (only use existing database columns)
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,manufacturer.ilike.%${search}%,gc_number.ilike.%${search}%`);
-    }
-
-    // Apply sorting
-    const sortField = sortBy === 'name' ? 'name' : sortBy;
-    query = query.order(sortField, { ascending: order === 'ASC' });
-
-    // Limit results for performance and browser compatibility
-    query = query.limit(10);
-
-    const { data: manuals, error } = await query;
-
-    if (error) {
-      console.error('[Manual API] Database error:', error);
-      throw new Error(`Database query failed: ${error.message}`);
-    }
-
-
-    if (manuals && manuals.length > 0) {
-      console.log('[Manual API] First manual:', {
-        name: manuals[0].name,
-        manufacturer: manuals[0].manufacturer
-      });
-    }
-
-    // Format the response using the actual database fields
-    const formattedManuals = (manuals || []).map(manual => ({
-      id: manual.id,
-      name: manual.name,
-      manufacturer: manual.manufacturer,
-      url: manual.url,
-      gc_number: manual.gc_number,
-      file_type: 'application/pdf', // Default since not in database
-      upload_date: manual.created_at,
-      description: '', // Not in database schema
-      popularity: 0 // Not in database schema
-    }));
-
-    res.json({ manuals: formattedManuals });
-  } catch (err) {
-    console.error('[Manual API] Error fetching manuals:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get manufacturers for filter dropdown
-app.get('/api/manufacturers', async (req, res) => {
-  try {
-    
-    let manufacturers = [];
-    let usingMockData = false;
-    
-    try {
-      
-      // Create admin client with service key to bypass RLS
-      const adminClient = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_KEY,
-        {
-          auth: {
-            autoRefreshToken: false,
-            persistSession: false
-          }
-        }
-      );
-      
-      const { data: manuals, error } = await adminClient
-        .from('boiler_manuals')
-        .select('manufacturer');
-
-
-      if (error) {
-        usingMockData = true;
-      } else if (manuals && manuals.length > 0) {
-        // Extract unique manufacturers from database
-        const manufacturerSet = new Set();
-        manuals.forEach(manual => {
-          if (manual.manufacturer && manual.manufacturer.trim()) {
-            manufacturerSet.add(manual.manufacturer.trim());
-          }
-        });
-        manufacturers = Array.from(manufacturerSet).sort();
-        console.log(`[Manual API] Found ${manufacturers.length} manufacturers from database:`, manufacturers.slice(0, 5));
-      } else {
-        usingMockData = true;
-      }
-    } catch (dbError) {
-      usingMockData = true;
-    }
-
-    // If database query failed or returned no results, use mock data
-    if (usingMockData || manufacturers.length === 0) {
-      manufacturers = [
-        'Baxi',
-        'Ideal',
-        'Worcester Bosch',
-        'Vaillant',
-        'Glow-worm',
-        'Potterton',
-        'Ferroli',
-        'Alpha',
-        'Viessmann',
-        'Ariston'
-      ].sort();
-    }
-
-    res.json({ manufacturers });
-  } catch (err) {
-    console.error('[Manual API] Error fetching manufacturers:', err);
-    // Return default manufacturers as fallback
-    res.json({ 
-      manufacturers: ['Baxi', 'Ideal', 'Worcester Bosch', 'Vaillant', 'Glow-worm', 'Potterton'].sort()
-    });
-  }
-});
-
-// Get a download URL for a manual
-app.get('/api/manuals/:id/download', async (req, res) => {
-  try {
-    
-    const { data: manual, error } = await supabase
-      .from('boiler_manuals')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
-
-    if (error) {
-      console.error('[Manual API] Error fetching manual:', error);
-      throw error;
-    }
-
-    if (!manual) {
-      return res.status(404).json({ error: 'Manual not found' });
-    }
-
-    // Update popularity (optional - increment download count)
-    try {
-      await supabase
-        .from('boiler_manuals')
-        .update({ popularity: (manual.popularity || 0) + 1 })
-        .eq('id', req.params.id);
-    } catch (updateError) {
-      console.warn('[Manual API] Failed to update popularity:', updateError);
-    }
-
-    res.json({ 
-      download_url: manual.url || manual.download_url,
-      filename: manual.model || manual.name,
-      file_type: manual.file_type || 'application/pdf'
-    });
-  } catch (err) {
-    console.error('[Manual API] Error getting download URL:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Health check endpoints
-app.get('/api/health', async (req, res) => {
-  try {
-    // Basic health check
-    const health = {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development',
-      uptime: process.uptime(),
-      memory: process.memoryUsage(),
-      version: process.version
-    };
-
-    // Test database connection
-    try {
-      const { data, error } = await supabase
-        .from('knowledge_base')
-        .select('count')
-        .limit(1);
-      
-      health.database = error ? 'unhealthy' : 'healthy';
-      if (error) health.databaseError = error.message;
-    } catch (dbError) {
-      health.database = 'unhealthy';
-      health.databaseError = dbError.message;
-    }
-
-    // Test API keys
-    health.apiKeys = {
-      deepseek: !!process.env.DEEPSEEK_API_KEY_1,
-      openai: !!process.env.OPENAI_API_KEY,
-      supabase: !!process.env.SUPABASE_SERVICE_ROLE_KEY
-    };
-
-    const isHealthy = health.database === 'healthy';
-    res.status(isHealthy ? 200 : 503).json(health);
-  } catch (error) {
-    res.status(503).json({
-      status: 'unhealthy',
-      timestamp: new Date().toISOString(),
-      error: error.message
-    });
-  }
-});
-
-// Readiness check for Kubernetes/Docker
-app.get('/api/ready', async (req, res) => {
-  try {
-    // Check if all critical services are ready
-    const { data, error } = await supabase
-      .from('knowledge_base')
-      .select('count')
-      .limit(1);
-    
-    if (error) {
-      return res.status(503).json({
-        status: 'not ready',
-        reason: 'Database not accessible'
-      });
-    }
-
-    res.json({
-      status: 'ready',
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    res.status(503).json({
-      status: 'not ready',
-      reason: error.message
-    });
-  }
-});
-
-// Liveness check for Kubernetes/Docker
-app.get('/api/live', (req, res) => {
-  res.json({
-    status: 'alive',
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    service: 'BoilerBrain API',
+    version: '1.0.0',
     timestamp: new Date().toISOString()
   });
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
 
-// POST session endpoint for session management (production-ready)
-app.post('/api/chat/session', async (req, res) => {
+// --- GET /api/manuals ---
+app.get('/api/manuals', validateManualSearch, async (req, res) => {
   try {
-    const { sessionId, history, userName, action = 'persist' } = req.body;
+    const search = req.query.search || '';
+    const manufacturer = req.query.manufacturer || '';
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+
+    logger.info(`[Manuals] Query: manufacturer=${manufacturer}, search=${search}, limit=${limit}, offset=${offset}`);
+
+    // Query boiler_manuals table directly
+    let query = supabase.from('boiler_manuals').select('*', { count: 'exact' });
     
-    // Validate request
-    if (!sessionId) {
-      return res.status(400).json({ error: 'Session ID is required' });
+    if (manufacturer) {
+      query = query.ilike('manufacturer', `%${manufacturer}%`);
     }
     
-    
-    // Handle persist action (production approach - no sync conflicts)
-    if (action === 'persist') {
-      if (!history || !Array.isArray(history) || history.length === 0) {
-        return res.json({
-          success: true,
-          message: 'No messages to persist',
-          sessionId
-        });
-      }
-      
-      // Create session object for persistence
-      const sessionData = {
-        sessionId,
-        history,
-        boilerInfo: {
-          manufacturer: null,
-          model: null,
-          systemType: null,
-          faultCodes: [],
-          heatingSystemType: null,
-          systemComponents: [],
-          detectedIssues: []
-        },
-        summaries: [],
-        userName: userName || null,
-        createdAt: new Date().toISOString(),
-        lastActivity: new Date().toISOString()
-      };
-      
-      try {
-        // Save session to store (overwrite approach for production)
-        await sessionStore.updateSession(sessionId, sessionData.history, sessionData.boilerInfo);
-        
-        // Create recovery point
-        await contextRecoveryService.createRecoveryPoint(sessionId, sessionData);
-        
-        res.json({
-          success: true,
-          message: 'Session persisted successfully',
-          sessionId,
-          messageCount: history.length
-        });
-        
-      } catch (persistError) {
-        console.error(`[Session] Failed to persist session ${sessionId}:`, persistError);
-        res.status(500).json({ 
-          error: 'Failed to persist session',
-          details: persistError.message
-        });
-      }
-      
-      return;
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,manufacturer.ilike.%${search}%,gc_number.ilike.%${search}%`);
     }
     
-    // Handle other actions (if needed in future)
-    res.status(400).json({ error: `Unknown action: ${action}` });
+    query = query.range(offset, offset + limit - 1).order('manufacturer', { ascending: true });
+    
+    const { data, error, count } = await query;
+    
+    if (error) {
+      logger.error('[Manuals] Database query error:', error);
+      throw error;
+    }
+    
+    logger.info(`[Manuals] Found ${data?.length || 0} manuals (total: ${count})`);
+    
+    res.json({
+      data: data || [],
+      total: count || 0,
+      hasMore: (offset + limit) < (count || 0)
+    });
     
   } catch (error) {
-    console.error('[Session] Error in session management:', error);
-    res.status(500).json({ 
-      error: 'Failed to manage session',
-      details: error.message
-    });
+    logger.error('[Manuals] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch manuals' });
   }
 });
 
-// POST clear session endpoint for resetting problematic sessions
-app.post('/api/chat/clear-session', async (req, res) => {
+// Legacy storage-based endpoint (kept for reference, not used)
+app.get('/api/manuals/storage', validateManualSearch, async (req, res) => {
+  try {
+    const manufacturer = req.query.manufacturer || '';
+    
+    // Get list of storage buckets
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    
+    if (bucketsError) {
+      logger.error('[Manuals] Error listing buckets:', bucketsError);
+      throw bucketsError;
+    }
+
+    // Find the boiler-manuals bucket
+    const boilerBucket = buckets.find(b => b.name === 'boiler-manuals');
+    if (!boilerBucket) {
+      console.log('No boiler-manuals bucket found, checking for alternative bucket names...');
+      
+      // Check for alternative bucket names
+      const altBuckets = buckets.filter(b => 
+        b.name.includes('manual') || 
+        b.name.includes('boiler') || 
+        b.name.includes('document')
+      );
+      
+      if (altBuckets.length === 0) {
+        return res.json({ data: [], total: 0, hasMore: false });
+      }
+      
+      console.log('Found alternative buckets:', altBuckets.map(b => b.name));
+    }
+
+    const bucketName = boilerBucket ? 'boiler-manuals' : buckets[0]?.name;
+    
+    // Get manufacturer folders from storage (nested under dhs_manuals_all)
+    const { data: rootFolders, error: rootError } = await supabase.storage
+      .from(bucketName)
+      .list('', { limit: 100 });
+
+    if (rootError) {
+      console.error('Error listing root folders:', rootError);
+      throw rootError;
+    }
+
+    // Check if we have the dhs_manuals_all structure
+    const dhsFolder = rootFolders.find(f => f.name === 'dhs_manuals_all');
+    const basePath = dhsFolder ? 'dhs_manuals_all' : '';
+
+    console.log(`Using base path: ${basePath || 'root'}`);
+
+    // Get manufacturer folders
+    const { data: folders, error: foldersError } = await supabase.storage
+      .from(bucketName)
+      .list(basePath, { limit: 100 });
+
+    if (foldersError) {
+      console.error('Error listing manufacturer folders:', foldersError);
+      throw foldersError;
+    }
+
+    console.log(`Found ${folders?.length || 0} manufacturer folders`);
+
+    let allManuals = [];
+    const manufacturerFolders = folders.filter(f => !f.name.includes('.'));
+
+    // Filter by manufacturer if specified
+    const targetFolders = manufacturer 
+      ? manufacturerFolders.filter(f => f.name.toLowerCase().includes(manufacturer.toLowerCase()))
+      : manufacturerFolders;
+
+    console.log(`Processing ${targetFolders.length} manufacturer folders`);
+
+    // Get files from each manufacturer folder
+    for (const folder of targetFolders) {
+      try {
+        const folderPath = basePath ? `${basePath}/${folder.name}` : folder.name;
+        
+        const { data: files, error: filesError } = await supabase.storage
+          .from(bucketName)
+          .list(folderPath, { limit: 1000 });
+
+        if (filesError) {
+          console.error(`Error listing files in ${folderPath}:`, filesError);
+          continue;
+        }
+
+        console.log(`Found ${files?.length || 0} files in ${folder.name}`);
+
+        // Convert storage files to manual objects
+        const folderManuals = files
+          .filter(f => f.name.toLowerCase().includes('.pdf') || f.name.toLowerCase().includes('.doc'))
+          .map((file, index) => {
+            const { data: publicUrl } = supabase.storage
+              .from(bucketName)
+              .getPublicUrl(`${folderPath}/${file.name}`);
+
+            // Clean up manufacturer name
+            let cleanMfg = folder.name.replace(/[-_]/g, ' ');
+            if (cleanMfg.startsWith('boilermanuals ')) {
+              cleanMfg = cleanMfg.replace('boilermanuals ', '');
+            }
+
+            return {
+              id: `${folder.name}_${index}`,
+              name: file.name.replace(/\.[^/.]+$/, ""), // Remove file extension
+              manufacturer: cleanMfg,
+              url: publicUrl.publicUrl,
+              gc_number: `GC-${folder.name.toUpperCase()}-${String(index).padStart(3, '0')}`,
+              file_size: file.metadata?.size || 0,
+              created_at: file.created_at || new Date().toISOString()
+            };
+          });
+
+        // Apply search filter
+        if (search) {
+          const searchLower = search.toLowerCase();
+          folderManuals.forEach(manual => {
+            if (manual.name.toLowerCase().includes(searchLower) ||
+                manual.manufacturer.toLowerCase().includes(searchLower) ||
+                manual.gc_number.toLowerCase().includes(searchLower)) {
+              allManuals.push(manual);
+            }
+          });
+        } else {
+          allManuals.push(...folderManuals);
+        }
+
+      } catch (err) {
+        console.error(`Error processing folder ${folder.name}:`, err);
+      }
+    }
+
+    // Sort results
+    allManuals.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Apply pagination
+    const paginatedManuals = allManuals.slice(offset, offset + limit);
+
+    console.log(`Returning ${paginatedManuals.length} manuals out of ${allManuals.length} total`);
+
+    res.json({
+      data: paginatedManuals,
+      total: allManuals.length,
+      hasMore: offset + limit < allManuals.length,
+      bucketUsed: bucketName,
+      foldersFound: manufacturerFolders.length
+    });
+
+  } catch (err) {
+    console.error('[Manuals/Storage] Error:', err);
+    res.status(500).json({ error: 'Failed to fetch manuals from storage' });
+  }
+});
+
+// --- GET /api/manuals/:id ---
+app.get('/api/manuals/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data: manual, error } = await supabase.from('boiler_manuals').select('*').eq('id', id).single();
+    if (error) throw error;
+    if (!manual) return res.status(404).json({ error: 'Manual not found' });
+    res.json({ manual });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- GET /api/manuals/:id/download ---
+app.get('/api/manuals/:id/download', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data: manual, error } = await supabase.from('boiler_manuals').select('*').eq('id', id).single();
+    if (error) throw error;
+    if (!manual || !manual.url) return res.status(404).json({ error: 'Manual or PDF not found' });
+    res.json({ download_url: manual.url, filename: manual.name + '.pdf' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- GET /api/manufacturers ---
+app.get('/api/manufacturers', async (req, res) => {
+  try {
+    const { data, error } = await supabase.from('manufacturers').select('name').order('name');
+    if (error) throw error;
+    // Extract unique manufacturer names
+    const manufacturers = [...new Set((data || []).map(m => m.name))].sort();
+    res.json({ manufacturers });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- POST /api/manuals (admin only, stub) ---
+app.post('/api/manuals', adminAuth, async (req, res) => {
+  res.status(501).json({ error: 'Manual creation via API not implemented. Use Supabase dashboard.' });
+});
+
+// --- POST /api/manuals/upload (admin only, stub) ---
+app.post('/api/manuals/upload', adminAuth, async (req, res) => {
+  res.status(501).json({ error: 'File upload via API not implemented. Use Supabase dashboard or implement file upload.' });
+});
+
+// --- User & Admin profile endpoints (stubbed) ---
+app.get('/api/user', (req, res) => {
+  res.status(501).json({ error: 'User profile API not implemented. Use Supabase Auth.' });
+});
+
+app.post('/api/chat', chatLimiter, validateChatMessage, async (req, res) => {
+  try {
+    const { message, sessionId, history, detail } = req.body;
+    
+    // Get or create session from database
+    let session = await SessionManager.getSession(sessionId);
+    let chatHistory = [];
+    
+    if (session) {
+      // Use session history from database
+      chatHistory = session.history || [];
+      console.log(`[Chat] Restored session from database with ${chatHistory.length} messages`);
+    } else if (Array.isArray(history) && history.length > 0) {
+      // Create new session with provided history
+      chatHistory = history;
+      await SessionManager.createSession(sessionId, null, chatHistory);
+      console.log(`[Chat] Created new session with ${chatHistory.length} messages`);
+    } else if (message && sessionId) {
+      // Create new session with initial message
+      chatHistory = [];
+      await SessionManager.createSession(sessionId, null, chatHistory);
+      console.log(`[Chat] Created new empty session`);
+    } else {
+      return res.status(400).json({ error: 'Missing message or chat history' });
+    }
+    
+    // Add current user message to history BEFORE processing
+    chatHistory.push({ 
+      sender: 'user', 
+      text: message, 
+      timestamp: new Date().toISOString() 
+    });
+  
+  // Create conversationText once for reuse throughout the function
+  let conversationText = chatHistory.map(msg => msg.text).join(' ').toLowerCase();
+  
+  // Add debugging for history tracking
+  console.log(`[Chat] Processing request - SessionId: ${sessionId}, History length: ${chatHistory.length}`);
+  console.log(`[Chat] Last 3 messages:`, chatHistory.slice(-3).map(m => `${m.sender}: ${m.text.substring(0, 50)}...`));
+  
+  // Analyze the last user message to extract boiler information
+  const lastUserMessage = chatHistory.filter(msg => msg.sender === 'user').pop();
+  let relevantKnowledge = '';
+  let contextExtracted = false;
+  
+  if (lastUserMessage) {
+    // Extract context from user message for better responses
+    const userText = lastUserMessage.text.toLowerCase();
+    
+    // Check for safety concerns first
+    if (userText.includes('gas smell') || userText.includes('smell gas')) {
+      relevantKnowledge += '\n\nURGENT SAFETY INFORMATION - GAS LEAK:\n' + 
+        '1. Turn off gas supply immediately\n' +
+        '2. Do not use electrical switches or naked flames\n' +
+        '3. Open windows and doors for ventilation\n' +
+        '4. Call Gas Emergency Service: 0800 111 999';
+      contextExtracted = true;
+    }
+    
+    if (userText.includes('carbon monoxide') || userText.includes('co alarm') || 
+        userText.includes('headache') || userText.includes('dizzy') || 
+        userText.includes('alarm beeping')) {
+      relevantKnowledge += '\n\nURGENT SAFETY INFORMATION - CARBON MONOXIDE:\n' + 
+        '1. Turn off gas appliances immediately\n' +
+        '2. Open windows and doors for fresh air\n' +
+        '3. Leave the property if symptoms persist\n' +
+        '4. Call Gas Emergency Service: 0800 111 999\n' +
+        'Symptoms: headache, dizziness, nausea, fatigue, confusion';
+      contextExtracted = true;
+    }
+    
+    // Use Enhanced Fault Code Service for comprehensive fault code analysis
+    try {
+      console.log('[EnhancedFaultCodeService] Analyzing user text:', userText.substring(0, 100));
+      const faultInfo = await EnhancedFaultCodeService.getComprehensiveFaultInfo(userText);
+      console.log('[EnhancedFaultCodeService] Result:', JSON.stringify(faultInfo, null, 2));
+      
+      if (faultInfo) {
+        console.log('[EnhancedFaultCodeService] Fault info received');
+        console.log('[EnhancedFaultCodeService] Fault Code:', faultInfo.faultCode, 'Manufacturer:', faultInfo.manufacturer);
+        console.log('[EnhancedFaultCodeService] Raw data:', JSON.stringify(faultInfo.rawData, null, 2));
+        
+        // Extract the actual description from the raw data
+        const description = faultInfo.rawData?.diagnosticInfo?.[0]?.fault_description || 
+                           faultInfo.rawData?.basicInfo?.[0]?.description ||
+                           faultInfo.rawData?.manufacturerSpecific?.[0]?.description ||
+                           null;
+        console.log('[EnhancedFaultCodeService] Description from DB:', description);
+        
+        // Check if we actually found database info
+        if (description && description !== 'Unknown') {
+          // PREPEND the fault code definition to make it impossible to ignore
+          relevantKnowledge += `\n\n🔴 FAULT CODE DEFINITION (FROM MANUFACTURER DATABASE - USE THIS ONLY):\n`;
+          relevantKnowledge += `${faultInfo.faultCode} = ${description}\n`;
+          relevantKnowledge += `DO NOT use any other interpretation of this fault code.\n`;
+          relevantKnowledge += faultInfo.context;
+          contextExtracted = true;
+        } else {
+          // Fault code mentioned but not in database
+          relevantKnowledge += `\n\n⚠️ FAULT CODE NOT FOUND IN DATABASE:\n`;
+          relevantKnowledge += `The fault code "${faultInfo.faultCode}" was not found in the manufacturer database`;
+          if (faultInfo.manufacturer) {
+            relevantKnowledge += ` for ${faultInfo.manufacturer}`;
+          }
+          relevantKnowledge += `.\nYou MUST inform the user that this fault code is not recognized and ask them to double-check the display.`;
+          contextExtracted = true;
+        }
+        
+        // Add safety warning if fault is safety-critical
+        if (faultInfo.isSafetyCritical) {
+          relevantKnowledge += '\n\n⚠️ SAFETY CRITICAL FAULT - Immediate attention required';
+        }
+        
+        // Add related fault codes for context
+        if (faultInfo.relatedCodes && faultInfo.relatedCodes.length > 0) {
+          relevantKnowledge += `\n\nRelated fault codes: ${faultInfo.relatedCodes.join(', ')}`;
+        }
+        
+        // NEW: Look up relevant manual for this boiler
+        if (faultInfo.manufacturer) {
+          try {
+            console.log('[Manual Lookup] Searching for manual:', faultInfo.manufacturer);
+            
+            // Search for manuals matching manufacturer and model from conversation
+            const modelMatch = conversationText.match(/\b(logic|greenstar|ecotec|main|platinum|combi|system)\s*\d*\b/gi);
+            const modelKeywords = modelMatch ? modelMatch.join(' ') : '';
+            
+            const { data: manuals, error: manualError } = await supabase
+              .from('boiler_manuals')
+              .select('name, url, manufacturer')
+              .ilike('manufacturer', `%${faultInfo.manufacturer}%`)
+              .or(`name.ilike.%${modelKeywords}%,name.ilike.%${faultInfo.manufacturer}%`)
+              .limit(3);
+            
+            if (manuals && manuals.length > 0) {
+              console.log('[Manual Lookup] Found', manuals.length, 'manuals');
+              relevantKnowledge += `\n\n📄 OFFICIAL MANUALS AVAILABLE:\n`;
+              relevantKnowledge += `The following manufacturer manuals are available for reference:\n`;
+              manuals.forEach((manual, index) => {
+                relevantKnowledge += `${index + 1}. ${manual.name}\n`;
+              });
+              relevantKnowledge += `\nYou MUST mention these manuals are available and suggest the user can reference them for detailed instructions.`;
+              
+              // Store manual URLs to add to response later
+              contextExtracted = true;
+            }
+          } catch (manualError) {
+            logger.error('[Manual Lookup] Failed to fetch manuals:', { error: manualError.message, manufacturer: faultInfo.manufacturer });
+          }
+        }
+      }
+    } catch (error) {
+      logger.error('[EnhancedFaultCodeService] Error during fault code lookup:', { error: error.message, userText: userText.substring(0, 100) });
+      // Fall back to basic pattern matching if enhanced service fails
+      const manufacturerMatch = userText.match(/\b(worcester|vaillant|baxi|ideal|glow ?worm|potterton|viessmann|ariston|navien)\b/i);
+      const faultCodeMatch = userText.match(/\b([a-z][0-9]{1,2}|[a-z]\.[0-9]{1,2}|[ef][0-9]{1,3})\b/i) || 
+                             userText.match(/fault(\s+code)?\s+([a-z0-9]{1,4})/i) || 
+                             userText.match(/error(\s+code)?\s+([a-z0-9]{1,4})/i);
+      
+      let manufacturer = manufacturerMatch ? manufacturerMatch[0] : null;
+      let faultCode = faultCodeMatch ? (faultCodeMatch[2] || faultCodeMatch[1]) : null;
+      
+      if (manufacturer && faultCode) {
+        relevantKnowledge += `\n\nFAULT CODE INFORMATION:\n`;
+        relevantKnowledge += `Manufacturer: ${manufacturer}\n`;
+        relevantKnowledge += `Fault Code: ${faultCode}\n`;
+        contextExtracted = true;
+      }
+    }
+    
+    // Check for common symptoms
+    const symptomPatterns = {
+      'No heating': /\b(no heat|not heating|won'?t heat|cold house|rads cold)\b/i,
+      'No hot water': /\b(no hot water|cold water|no water heat|shower cold)\b/i,
+      'Boiler noise': /\b(noise|loud|bang|knocking|gurgling|kettling|whistle)\b/i,
+      'Leaking boiler': /\b(leak|drip|water com(es|ing) out|puddle)\b/i,
+      'Low pressure': /\b(low pressure|pressure (too )?low|dropping pressure|pressure drop)\b/i
+    };
+    
+    for (const [symptom, pattern] of Object.entries(symptomPatterns)) {
+      if (pattern.test(userText)) {
+        relevantKnowledge += `\n\nRELEVANT INFORMATION FOR "${symptom}":\n`;
+        relevantKnowledge += `Common diagnostic steps for ${symptom.toLowerCase()}\n`;
+        contextExtracted = true;
+        break;
+      }
+    }
+  }
+  
+  // Analyze conversation history for context (reuse conversationText from above)
+  if (chatHistory.length > 1) {
+    // Look for manufacturer and model mentions across the conversation
+    const manufacturerMatches = conversationText.match(/\b(worcester|vaillant|baxi|ideal|glow ?worm|potterton|viessmann|ariston|navien)\b/gi);
+    const modelMatches = conversationText.match(/\b(logic|ecotec|main|platinum|system|combi|regular|heat only)\s*\d*\b/gi);
+    
+    if (manufacturerMatches || modelMatches) {
+      relevantKnowledge += "\nCONVERSATION CONTEXT: ";
+      if (manufacturerMatches) {
+        relevantKnowledge += `Previously mentioned boiler manufacturer(s): ${[...new Set(manufacturerMatches)].join(', ')}. `;
+      }
+      if (modelMatches) {
+        relevantKnowledge += `Previously mentioned model(s): ${[...new Set(modelMatches)].join(', ')}. `;
+      }
+    }
+  }
+  
+  // STRICT manufacturer detection (only actual manufacturers, NOT model names)
+  const hasManufacturer = /\b(worcester|vaillant|baxi|ideal|glow ?worm|potterton|viessmann|ariston|navien|bosch|bosh)\b/i.test(conversationText);
+  
+  // Enhanced boiler type/system detection - now includes all system types
+  const hasSystemType = /\b(combi|combination|system|regular|conventional|standard|heat only|back boiler|condensing)\b/i.test(conversationText);
+  
+  // Enhanced model detection
+  const hasModel = /\b(greenstar|logic|ecotec|main|platinum|\d+kw?|\d+i?)\b/i.test(conversationText);
+  
+  // Check if user has provided enough context to proceed - now requires manufacturer AND system type
+  const hasBoilerDetails = (hasManufacturer && hasSystemType) || 
+                          /\b(ideal\s+logic\s+(combi|system)|worcester\s+greenstar\s+(combi|system)|vaillant\s+ecotec\s+(combi|system)|baxi\s+(main|platinum)\s+(combi|system))\b/i.test(conversationText);
+  
+  console.log(`[Chat] Boiler detection - Manufacturer: ${hasManufacturer}, SystemType: ${hasSystemType}, Model: ${hasModel}, Details: ${hasBoilerDetails}`);
+  console.log(`[Chat] Conversation text: ${conversationText.substring(0, 200)}...`);
+
+  // Enhanced boiler identification requirement - now requires manufacturer AND system type
+  if (!hasBoilerDetails) {
+    if (hasManufacturer && !hasSystemType) {
+      return res.json({ 
+        reply: "Right, got the manufacturer. What type of system is it? Combi, system, or regular boiler?" 
+      });
+    } else if (hasSystemType && !hasManufacturer) {
+      return res.json({ 
+        reply: "OK, got the system type. What make is it? Worcester, Vaillant, Baxi, Ideal, or another manufacturer?" 
+      });
+    } else {
+      return res.json({ 
+        reply: "Right, to help you out I need a bit more info. What boiler are you working on? I need the manufacturer (like Worcester, Vaillant, Ideal), the model if you know it, and the system type (combi, system, or regular)." 
+      });
+    }
+    // Note: tools array removed as it was unused dead code
+  }
+
+  // Prepare messages for OpenAI with enhanced lead engineer prompt
+  const messages = [
+    {
+      role: 'system',
+      content: `IDENTITY & EXPERTISE:
+You are a Master Gas Safe registered engineer with 25+ years of hands-on experience. You've diagnosed thousands of boiler faults across all major manufacturers. You're known for:
+- Getting to the root cause quickly and methodically
+- Explaining the "why" not just the "what"
+- Sharing practical field experience and patterns
+- Never wasting time on unlikely causes
+- Being decisive based on probability
+- Knowing manufacturer-specific quirks
+
+IMPORTANT: You're talking to a FELLOW GAS SAFE REGISTERED ENGINEER. They have the skills, tools, and qualifications to fix anything. NEVER suggest calling support or getting help - guide them through the fix. They just need your experience and systematic approach.
+
+COMMUNICATION STYLE:
+- Talk like you're on-site with a colleague, not writing a manual
+- Use "we" and "let's" (collaborative)
+- Share context: "I've seen this pattern on Ideals before..."
+- Give reasoning: "We check X first because..."
+- Be decisive: "This is almost certainly..." not "it might be..."
+- Natural engineer shorthand when appropriate
+- Acknowledge frustration: "I know, these can be fiddly..."
+- Celebrate progress: "Right, that's a good sign..."
+- Use conversational openers: "Right, so..." "OK, let's think through this..."
+
+SYSTEM TYPES (critical for diagnostics):
+- COMBI: Single unit, instant hot water, sealed system
+- SYSTEM: Separate cylinder, sealed heating, pressurised
+- REGULAR: Open vented, cold water tank, gravity fed
+
+DIAGNOSTIC APPROACH:
+
+[ASSESSMENT] (1-2 sentences - what this likely is)
+"Right, L2 on an Ideal Logic is classic ignition lockout after 3 attempts..."
+
+[CONTEXT] (Brief WHY)
+"Usually gas supply, electrode position, or occasionally the PCB. Nine times out of ten it's something simple."
+
+[ACTIONS] (Prioritized by probability)
+1. Check gas valve fully open
+2. Electrode gap while you're there - should be 3-4mm
+3. Look for loose PCB connections
+
+[INDICATORS] (What each result tells us)
+✓ Fires after gas valve check → supply issue sorted
+✓ Sparking but no flame → electrode gap or gas pressure  
+✗ No spark at all → igniter or PCB connection
+
+[FOLLOW-UP] (Specific, contextual)
+"What's happening when you hit reset - getting spark? Hear gas flowing?"
+
+SAFETY COMMUNICATION:
+- Natural, not robotic: "Right, if you're smelling gas, we stop here. Turn off at meter, get ventilation, call emergency line (0800 111 999). I know it's frustrating mid-job, but can't risk it."
+- Include reasoning, not just rules
+- Emergency numbers when genuinely needed
+- But remember: they're qualified to handle it
+
+KEY PATTERNS:
+- Opening: "Right, so..." "OK, let's..." "Interesting one..."
+- Explaining: "Here's the thing..." "What we're looking at..."
+- Experience: "Nine times out of ten..." "I've seen this before when..."
+- Action: "Let's check..." "Quick test..."
+- Reasoning: "That tells us..." "Which means..."
+
+MANUFACTURER KNOWLEDGE:
+- Include quirks: "Ideals are known for..." "Worcester F22 usually..."
+- Common patterns from experience
+- Tool requirements upfront
+- Part numbers when helpful
+- Installation gotchas
+
+CRITICAL RULES:
+1. Model numbers (24, 28, 30) are kW ratings, NOT fault codes
+2. Use ONLY database info when provided (marked [MANUFACTURER DATABASE INFORMATION])
+3. Never suggest "contact support" or "seek help" - they ARE the expert
+4. Every response ends with specific follow-up question
+5. Always explain WHY, not just WHAT
+6. Adapt complexity to their demonstrated skill level
+7. Share relevant experience patterns
+
+FORBIDDEN:
+- "You might want to call manufacturer support" ❌
+- "Contact a qualified engineer" ❌ (THEY ARE ONE!)
+- "If unsure, seek assistance" ❌
+- Generic endings without specific questions ❌
+- Textbook responses without context ❌
+- "It could be several things" (be decisive!) ❌
+- Time estimates in action steps ❌
+- "Sources:" section or references ❌ (integrate info naturally)
+- NEVER say "since you mentioned X" or "you said X" unless they ACTUALLY did ❌
+- NEVER make assumptions about readings or checks they haven't explicitly stated ❌
+
+CRITICAL: Only reference what the user ACTUALLY provided. If they said "F22" but didn't mention pressure, DON'T say "since the pressure is fine". ASK: "What's the pressure reading?"
+
+${relevantKnowledge ? '⚠️ MANUFACTURER DATABASE - USE THIS EXACT INFO:\n' + relevantKnowledge + '\n\n🔒 DATABASE IS AUTHORITATIVE - interpret and explain it naturally.' : ''}
+
+Remember: You're the experienced engineer they're consulting. Be confident, practical, and guide them to the fix.`
+    }
+  ];
+  
+  // Add conversation history
+  chatHistory.forEach((msg, index) => {
+    // For the LAST user message, prepend the database context
+    if (msg.sender === 'user' && index === chatHistory.length - 1 && relevantKnowledge) {
+      messages.push({
+        role: 'user',
+        content: `==========================================
+[MANUFACTURER DATABASE INFORMATION]
+⚠️ YOU MUST USE THIS INFORMATION ONLY
+==========================================
+${relevantKnowledge}
+==========================================
+[END DATABASE INFORMATION]
+==========================================
+
+${msg.text}`
+      });
+    } else {
+      messages.push({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      });
+    }
+  });
+  
+  console.log('[Chat] Enhanced prompt with knowledge:', relevantKnowledge ? 'Yes' : 'No');
+  
+  // Adaptive temperature based on conversation context
+  const hasFaultCode = /\b([fela]\.?\d{1,3}|EA)\b/i.test(conversationText);
+  const isSafetyCritical = /gas smell|leak|co alarm|carbon monoxide/i.test(conversationText);
+  const isInitialGathering = chatHistory.length <= 2;
+  
+  let temperature = 0.7; // default
+  if (isSafetyCritical) temperature = 0.3;  // Consistent for safety but not robotic
+  else if (hasFaultCode) temperature = 0.5; // Natural for diagnostics
+  else if (isInitialGathering) temperature = 0.6; // Natural for gathering info
+  else temperature = 0.7; // Natural conversation
+  
+  logger.info(`[Chat] Adaptive temp=${temperature} (fault=${hasFaultCode}, safety=${isSafetyCritical}, initial=${isInitialGathering})`);
+  
+  // Use OpenAI instead of DeepSeek
+  const openaiKeys = [
+    process.env.OPENAI_API_KEY,
+    process.env.OPENAI_API_KEY_2,
+    process.env.OPENAI_API_KEY_3
+  ].filter(Boolean);
+  
+  for (let i = 0; i < openaiKeys.length; i++) {
+    const key = openaiKeys[i];
+    try {
+      console.log(`[OpenAI] Trying API key #${i+1} with temp=${temperature}`);
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: messages,
+          max_tokens: 1000,
+          temperature: temperature
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        let reply = data.choices[0].message.content;
+        
+        // Check if AI is incorrectly interpreting model numbers as fault codes
+        const incorrectPatterns = [
+          /fault code (24|25|28|30|33|35|37|40|42)/gi,
+          /(24|25|28|30|33|35|37|40|42).*sensor fault/gi,
+          /displaying.*fault code (24|25|28|30|33|35|37|40|42)/gi,
+          /code (24|25|28|30|33|35|37|40|42).*indicating/gi,
+          /boiler.*fault code (24|25|28|30|33|35|37|40|42)/gi,
+          /greenstar (24|25|28|30|33|35|37|40|42).*fault code (24|25|28|30|33|35|37|40|42)/gi,
+          /return temperature sensor fault/gi,
+          /temperature sensor fault/gi,
+          /flue gas sensor fault/gi,
+          /sensor fault/gi
+        ];
+        
+        // Check conversation context to determine if model number was misinterpreted
+        const conversationText = chatHistory.map(msg => msg.text).join(' ').toLowerCase();
+        console.log('DEBUG: Conversation text:', conversationText);
+        
+        const onlyModelProvided = /greenstar\s+\d+/.test(conversationText) && 
+                                 !/fault code|error code|f\d+|e\d+|ea|l\d+|no heating|no hot water|problem|issue/.test(conversationText);
+        console.log('DEBUG: Only model provided:', onlyModelProvided);
+        
+        // Check if AI is repeating the boiler identification question when details already provided
+        const isRepeatingBoilerQuestion = /what make.*model.*type.*boiler/i.test(reply) && hasBoilerDetails;
+        console.log('DEBUG: Is repeating boiler question:', isRepeatingBoilerQuestion);
+        
+        // More aggressive detection - if user only provided model and AI mentions ANY fault codes or sensor issues
+        const mentionsFaultCodes = /fault code|error code|displaying.*fault|code.*indicating/i.test(reply);
+        const mentionsSensorFaults = /sensor fault|temperature sensor|return sensor|flue.*sensor/i.test(reply);
+        console.log('DEBUG: Mentions fault codes:', mentionsFaultCodes);
+        console.log('DEBUG: Mentions sensor faults:', mentionsSensorFaults);
+        console.log('DEBUG: AI Reply:', reply.substring(0, 200));
+        
+        const hasIncorrectInterpretation = incorrectPatterns.some(pattern => pattern.test(reply)) || 
+                                         (onlyModelProvided && (mentionsFaultCodes || mentionsSensorFaults)) ||
+                                         isRepeatingBoilerQuestion;
+        console.log('DEBUG: Has incorrect interpretation:', hasIncorrectInterpretation);
+        
+        if (hasIncorrectInterpretation) {
+          // Extract boiler model and issue from conversation
+          const modelMatch = conversationText.match(/greenstar\s+(\d+)/i);
+          const model = modelMatch ? modelMatch[1] : '24';
+          const issueMatch = conversationText.match(/(no heating|no hot water|fault|error|problem|issue|not working)/i);
+          const issue = issueMatch ? issueMatch[0] : 'an issue';
+          
+          // Handle different scenarios for rewriting response
+          if (isRepeatingBoilerQuestion) {
+            // Extract the boiler details already provided including system type
+            const idealCombiMatch = conversationText.match(/ideal\s+(logic\s+)?(combi|combination)/i);
+            const idealSystemMatch = conversationText.match(/ideal\s+(logic\s+)?(system)/i);
+            const worcesterCombiMatch = conversationText.match(/worcester\s+greenstar\s+(\d+)\s*(combi|combination)/i);
+            const worcesterSystemMatch = conversationText.match(/worcester\s+greenstar\s+(\d+)\s*(system)/i);
+            const vaillantCombiMatch = conversationText.match(/vaillant\s+ecotec\s*(combi|combination)/i);
+            const vaillantSystemMatch = conversationText.match(/vaillant\s+ecotec\s*(system)/i);
+            
+            if (idealCombiMatch) {
+              reply = `What specific problem are you experiencing with your Ideal Logic Combi boiler?
+
+Please describe the symptoms - for example: no heating, no hot water, strange noises, or if there's a fault code displayed on the boiler.`;
+            } else if (idealSystemMatch) {
+              reply = `What specific problem are you experiencing with your Ideal Logic System boiler?
+
+Please describe the symptoms - for example: no heating, no hot water from cylinder, strange noises, or if there's a fault code displayed.`;
+            } else if (worcesterCombiMatch) {
+              const model = worcesterCombiMatch[1] || '24';
+              reply = `What specific problem are you experiencing with your Worcester Greenstar ${model} Combi boiler?
+
+Please describe the symptoms or issue you're encountering, or let me know if there's a fault code displayed.`;
+            } else if (worcesterSystemMatch) {
+              const model = worcesterSystemMatch[1] || '24';
+              reply = `What specific problem are you experiencing with your Worcester Greenstar ${model} System boiler?
+
+Please describe the symptoms or issue you're encountering, or let me know if there's a fault code displayed.`;
+            } else if (vaillantCombiMatch) {
+              reply = `What specific problem are you experiencing with your Vaillant ecoTEC Combi boiler?
+
+Please describe the symptoms or issue you're encountering, or let me know if there's a fault code displayed.`;
+            } else if (vaillantSystemMatch) {
+              reply = `What specific problem are you experiencing with your Vaillant ecoTEC System boiler?
+
+Please describe the symptoms or issue you're encountering, or let me know if there's a fault code displayed.`;
+            } else {
+              reply = `What specific problem are you experiencing with your boiler?
+
+Please describe the symptoms - for example: no heating, no hot water, strange noises, or if there's a fault code displayed.`;
+            }
+          } else if (issueMatch) {
+            const modelMatch = conversationText.match(/greenstar\s+(\d+)/i);
+            const model = modelMatch ? modelMatch[1] : '24';
+            reply = `For your Worcester Greenstar ${model} (${model}kW) boiler with ${issue}, I need to clarify: Is there an actual fault code displayed on the boiler's digital display?
+
+Fault codes typically appear as letters followed by numbers (like F22, F28, F75, EA, etc.). The "${model}" in your boiler model name is just the power rating, not a fault code.
+
+What fault code is showing on the boiler display, or is there no fault code displayed?`;
+          } else {
+            const modelMatch = conversationText.match(/greenstar\s+(\d+)/i);
+            const model = modelMatch ? modelMatch[1] : '24';
+            reply = `What specific problem are you experiencing with your Worcester Greenstar ${model} (${model}kW) boiler?
+
+The "${model}" refers to the power output in kilowatts, not a fault code. Please describe the symptoms or issue you're encountering.`;
+          }
+          
+          // Skip the rest of the post-processing since we've rewritten the response
+          // Save session before responding (user message already added at top)
+          chatHistory.push({ sender: 'assistant', text: reply, timestamp: new Date().toISOString() });
+          await SessionManager.updateSession(sessionId, chatHistory);
+          return res.json({ reply });
+        }
+        
+        // Force follow-up question by removing generic endings and adding specific question
+        const forbiddenPatterns = [
+          /Let me know if you need.*$/gi,
+          /Please refer to.*$/gi,
+          /Contact.*support.*$/gi,
+          /Seek.*assistance.*$/gi,
+          /If.*unsure.*$/gi,
+          /What did you find when performing these diagnostic steps\?$/gi,
+          /What did you find when.*diagnostic steps\?$/gi,
+          /What did you find when performing.*$/gi,
+          /Have you completed.*diagnostic.*steps.*$/gi,
+          /What were the results.*diagnostic.*$/gi,
+          /Remember to.*safety.*$/gi,
+          /Always follow.*procedures.*$/gi,
+          /Safety is paramount.*$/gi,
+          /Further investigation may be required.*$/gi
+        ];
+        
+        // Remove all forbidden endings
+        forbiddenPatterns.forEach(pattern => {
+          reply = reply.replace(pattern, '');
+        });
+        
+        // Remove trailing periods and whitespace
+        reply = reply.trim().replace(/\.$/, '');
+        
+        // Always add a specific follow-up question based on what was actually mentioned
+        if (reply.includes('gas pressure')) {
+          reply += '\n\nWhat readings did you get when checking the gas pressure?';
+        } else if (reply.includes('ignition electrode')) {
+          reply += '\n\nWhat did you find when inspecting the ignition electrode?';
+        } else if (reply.includes('reset')) {
+          reply += '\n\nDid resetting the boiler clear the fault code?';
+        } else if (reply.includes('gas valve')) {
+          reply += '\n\nHave you checked the gas valve? What were your findings?';
+        } else if (reply.includes('wiring')) {
+          reply += '\n\nWhat did you find when inspecting the wiring connections?';
+        } else if (reply.includes('gas supply')) {
+          reply += '\n\nIs the gas supply turned on? What did you observe?';
+        } else if (reply.includes('fault code') && !reply.includes('?')) {
+          reply += '\n\nIs there anything else you\'ve observed that may help narrow down the issue?';
+        } else if (!reply.includes('?')) {
+          // Only add question if there isn't already one
+          reply += '\n\nWhat have you observed so far?';
+        }
+
+        // NEW: Add manual links - match by model name for accuracy
+        try {
+          const conversationText = chatHistory.map(msg => msg.text).join(' ').toLowerCase();
+          const manufacturerMatch = conversationText.match(/\b(worcester|vaillant|baxi|ideal|glow ?worm|potterton)\b/i);
+          
+          if (manufacturerMatch) {
+            const manufacturer = manufacturerMatch[0];
+            
+            // Extract model name (e.g., "Logic 24", "Greenstar 30", "ecoTEC Plus")
+            const modelMatch = conversationText.match(/\b(logic|greenstar|ecotec|main|platinum|vogue|mexico|response|isar|icos|promax|combi)\s*\+?\s*\d*\b/gi);
+            const modelName = modelMatch ? modelMatch[0] : null;
+            
+            console.log('[Manual Lookup] Manufacturer:', manufacturer, 'Model:', modelName);
+            
+            let manuals = [];
+            
+            // Strategy 1: If we have a model name, search for exact model match
+            if (modelName) {
+              const { data: modelManuals } = await supabase
+                .from('boiler_manuals')
+                .select('name, url, gc_number')
+                .or(`manufacturer.ilike.%${manufacturer}%,name.ilike.%${manufacturer}%`)
+                .ilike('name', `%${modelName}%`)
+                .limit(3);
+              
+              if (modelManuals && modelManuals.length > 0) {
+                manuals = modelManuals;
+                console.log('[Manual Lookup] Found', manuals.length, 'model-specific manuals');
+              }
+            }
+            
+            // Strategy 2: If no model-specific manuals, get general manufacturer manuals
+            if (manuals.length === 0) {
+              const { data: generalManuals } = await supabase
+                .from('boiler_manuals')
+                .select('name, url, gc_number')
+                .or(`manufacturer.ilike.%${manufacturer}%,name.ilike.%${manufacturer}%`)
+                .limit(3);
+              
+              if (generalManuals && generalManuals.length > 0) {
+                manuals = generalManuals;
+                console.log('[Manual Lookup] Found', manuals.length, 'general manuals');
+              }
+            }
+            
+            if (manuals.length > 0) {
+              reply += `\n\n📄 **${manufacturer.charAt(0).toUpperCase() + manufacturer.slice(1)} Manuals Available:**`;
+              manuals.slice(0, 2).forEach(manual => {
+                const displayName = manual.name.replace(/-/g, ' ').replace(/\d{7}$/, '').trim();
+                reply += `\n• [${displayName}](${manual.url})`;
+                if (manual.gc_number) {
+                  reply += ` (GC: ${manual.gc_number})`;
+                }
+              });
+              
+              if (modelName && manuals.some(m => m.name.toLowerCase().includes(modelName.toLowerCase()))) {
+                reply += `\n\n💡 *Model-specific manual for ${modelName}*`;
+              } else {
+                reply += `\n\n💡 *Reference these ${manufacturer} manuals for detailed procedures*`;
+              }
+            }
+          }
+        } catch (manualError) {
+          logger.error('[Manual Links] Failed to fetch manual links:', { error: manualError.message });
+        }
+
+        // Save session before responding (user message already added at top)
+        chatHistory.push({ sender: 'assistant', text: reply, timestamp: new Date().toISOString() });
+        await SessionManager.updateSession(sessionId, chatHistory);
+        
+        return res.json({ reply });
+      } else {
+        let errText;
+        try {
+          errText = await response.text();
+          console.warn(`[OpenAI] Error response:`, errText);
+        } catch (e) {
+          console.warn(`[OpenAI] Error: Could not read error body`);
+        }
+      }
+    } catch (err) {
+      console.error(`[OpenAI] Network/JS error:`, err);
+      continue;
+    }
+  }
+  // All keys failed
+  res.json({ reply: "I'm having trouble connecting to the AI right now. Please try again later!" });
+  } catch (error) {
+    console.error('[Chat] Endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// SSE streaming endpoint for detailed diagnostics
+app.get('/api/agent/chat/stream', chatLimiter, async (req, res) => {
+  try {
+    const message = String(req.query.message || '');
+    const sessionId = req.query.sessionId ? String(req.query.sessionId) : null;
+    const detail = (String(req.query.detail || '').toLowerCase() === 'true') || (String(req.query.detail || '') === '1');
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    const send = (obj) => res.write(`data: ${JSON.stringify(obj)}\n\n`);
+    const end = () => res.end();
+
+    // Restore session history
+    let chatHistory = [];
+    if (sessionId) {
+      try {
+        const ses = await SessionManager.getSession(sessionId);
+        if (ses?.history) chatHistory = ses.history;
+      } catch {}
+    }
+    chatHistory.push({ sender: 'user', text: message, timestamp: new Date().toISOString() });
+
+    const extracted = EnhancedFaultCodeService.extractFaultInfo(message) || {};
+
+    // Build system and pre-seed tools similar to non-streaming path
+    const system = `You are a senior Gas Safe engineer assistant.
+Ground responses with tools and keep them brief. Rules:
+1) If a CLEAR fault code is present, call get_fault_info first (use user_text fallback).
+2) Numbers after model names (e.g., "Logic Combi 24/30/35") are kW ratings, NOT fault codes.
+3) For model/system-only inputs (no fault code), begin reply with: "Make: <mfr> | Model: <model> | System: <type>" (omit unknowns). Then ask for the displayed fault code or symptoms. Do NOT diagnose a fault code.
+4) If manufacturer known, call search_manuals (limit 1) and include 1 manual link.
+5) If a fault code present, call get_verified_knowledge (limit 1) and summarize briefly.
+6) If get_fault_info returns modelTips, INCLUDE it early in the reply.
+7) Do NOT include URLs in the body. Only include URLs from tool results in a final 'Sources:' section. Never invent URLs.
+8) Do NOT instruct the user to check/read/see/consult any guide/manual/website. Include necessary procedures directly; 'Sources:' is provenance only.
+9) Prefer manufacturer-specific info; no hallucinated codes/values.
+10) Output: concise and safety-first.
+11) If the user requests diagnostics/procedure/steps, provide a detailed numbered procedure (8–15 steps) using available tool context/procedures, include cautions, and keep it self-contained.`;
+
+    const toOpenAIMessages = [{ role: 'system', content: system }];
+    chatHistory.forEach((m) => toOpenAIMessages.push({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text }));
+
+    if (extracted && (extracted.manufacturer || extracted.model || extracted.systemType || extracted.faultCode)) {
+      const ctxParts = [];
+      if (extracted.manufacturer) ctxParts.push(`manufacturer=${extracted.manufacturer}`);
+      if (extracted.model) ctxParts.push(`model=${extracted.model}`);
+      if (extracted.systemType) ctxParts.push(`systemType=${extracted.systemType}`);
+      if (extracted.faultCode) ctxParts.push(`faultCode=${extracted.faultCode}`);
+      if (ctxParts.length > 0) {
+        toOpenAIMessages.push({ role: 'system', content: `Context: ${ctxParts.join(' | ')}` });
+      }
+    }
+
+    const preToolResults = [];
+    if (extracted?.manufacturer) {
+      try {
+        const r2 = await AgentTools.search_manuals({ manufacturer: extracted.manufacturer, model: extracted?.model || null, limit: 1 });
+        preToolResults.push({ role: 'tool', tool_call_id: 'pre_2', name: 'search_manuals', content: JSON.stringify(r2) });
+      } catch {}
+    }
+    if ((extracted?.manufacturer || extracted?.model) && !extracted?.faultCode) {
+      try {
+        const r4 = await AgentTools.get_symptom_guidance({ manufacturer: extracted?.manufacturer || null, model: extracted?.model || null, symptoms: String(message || ''), limit: 5 });
+        preToolResults.push({ role: 'tool', tool_call_id: 'pre_4', name: 'get_symptom_guidance', content: JSON.stringify(r4) });
+      } catch {}
+    }
+    let modelTipText = '';
+    if (extracted?.faultCode) {
+      try {
+        const r1 = await AgentTools.get_fault_info({ manufacturer: extracted?.manufacturer || null, fault_code: extracted?.faultCode || null, user_text: String(message || '') });
+        preToolResults.push({ role: 'tool', tool_call_id: 'pre_1', name: 'get_fault_info', content: JSON.stringify(r1) });
+        if (r1?.modelTips) modelTipText = String(r1.modelTips);
+      } catch {}
+      try {
+        const r3 = await AgentTools.get_verified_knowledge({ fault_code: extracted.faultCode, manufacturer: extracted?.manufacturer || null, model: extracted?.model || null, limit: 1 });
+        preToolResults.push({ role: 'tool', tool_call_id: 'pre_3', name: 'get_verified_knowledge', content: JSON.stringify(r3) });
+      } catch {}
+    }
+
+    // Build allowed URLs from manuals only
+    const allowedUrls = new Set();
+    preToolResults
+      .filter((t) => t.name === 'search_manuals')
+      .forEach((t) => {
+        try {
+          const items = (JSON.parse(t.content || '{}')?.items) || [];
+          items.forEach((m) => { if (m?.url) allowedUrls.add(String(m.url)); });
+        } catch {}
+      });
+
+    // Model-only flow: emit header immediately and end
+    if (!extracted?.faultCode) {
+      const displayMap = {
+        'worcester': 'Worcester Bosch',
+        'glow-worm': 'Glow-worm',
+        'viessmann': 'Viessmann',
+        'vaillant': 'Vaillant',
+        'ideal': 'Ideal',
+        'baxi': 'Baxi',
+        'potterton': 'Potterton',
+        'ariston': 'Ariston',
+        'ferroli': 'Ferroli',
+        'alpha': 'Alpha',
+        'ravenheat': 'Ravenheat',
+        'intergas': 'Intergas'
+      };
+      const parts = [];
+      if (extracted?.manufacturer) {
+        const mfRaw = String(extracted.manufacturer).toLowerCase();
+        const displayMf = displayMap[mfRaw] || (mfRaw.charAt(0).toUpperCase() + mfRaw.slice(1));
+        parts.push(`Make: ${displayMf}`);
+      }
+      if (extracted?.model) parts.push(`Model: ${extracted.model}`);
+      if (extracted?.systemType) {
+        const sys = String(extracted.systemType);
+        parts.push(`System: ${sys.charAt(0).toUpperCase() + sys.slice(1)}`);
+      }
+      const header = parts.join(' | ');
+      const ask = 'Please provide the displayed fault code or a brief description of the symptoms.';
+      const headerText = header ? `${header}\n\n${ask}` : ask;
+      send({ delta: headerText + '\n' });
+
+      // Append Sources
+      let sourcesText = '';
+      try {
+        const manuals = preToolResults
+          .filter((t) => t.name === 'search_manuals')
+          .flatMap((t) => { try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; } })
+          .slice(0, 1);
+        const knowledge = preToolResults
+          .filter((t) => t.name === 'get_verified_knowledge')
+          .flatMap((t) => { try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; } })
+          .slice(0, 1);
+        if (manuals.length > 0 || knowledge.length > 0) {
+          sourcesText += '\nSources:';
+          manuals.forEach((m) => {
+            const n = m?.name ? String(m.name) : 'Manual';
+            const mf = m?.manufacturer ? ` (${m.manufacturer})` : '';
+            const url = m?.url ? String(m.url) : '';
+            if (url) sourcesText += `\n- [Manual] ${n}${mf}: ${url}`;
+          });
+          knowledge.forEach((k) => {
+            const title = (k?.title || k?.summary || k?.note || k?.content || '').toString().slice(0, 120);
+            const fc = k?.fault_code ? ` [${k.fault_code}]` : '';
+            const mf = k?.manufacturer ? ` (${k.manufacturer})` : '';
+            if (title) sourcesText += `\n- [Knowledge] ${title}${fc}${mf}`;
+          });
+        }
+      } catch {}
+      if (sourcesText) send({ delta: sourcesText });
+
+      // Build structured and persist session
+      const make = extracted?.manufacturer ? (displayMap[String(extracted.manufacturer).toLowerCase()] || extracted.manufacturer) : null;
+      const model = extracted?.model || null;
+      const system = extracted?.systemType ? (String(extracted.systemType).charAt(0).toUpperCase() + String(extracted.systemType).slice(1)) : null;
+      const structured = { header: { make, model, system, faultCode: null }, bullets: [], steps: [], cautions: [], parts: [], measurements: [], sources: { manuals: Array.from(allowedUrls).map((u) => ({ type: 'manual', title: 'Manual', manufacturer: make, gc_number: null, url: u })), knowledge: [] } };
+      try {
+        const historyNow = Array.isArray(chatHistory) ? [...chatHistory, { sender: 'assistant', text: headerText + (sourcesText ? ('\n' + sourcesText) : ''), timestamp: new Date().toISOString() }] : [];
+        if (sessionId) await SessionManager.updateSession(sessionId, historyNow);
+      } catch {}
+      send({ done: true, structured });
+      return end();
+    }
+
+    // Fault present: stream from OpenAI
+    const openaiKeys = [process.env.OPENAI_API_KEY, process.env.OPENAI_API_KEY_2, process.env.OPENAI_API_KEY_3].filter(Boolean);
+
+    // Include preTool results as tool messages
+    preToolResults.forEach((t) => toOpenAIMessages.push(t));
+
+    // Model tip preface
+    if (modelTipText) send({ delta: `Model tip: ${modelTipText}\n\n` });
+
+    async function getStream(messages) {
+      for (let i = 0; i < openaiKeys.length; i++) {
+        const key = openaiKeys[i];
+        try {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: 'gpt-4o-mini', messages, stream: true, tool_choice: 'none', temperature: detail ? 0.25 : 0.2, max_tokens: detail ? 900 : 600, frequency_penalty: 0.35, presence_penalty: 0 })
+          });
+          if (!response.ok) continue;
+          return response.body;
+        } catch (e) { continue; }
+      }
+      return null;
+    }
+
+    const stream = await getStream(toOpenAIMessages);
+    if (!stream) {
+      send({ delta: 'Sorry, I could not generate a response right now.' });
+      send({ done: true });
+      return end();
+    }
+
+    const reader = stream.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+    let finalBody = modelTipText ? `Model tip: ${modelTipText}\n\n` : '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop();
+      for (const p of parts) {
+        const line = p.trim();
+        if (!line.startsWith('data:')) continue;
+        const dataStr = line.slice(5).trim();
+        if (dataStr === '[DONE]') { buffer = ''; break; }
+        try {
+          const obj = JSON.parse(dataStr);
+          const raw = obj?.choices?.[0]?.delta?.content || '';
+          if (raw) {
+            // Sanitize: remove disallowed URLs and instructive lines
+            let sanitized = raw.replace(/https?:\/\/\S+/g, (u) => allowedUrls.has(u) ? u : '');
+            const instructive = /(\brefer to|\bsee|\bcheck|\bconsult|\bvisit|\bread)\b[^\n]{0,160}\b(manual|guide|documentation|docs|website|page|link|bulletin|datasheet|procedure)\b/i;
+            const chunks = sanitized.split('\n');
+            const filtered = chunks.filter((ln) => !instructive.test(ln));
+            sanitized = filtered.join('\n');
+            if (sanitized) {
+              finalBody += sanitized;
+              send({ delta: sanitized });
+            }
+          }
+        } catch {}
+      }
+    }
+
+    // Append Sources
+    let sourcesText = '';
+    let structuredSources = { manuals: [], knowledge: [] };
+    try {
+      const manuals = preToolResults
+        .filter((t) => t.name === 'search_manuals')
+        .flatMap((t) => { try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; } })
+        .slice(0, 1);
+      const knowledge = preToolResults
+        .filter((t) => t.name === 'get_verified_knowledge')
+        .flatMap((t) => { try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; } })
+        .slice(0, 1);
+      if (manuals.length > 0 || knowledge.length > 0) {
+        sourcesText += '\n\nSources:';
+        manuals.forEach((m) => {
+          const n = m?.name ? String(m.name) : 'Manual';
+          const mf = m?.manufacturer ? ` (${m.manufacturer})` : '';
+          const url = m?.url ? String(m.url) : '';
+          if (url) sourcesText += `\n- [Manual] ${n}${mf}: ${url}`;
+          structuredSources.manuals.push({ type: 'manual', title: n, manufacturer: m?.manufacturer || null, gc_number: m?.gc_number || null, url });
+        });
+        knowledge.forEach((k) => {
+          const title = (k?.title || k?.summary || k?.note || k?.content || '').toString().slice(0, 120);
+          const fc = k?.fault_code ? ` [${k.fault_code}]` : '';
+          const mf = k?.manufacturer ? ` (${k.manufacturer})` : '';
+          if (title) sourcesText += `\n- [Knowledge] ${title}${fc}${mf}`;
+          structuredSources.knowledge.push({ type: 'knowledge', title, fault_code: k?.fault_code || null, manufacturer: k?.manufacturer || null });
+        });
+      }
+    } catch {}
+    if (sourcesText) {
+      send({ delta: sourcesText });
+      finalBody += sourcesText;
+    }
+
+    // Build structured
+    let structured = null;
+    try {
+      const displayMap = {
+        'worcester': 'Worcester Bosch',
+        'glow-worm': 'Glow-worm',
+        'viessmann': 'Viessmann',
+        'vaillant': 'Vaillant',
+        'ideal': 'Ideal',
+        'baxi': 'Baxi',
+        'potterton': 'Potterton',
+        'ariston': 'Ariston',
+        'ferroli': 'Ferroli',
+        'alpha': 'Alpha',
+        'ravenheat': 'Ravenheat',
+        'intergas': 'Intergas'
+      };
+      const make = extracted?.manufacturer ? (displayMap[String(extracted.manufacturer).toLowerCase()] || extracted.manufacturer) : null;
+      const model = extracted?.model || null;
+      const system = extracted?.systemType ? (String(extracted.systemType).charAt(0).toUpperCase() + String(extracted.systemType).slice(1)) : null;
+      const faultCode = extracted?.faultCode || null;
+      const idxSrc = finalBody.indexOf('\n\nSources:');
+      const mainBody = idxSrc >= 0 ? finalBody.slice(0, idxSrc) : finalBody;
+      const bodyLines = mainBody.split('\n').map((l) => l.trim()).filter(Boolean);
+      const bullets = bodyLines.filter((l) => /^[-•—]\s+/.test(l)).map((l) => l.replace(/^[-•—]\s+/, ''));
+      const steps = bodyLines.filter((l) => /^\d+[\.)]\s+/.test(l)).map((l) => l.replace(/^\d+[\.)]\s+/, ''));
+      const cautions = bodyLines.filter((l) => /(safety|caution|warning|danger)/i.test(l));
+      const parts = (() => {
+        const out = new Set();
+        const partWords = ['electrode','spark generator','ignition module','gas valve','fan','pump','diverter valve','pcb','pressure sensor','flame sensor','thermostat'];
+        bodyLines.forEach((l) => partWords.forEach((p) => { if (new RegExp(`\\b${p.replace(/\s+/g,'\\s+')}\\b`, 'i').test(l)) out.add(p); }));
+        return Array.from(out);
+      })();
+      const measurements = bodyLines.filter((l) => /(\b\d+(\.\d+)?\s*(bar|mbar|kpa|pa|v|vac|vdc|ohm|Ω|ma|a|hz|kw|°c|c)\b)/i.test(l));
+      structured = { header: { make, model, system, faultCode }, bullets, steps, cautions, parts, measurements, sources: structuredSources };
+    } catch {}
+
+    // Persist session
+    try {
+      if (sessionId) {
+        const historyNow = Array.isArray(chatHistory) ? [...chatHistory, { sender: 'assistant', text: finalBody, timestamp: new Date().toISOString() }] : [];
+        await SessionManager.updateSession(sessionId, historyNow);
+      }
+    } catch {}
+
+    send({ done: true, structured });
+    end();
+  } catch (error) {
+    try { res.write(`data: ${JSON.stringify({ error: 'stream_error' })}\n\n`); } catch {}
+    res.end();
+  }
+});
+
+app.post('/api/agent/chat', chatLimiter, validateChatMessage, async (req, res) => {
+  try {
+    const { message, sessionId, history, detail } = req.body;
+    const rid = randomUUID();
+    logger.info(`[Agent][${rid}] POST /api/agent/chat msgLen=${(message||'').length} sessionId=${sessionId||'-'}`);
+    if (!message) return res.status(400).json({ error: 'Missing message' });
+
+    let session = await SessionManager.getSession(sessionId);
+    let chatHistory = [];
+    if (session) {
+      chatHistory = session.history || [];
+    } else if (Array.isArray(history)) {
+      chatHistory = history;
+      if (sessionId) await SessionManager.createSession(sessionId, null, chatHistory);
+    } else if (sessionId) {
+      await SessionManager.createSession(sessionId, null, []);
+    }
+
+    chatHistory.push({ sender: 'user', text: message, timestamp: new Date().toISOString() });
+    
+    // Check if we have required boiler information FIRST
+    const conversationText = chatHistory.map(m => m.text || '').join(' ').toLowerCase();
+    const hasManufacturer = /\b(worcester|vaillant|baxi|ideal|glow ?worm|potterton|viessmann|ariston|navien|bosch|bosh)\b/i.test(conversationText);
+    const hasSystemType = /\b(combi|combination|system|regular|conventional|standard|heat only|back boiler)\b/i.test(conversationText);
+    
+    // If missing required info, ask for it BEFORE proceeding
+    if (!hasManufacturer || !hasSystemType) {
+      let reply = "Right, to help you out I need a bit more info. What boiler are you working on? I need the manufacturer (like Worcester, Vaillant, Ideal), the model if you know it, and the system type (combi, system, or regular).";
+      
+      if (hasManufacturer && !hasSystemType) {
+        reply = "Right, got the manufacturer. What type of system is it? Combi, system, or regular boiler?";
+      } else if (hasSystemType && !hasManufacturer) {
+        reply = "OK, got the system type. What make is it? Worcester, Vaillant, Baxi, Ideal, or another manufacturer?";
+      }
+      
+      chatHistory.push({ sender: 'assistant', text: reply, timestamp: new Date().toISOString() });
+      if (sessionId) await SessionManager.updateSession(sessionId, chatHistory);
+      return res.json({ reply });
+    }
+
+    const detailKeywords = /(diagnos|procedure|step|walkthrough|how to|detailed|full)/i;
+    const detailedMode = (detail === true) || detailKeywords.test(String(message || ''));
+    
+    // Adaptive temperature for agent endpoint - higher for more natural conversation
+    const hasFaultCodeAgent = /\b([fela]\.?\d{1,3}|EA)\b/i.test(conversationText);
+    const isSafetyCriticalAgent = /gas smell|leak|co alarm|carbon monoxide/i.test(conversationText);
+    let agentTemp = isSafetyCriticalAgent ? 0.3 : hasFaultCodeAgent ? 0.5 : detailedMode ? 0.4 : 0.6;
+
+    let system = `You are James, a Master Gas Safe engineer with 25+ years hands-on experience. You're the guy other engineers call when they're stuck.
+
+CRITICAL: You're talking to a FELLOW GAS SAFE REGISTERED ENGINEER on-site right now. They have all the skills and tools. NEVER suggest calling support or getting help. Guide them through the fix like you're on the phone with them.
+
+CONVERSATION STYLE - CRUCIAL:
+DO NOT use structured formats, section headers, or bullet points. Talk naturally like you're having a phone conversation. Keep responses SHORT and focused - 2-3 sentences max, then ask a question.
+
+EXAMPLES:
+
+User: "Ideal Logic 30 combi, fault code L2"
+GOOD: "Right, L2 on the Logic - ignition lockout. First check gas pressure at inlet, should be 20-21 mbar. If that's good, check the spark generator and electrode gap (3-4mm). What's your gas pressure showing?"
+
+User: "Ideal Logic L2, no clicking sound"
+GOOD: "Right, no clicking means spark generator isn't firing. Check the connections to it first - make sure they're tight. If connections are good, check continuity on the HT lead. Are you getting spark at the electrode?"
+
+IMPORTANT - IDEAL LOGIC SPECIFIC:
+- Ideal Logic boilers use a SPARK GENERATOR, NOT an ignition PCB
+- Common L2 causes: faulty spark generator, electrode gap, gas pressure
+- To test spark generator: Listen for clicking, look for spark at electrode, check HT lead continuity
+- DO NOT test spark generator with multimeter AC voltage - that's incorrect and dangerous
+- If no clicking and connections are good, spark generator is faulty and needs replacing
+
+User: "Worcester Greenstar 28i, F22 code"
+GOOD: "Right, F22 on the Greenstar - low pressure fault. What's your system pressure reading? Should be 1.0-1.5 bar when cold."
+
+User: "Worcester Greenstar F22, pressure is 1.2 bar"
+GOOD: "OK, 1.2 bar is fine so it's likely the pressure sensor playing up. Check the wiring to it first - sometimes works loose. What happens when you reset it?"
+
+User: "Got spark but no flame on a Baxi 830"
+GOOD: "Right, spark's there so ignition side's working. Check gas valve at meter is fully open, then check gas pressure while it's trying to fire - should be 20mbar minimum. Hearing the gas valve click?"
+
+GUIDELINES:
+- Keep responses SHORT: 2-3 sentences max, then ask a question
+- Start with "Right" or "OK" often
+- Be direct and specific
+- Ask ONE focused question at the end
+- Use shorthand: "spark generator", "HT lead", "NTC"
+- For Ideal Logic L2: Always mention spark generator (NOT PCB)
+
+AVOID:
+- Long explanations (keep it brief!)
+- Section headers [ASSESSMENT] [ACTIONS]
+- Bullet points or numbered lists
+- Multiple paragraphs
+- Formal textbook language
+- Suggesting external help
+- Being vague
+- NEVER claim the user said something they didn't
+- NEVER make assumptions about what they've checked unless explicitly stated
+
+TOOL USAGE:
+When you get fault code data, interpret it naturally: "So L2 is ignition lockout - boiler's tried 3 times and given up. Usually means..." Don't regurgitate database info, blend it in.
+
+CRITICAL: Only reference information the user ACTUALLY provided. If they haven't mentioned pressure, don't say "since the pressure is fine". Ask instead: "What's the pressure reading?"
+
+ALWAYS end with a specific question about what they're seeing.
+
+Model numbers (24/28/30) are kW ratings NOT fault codes. Never suggest calling support.`;
+    
+    if (String(process.env.DB_ONLY_MODE || 'false').toLowerCase() === 'true') {
+      system += `\n\nDB-ONLY: Use ONLY tool results. If insufficient, ask ONE clarifying question. No invented data.`;
+    }
+
+    const toOpenAIMessages = [];
+    toOpenAIMessages.push({ role: 'system', content: system });
+    chatHistory.forEach((m) => {
+      const t = m?.text;
+      const s = typeof t === 'string' ? t : (t && typeof t === 'object' && typeof t.text === 'string' ? t.text : '');
+      toOpenAIMessages.push({ role: m.sender === 'user' ? 'user' : 'assistant', content: s });
+    });
+
+    const extracted = EnhancedFaultCodeService.extractFaultInfo(String(message || '')) || {};
+    logger.info(`[Agent][${rid}] extracted manufacturer=${extracted.manufacturer||'-'} model=${extracted.model||'-'} system=${extracted.systemType||'-'} fault=${extracted.faultCode||'-'}`);
+    // Detect if a prior message in this session contained a fault code; if so, don't force the generic ask
+    let hasPriorFaultMention = false;
+    try {
+      const historyText = (Array.isArray(chatHistory) ? chatHistory : [])
+        .map((m) => {
+          const t = m?.text;
+          return typeof t === 'string' ? t : (t && typeof t === 'object' && typeof t.text === 'string' ? t.text : '');
+        })
+        .join('\n');
+      const faultRegex = /\b(?:[FfEeLlAa]\.?\d{1,3}|EA)\b/;
+      hasPriorFaultMention = faultRegex.test(historyText);
+    } catch {}
+    const preToolCalls = [];
+    const preToolResults = [];
+    if (extracted && (extracted.manufacturer || extracted.model || extracted.systemType || extracted.faultCode)) {
+      const ctxParts = [];
+      if (extracted.manufacturer) ctxParts.push(`manufacturer=${extracted.manufacturer}`);
+      if (extracted.model) ctxParts.push(`model=${extracted.model}`);
+      if (extracted.systemType) ctxParts.push(`systemType=${extracted.systemType}`);
+      if (extracted.faultCode) ctxParts.push(`faultCode=${extracted.faultCode}`);
+      if (ctxParts.length > 0) {
+        toOpenAIMessages.push({ role: 'system', content: `Context: ${ctxParts.join(' | ')}` });
+      }
+    }
+    // Pre-seed manuals if we know manufacturer/model (model-only flow)
+    if (extracted?.manufacturer) {
+      const tc2 = { id: 'pre_2', type: 'function', function: { name: 'search_manuals', arguments: JSON.stringify({ manufacturer: extracted.manufacturer, model: extracted?.model || null, limit: 1 }) } };
+      preToolCalls.push(tc2);
+      try {
+        const t0 = Date.now();
+        const r2 = await AgentTools.search_manuals({ manufacturer: extracted.manufacturer, model: extracted?.model || null, limit: 1 });
+        logger.info(`[Agent][${rid}] tool search_manuals dt=${Date.now()-t0}ms items=${(r2?.items||[]).length}`);
+        preToolResults.push({ role: 'tool', tool_call_id: tc2.id, name: 'search_manuals', content: JSON.stringify(r2) });
+      } catch {}
+    }
+    // Pre-seed symptom guidance for model-only or symptom-only queries
+    if ((extracted?.manufacturer || extracted?.model) && !extracted?.faultCode) {
+      const tc4 = { id: 'pre_4', type: 'function', function: { name: 'get_symptom_guidance', arguments: JSON.stringify({ manufacturer: extracted?.manufacturer || null, model: extracted?.model || null, symptoms: String(message || ''), limit: 5 }) } };
+      preToolCalls.push(tc4);
+      try {
+        const t0 = Date.now();
+        const r4 = await AgentTools.get_symptom_guidance({ manufacturer: extracted?.manufacturer || null, model: extracted?.model || null, symptoms: String(message || ''), limit: 5 });
+        logger.info(`[Agent][${rid}] tool get_symptom_guidance dt=${Date.now()-t0}ms items=${(r4?.items||[]).length}`);
+        preToolResults.push({ role: 'tool', tool_call_id: tc4.id, name: 'get_symptom_guidance', content: JSON.stringify(r4) });
+      } catch {}
+    }
+    // Only pre-seed fault info and knowledge when we have a real fault code
+    if (extracted?.faultCode) {
+      const tc1 = { id: 'pre_1', type: 'function', function: { name: 'get_fault_info', arguments: JSON.stringify({ manufacturer: extracted?.manufacturer || null, fault_code: extracted?.faultCode || null, user_text: String(message || '') }) } };
+      preToolCalls.push(tc1);
+      try {
+        const t0 = Date.now();
+        const r1 = await AgentTools.get_fault_info({ manufacturer: extracted?.manufacturer || null, fault_code: extracted?.faultCode || null, user_text: String(message || '') });
+        logger.info(`[Agent][${rid}] tool get_fault_info dt=${Date.now()-t0}ms found=${!!r1?.found}`);
+        preToolResults.push({ role: 'tool', tool_call_id: tc1.id, name: 'get_fault_info', content: JSON.stringify(r1) });
+      } catch {}
+      const tc3 = { id: 'pre_3', type: 'function', function: { name: 'get_verified_knowledge', arguments: JSON.stringify({ fault_code: extracted.faultCode, manufacturer: extracted?.manufacturer || null, limit: 1 }) } };
+      preToolCalls.push(tc3);
+      try {
+        const t0 = Date.now();
+        const r3 = await AgentTools.get_verified_knowledge({ fault_code: extracted.faultCode, manufacturer: extracted?.manufacturer || null, limit: 1 });
+        logger.info(`[Agent][${rid}] tool get_verified_knowledge dt=${Date.now()-t0}ms items=${(r3?.items||[]).length}`);
+        preToolResults.push({ role: 'tool', tool_call_id: tc3.id, name: 'get_verified_knowledge', content: JSON.stringify(r3) });
+      } catch {}
+    }
+    if (preToolCalls.length > 0) {
+      toOpenAIMessages.push({ role: 'assistant', content: '', tool_calls: preToolCalls });
+      preToolResults.forEach((t) => toOpenAIMessages.push(t));
+    }
+
+    // Fast-path: answer identity questions without LLM
+    try {
+      const lowerMsg = String(message || '').toLowerCase();
+      const askMake = /(what\s+(boiler\s+)?(make|brand|manufacturer)|which\s+brand)/i.test(lowerMsg);
+      const askModel = /(what\s+(boiler\s+)?model|which\s+model)/i.test(lowerMsg);
+      if ((askMake || askModel)) {
+        const displayMap = {
+          'worcester': 'Worcester Bosch',
+          'glow-worm': 'Glow-worm',
+          'viessmann': 'Viessmann',
+          'vaillant': 'Vaillant',
+          'ideal': 'Ideal',
+          'baxi': 'Baxi',
+          'potterton': 'Potterton',
+          'ariston': 'Ariston',
+          'ferroli': 'Ferroli',
+          'alpha': 'Alpha',
+          'ravenheat': 'Ravenheat',
+          'intergas': 'Intergas'
+        };
+        let make = extracted?.manufacturer || null;
+        let model = extracted?.model || null;
+        let systemType = extracted?.systemType || null;
+        // Try to infer from tool results
+        try {
+          if (!make) {
+            const mItem = preToolResults
+              .filter((t) => t.name === 'search_manuals')
+              .map((t) => { try { return (JSON.parse(t.content || '{}')?.items)||[]; } catch { return []; } })
+              .flat()[0];
+            if (mItem?.manufacturer) make = mItem.manufacturer;
+            if (!model && mItem?.name) model = mItem.name;
+          }
+          if (!make) {
+            const kItem = preToolResults
+              .filter((t) => t.name === 'get_verified_knowledge')
+              .map((t) => { try { return (JSON.parse(t.content || '{}')?.items)||[]; } catch { return []; } })
+              .flat()[0];
+            if (kItem?.manufacturer) make = kItem.manufacturer;
+          }
+        } catch {}
+        // Try to infer from prior history text
+        try {
+          if (!make || !model || !systemType) {
+            const historyText = (Array.isArray(chatHistory) ? chatHistory : [])
+              .map((m) => {
+                const t = m?.text; return typeof t === 'string' ? t : (t && typeof t === 'object' && typeof t.text === 'string' ? t.text : '');
+              })
+              .join('\n');
+            const hx = EnhancedFaultCodeService.extractFaultInfo(historyText) || {};
+            if (!make && hx.manufacturer) make = hx.manufacturer;
+            if (!model && hx.model) model = hx.model;
+            if (!systemType && hx.systemType) systemType = hx.systemType;
+            // If still no make but we have a prior fault code, look up verified knowledge to infer manufacturer
+            if (!make && hx.faultCode) {
+              try {
+                const vk = await AgentTools.get_verified_knowledge({ fault_code: hx.faultCode, manufacturer: null, limit: 1 });
+                const item = (vk?.items || [])[0];
+                if (item?.manufacturer) make = item.manufacturer;
+              } catch {}
+            }
+          }
+        } catch {}
+        // If we learned a make, fetch one best manual to show provenance
+        const structuredSources = { manuals: [], knowledge: [] };
+        if (make && (!structuredSources.manuals || structuredSources.manuals.length === 0)) {
+          try {
+            const sm = await AgentTools.search_manuals({ manufacturer: make, model: model || null, limit: 1 });
+            const manuals = sm?.items || [];
+            if (manuals.length > 0) {
+              const m = manuals[0];
+              structuredSources.manuals.push({ type: 'manual', title: m?.name || 'Manual', manufacturer: m?.manufacturer || null, gc_number: m?.gc_number || null, url: m?.url || '' });
+            }
+          } catch {}
+        }
+        const niceMake = make ? (displayMap[String(make).toLowerCase()] || make) : null;
+        const parts = [];
+        if (niceMake) parts.push(`Make: ${niceMake}`);
+        if (model) parts.push(`Model: ${model}`);
+        if (systemType) {
+          const sys = String(systemType); parts.push(`System: ${sys.charAt(0).toUpperCase() + sys.slice(1)}`);
+        }
+        const header = parts.join(' | ');
+        let finalText = header || 'I need the make or model to answer precisely.';
+        // Sources: include at most 1 manual discovered
+        try {
+          if (structuredSources.manuals.length > 0) {
+            let refs = '\n\nSources:';
+            structuredSources.manuals.forEach((m) => {
+              const n = m?.title ? String(m.title) : 'Manual';
+              const mf = m?.manufacturer ? ` (${m.manufacturer})` : '';
+              const url = m?.url ? String(m.url) : '';
+              if (url) refs += `\n- [Manual] ${n}${mf}: ${url}`;
+            });
+            finalText += refs;
+          }
+        } catch {}
+        // Persist session history
+        if (sessionId) {
+          try {
+            const historyNow = Array.isArray(chatHistory) ? [...chatHistory, { sender: 'assistant', text: finalText, timestamp: new Date().toISOString() }] : [];
+            await SessionManager.updateSession(sessionId, historyNow);
+          } catch {}
+        }
+        const structured = {
+          header: { make: niceMake || null, model: model || null, system: systemType ? (String(systemType).charAt(0).toUpperCase() + String(systemType).slice(1)) : null, faultCode: extracted?.faultCode || null },
+          bullets: [], steps: [], cautions: [], parts: [], measurements: [], sources: structuredSources
+        };
+        logger.info(`[Agent][${rid}] fastpath identity response header='${header}'`);
+        return res.json({ reply: finalText, sessionId: sessionId || null, structured });
+      }
+    } catch {}
+
+    const tools = [];
+    if (extracted?.faultCode) {
+      tools.push({
+        type: 'function',
+        function: {
+          name: 'get_fault_info',
+          description: 'Get authoritative fault info from manufacturer database',
+          parameters: {
+            type: 'object',
+            properties: {
+              manufacturer: { type: 'string' },
+              fault_code: { type: 'string' },
+              user_text: { type: 'string' }
+            }
+          }
+        }
+      });
+    }
+    tools.push({
+      type: 'function',
+      function: {
+        name: 'search_manuals',
+        description: 'Find manuals for a manufacturer and optional model',
+        parameters: {
+          type: 'object',
+          properties: {
+            manufacturer: { type: 'string' },
+            model: { type: 'string' },
+            limit: { type: 'number' }
+          },
+          required: ['manufacturer']
+        }
+      }
+    });
+    if (extracted?.faultCode) {
+      tools.push({
+        type: 'function',
+        function: {
+          name: 'get_verified_knowledge',
+          description: 'Get verified knowledge items for a fault code and optional manufacturer',
+          parameters: {
+            type: 'object',
+            properties: {
+              fault_code: { type: 'string' },
+              manufacturer: { type: 'string' },
+              limit: { type: 'number' }
+            },
+            required: ['fault_code']
+          }
+        }
+      });
+    }
+    tools.push({
+      type: 'function',
+      function: {
+        name: 'update_session',
+        description: 'Persist a message in the chat session history',
+        parameters: {
+          type: 'object',
+          properties: {
+            session_id: { type: 'string' },
+            role: { type: 'string', enum: ['user', 'assistant'] },
+            message_text: { type: 'string' }
+          },
+          required: ['session_id', 'message_text']
+        }
+      }
+    });
+
+    const openaiKeys = [
+      process.env.OPENAI_API_KEY,
+      process.env.OPENAI_API_KEY_2,
+      process.env.OPENAI_API_KEY_3
+    ].filter(Boolean);
+
+    async function runOnce(messages) {
+      for (let i = 0; i < openaiKeys.length; i++) {
+        const key = openaiKeys[i];
+        try {
+          const t0 = Date.now();
+          logger.info(`[Agent][${rid}] openai call start key#${i} msgs=${messages.length}`);
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model: hasFaultCodeAgent ? 'gpt-4o' : 'gpt-4o-mini', messages, tools, tool_choice: 'auto', temperature: agentTemp, max_tokens: detailedMode ? 1500 : 800, frequency_penalty: 0.2, presence_penalty: 0.1 })
+          });
+          if (!response.ok) continue;
+          const data = await response.json();
+          const usage = data?.usage || {};
+          logger.info(`[Agent][${rid}] openai call done dt=${Date.now()-t0}ms tokens=${usage.total_tokens||'-'}`);
+          return data;
+        } catch (e) { continue; }
+      }
+      return null;
+    }
+
+    let messages = toOpenAIMessages.slice();
+    let toolIterations = 0;
+    let finalText = '';
+    let structuredSources = { manuals: [], knowledge: [] };
+
+    while (toolIterations < 4) {
+      const data = await runOnce(messages);
+      if (!data) break;
+      const msg = data?.choices?.[0]?.message;
+      const toolCalls = msg?.tool_calls || [];
+      if (toolCalls.length === 0) {
+        finalText = msg?.content || '';
+        break;
+      }
+      messages.push({ role: 'assistant', content: msg?.content || '', tool_calls: toolCalls });
+      for (const tc of toolCalls) {
+        try {
+          const name = tc.function?.name;
+          const args = JSON.parse(tc.function?.arguments || '{}');
+          let result;
+          if (name === 'get_fault_info') result = await AgentTools.get_fault_info(args);
+          else if (name === 'search_manuals') result = await AgentTools.search_manuals(args);
+          else if (name === 'get_verified_knowledge') result = await AgentTools.get_verified_knowledge(args);
+          else if (name === 'get_symptom_guidance') result = await AgentTools.get_symptom_guidance(args);
+          else if (name === 'update_session') result = await AgentTools.update_session(args);
+          else result = { error: 'unknown_tool' };
+          messages.push({ role: 'tool', tool_call_id: tc.id, name, content: JSON.stringify(result) });
+        } catch (e) {
+          messages.push({ role: 'tool', tool_call_id: tc.id, name: tc.function?.name || 'tool', content: JSON.stringify({ error: e?.message || 'tool_error' }) });
+        }
+      }
+      toolIterations++;
+    }
+
+    if (!finalText) {
+      const data = await runOnce(messages);
+      finalText = data?.choices?.[0]?.message?.content || '';
+    }
+
+    if (!finalText) finalText = "I'm having trouble responding right now. Please try again shortly.";
+
+    let modelTipText = '';
+    try {
+      const gf = preToolResults.find((t) => t.name === 'get_fault_info');
+      if (gf) {
+        const parsed = JSON.parse(gf.content || '{}');
+        if (parsed?.modelTips) modelTipText = String(parsed.modelTips);
+      }
+    } catch {}
+    // Model tips are now integrated into the AI's natural response by the system prompt
+    // No need to prepend them separately
+
+    // If no fault code, override with standardized Make | Model | System + question
+    try {
+      if (!extracted?.faultCode && !hasPriorFaultMention) {
+        const parts = [];
+        const displayMap = {
+          'worcester': 'Worcester Bosch',
+          'glow-worm': 'Glow-worm',
+          'viessmann': 'Viessmann',
+          'vaillant': 'Vaillant',
+          'ideal': 'Ideal',
+          'baxi': 'Baxi',
+          'potterton': 'Potterton',
+          'ariston': 'Ariston',
+          'ferroli': 'Ferroli',
+          'alpha': 'Alpha',
+          'ravenheat': 'Ravenheat',
+          'intergas': 'Intergas'
+        };
+        if (extracted?.manufacturer) {
+          const mfRaw = String(extracted.manufacturer).toLowerCase();
+          const displayMf = displayMap[mfRaw] || (mfRaw.charAt(0).toUpperCase() + mfRaw.slice(1));
+          parts.push(`Make: ${displayMf}`);
+        }
+        if (extracted?.model) parts.push(`Model: ${extracted.model}`);
+        if (extracted?.systemType) {
+          const sys = String(extracted.systemType);
+          parts.push(`System: ${sys.charAt(0).toUpperCase() + sys.slice(1)}`);
+        }
+        const header = parts.join(' | ');
+        const ask = 'Please provide the displayed fault code or a brief description of the symptoms.';
+        finalText = header ? `${header}\n\n${ask}` : ask;
+      }
+    } catch {}
+
+    if (preToolResults.length > 0) {
+      try {
+        const manuals = preToolResults
+          .filter((t) => t.name === 'search_manuals')
+          .flatMap((t) => {
+            try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; }
+          })
+          .slice(0, 1);
+        const knowledge = preToolResults
+          .filter((t) => t.name === 'get_verified_knowledge')
+          .flatMap((t) => {
+            try { return (JSON.parse(t.content || '{}')?.items) || []; } catch { return []; }
+          })
+          .slice(0, 1);
+        let referencesText = '';
+        if (manuals.length > 0 || knowledge.length > 0) {
+          referencesText += '\n\nSources:';
+          manuals.forEach((m) => {
+            const n = m?.name ? String(m.name) : 'Manual';
+            const mf = m?.manufacturer ? ` (${m.manufacturer})` : '';
+            const url = m?.url ? String(m.url) : '';
+            if (url) referencesText += `\n- [Manual] ${n}${mf}: ${url}`;
+            structuredSources.manuals.push({ type: 'manual', title: n, manufacturer: m?.manufacturer || null, gc_number: m?.gc_number || null, url });
+          });
+          knowledge.forEach((k) => {
+            const title = (k?.title || k?.summary || k?.note || k?.content || '').toString().slice(0, 120);
+            const fc = k?.fault_code ? ` [${k.fault_code}]` : '';
+            const mf = k?.manufacturer ? ` (${k.manufacturer})` : '';
+            if (title) referencesText += `\n- [Knowledge] ${title}${fc}${mf}`;
+            structuredSources.knowledge.push({ type: 'knowledge', title, fault_code: k?.fault_code || null, manufacturer: k?.manufacturer || null });
+          });
+        }
+        // Sources section removed - info already integrated in response
+        // if (referencesText) {
+        //   finalText += referencesText;
+        // }
+      } catch {}
+    }
+
+    try {
+      const allowedUrls = new Set();
+      preToolResults
+        .filter((t) => t.name === 'search_manuals')
+        .forEach((t) => {
+          try {
+            const items = (JSON.parse(t.content || '{}')?.items) || [];
+            items.forEach((m) => { if (m?.url) allowedUrls.add(String(m.url)); });
+          } catch {}
+        });
+      let bodyPart = finalText;
+      let refsPart = '';
+      const idx = finalText.indexOf('\n\nSources:');
+      if (idx >= 0) { bodyPart = finalText.slice(0, idx); refsPart = finalText.slice(idx); }
+      bodyPart = bodyPart.replace(/https?:\/\/\S+/g, (u) => allowedUrls.has(u) ? u : '');
+      const instructive = /(\brefer to|\bsee|\bcheck|\bconsult|\bvisit|\bread)\b[^\n]{0,160}\b(manual|guide|documentation|docs|website|page|link|bulletin|datasheet|procedure)\b/i;
+      bodyPart = bodyPart
+        .split('\n')
+        .filter((line) => !instructive.test(line))
+        .join('\n');
+      finalText = bodyPart + refsPart;
+    } catch {}
+
+    // Build structured JSON response
+    try {
+      const displayMap = {
+        'worcester': 'Worcester Bosch',
+        'glow-worm': 'Glow-worm',
+        'viessmann': 'Viessmann',
+        'vaillant': 'Vaillant',
+        'ideal': 'Ideal',
+        'baxi': 'Baxi',
+        'potterton': 'Potterton',
+        'ariston': 'Ariston',
+        'ferroli': 'Ferroli',
+        'alpha': 'Alpha',
+        'ravenheat': 'Ravenheat',
+        'intergas': 'Intergas'
+      };
+      const make = extracted?.manufacturer ? (displayMap[String(extracted.manufacturer).toLowerCase()] || extracted.manufacturer) : null;
+      const model = extracted?.model || null;
+      const system = extracted?.systemType ? (String(extracted.systemType).charAt(0).toUpperCase() + String(extracted.systemType).slice(1)) : null;
+      const faultCode = extracted?.faultCode || null;
+
+      const idxSrc = finalText.indexOf('\n\nSources:');
+      const mainBody = idxSrc >= 0 ? finalText.slice(0, idxSrc) : finalText;
+      const bodyLines = mainBody.split('\n').map((l) => l.trim()).filter(Boolean);
+      const bullets = bodyLines.filter((l) => /^[-•—]\s+/.test(l)).map((l) => l.replace(/^[-•—]\s+/, ''));
+      const steps = bodyLines.filter((l) => /^\d+[\.)]\s+/.test(l)).map((l) => l.replace(/^\d+[\.)]\s+/, ''));
+      const cautions = bodyLines.filter((l) => /(safety|caution|warning|danger)/i.test(l));
+      const parts = (() => {
+        const out = new Set();
+        const partWords = ['electrode','spark generator','ignition module','gas valve','fan','pump','diverter valve','pcb','pressure sensor','flame sensor','thermostat'];
+        bodyLines.forEach((l) => partWords.forEach((p) => { if (new RegExp(`\\b${p.replace(/\s+/g,'\\s+')}\\b`, 'i').test(l)) out.add(p); }));
+        return Array.from(out);
+      })();
+      const measurements = bodyLines.filter((l) => /(\b\d+(\.\d+)?\s*(bar|mbar|kpa|pa|v|vac|vdc|ohm|Ω|ma|a|hz|kw|°c|c)\b)/i.test(l));
+
+      var structured = {
+        header: { make, model, system, faultCode },
+        bullets,
+        steps,
+        cautions,
+        parts,
+        measurements,
+        sources: structuredSources
+      };
+    } catch {}
+
+    if (sessionId) {
+      try {
+        const historyNow = Array.isArray(chatHistory) ? [...chatHistory, { sender: 'assistant', text: finalText, timestamp: new Date().toISOString() }] : [];
+        await SessionManager.updateSession(sessionId, historyNow);
+      } catch {}
+    }
+
+    logger.info(`[Agent][${rid}] respond len=${finalText.length} structured=${structured ? 'y' : 'n'}`);
+    res.json({ reply: finalText, sessionId: sessionId || null, structured: typeof structured !== 'undefined' ? structured : null });
+  } catch (error) {
+    logger.error('[Agent Chat] Endpoint error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// --- POST /api/sessions/get ---
+// Retrieve session by ID for cross-device sync
+app.post('/api/sessions/get', async (req, res) => {
   try {
     const { sessionId } = req.body;
-    
-    if (!sessionId) {
-      return res.status(400).json({ error: 'Session ID is required' });
-    }
-    
-    
-    // Clear from session store
-    try {
-      await sessionStore.clearSession(sessionId);
-    } catch (error) {
-      console.warn(`[Session] Failed to clear from session store: ${error.message}`);
-    }
-    
-    // Clear from context recovery
-    try {
-      await contextRecoveryService.clearRecoveryPoint(sessionId);
-    } catch (error) {
-      console.warn(`[Session] Failed to clear recovery point: ${error.message}`);
-    }
-    
-    
-    res.json({
-      success: true,
-      message: 'Session cleared successfully',
-      sessionId
-    });
-    
-  } catch (error) {
-    console.error('[Session] Error clearing session:', error);
-    res.status(500).json({ 
-      error: 'Failed to clear session',
-      details: error.message
-    });
-  }
-});
-
-// Fault Code API endpoints
-app.get('/api/fault-codes/search', async (req, res) => {
-  try {
-    const { code, manufacturer } = req.query;
-    
-    if (!code) {
-      return res.status(400).json({ error: 'Fault code is required' });
-    }
-
-    const { data, error } = await supabase
-      .from('boiler_fault_codes')
-      .select('*')
-      .ilike('fault_code', `%${code}%`)
-      .ilike('manufacturer', manufacturer ? `%${manufacturer}%` : '%')
-      .limit(10);
-
-    if (error) {
-      console.error('Database error:', error);
-      return res.status(500).json({ error: 'Database query failed' });
-    }
-
-    res.json({ results: data || [], count: data?.length || 0 });
-  } catch (error) {
-    console.error('Fault code search error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-app.get('/api/fault-codes/manufacturers', async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from('boiler_fault_codes')
-      .select('manufacturer')
-      .not('manufacturer', 'is', null);
-
-    if (error) {
-      console.error('Database error:', error);
-      return res.status(500).json({ error: 'Database query failed' });
-    }
-
-    const manufacturers = [...new Set(data?.map(row => row.manufacturer).filter(Boolean))].sort();
-    res.json({ manufacturers });
-  } catch (error) {
-    console.error('Manufacturers fetch error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Initialize clean chat endpoint with 100% reliability guarantee
-createChatEndpoint(app, {
-  sessionStore,
-  contextRecoveryService,
-  interactiveWorkflow,
-  enhancedIntegration,
-  reliabilityGuarantee,
-  professionalDiagnosticService,
-  llmMonitor,
-  hybridDiagnosticService
-});
-
-// Chat session endpoint - get session info
-app.get('/api/chat/session', async (req, res) => {
-  try {
-    const { sessionId } = req.query;
-    
-    if (!sessionId) {
-      return res.status(400).json({ error: 'Session ID is required' });
-    }
-    
-    const session = await sessionStore.getSession(sessionId);
-    
-    if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-    
-    res.json({
-      sessionId: session.sessionId,
-      messageCount: session.history?.length || 0,
-      lastActivity: session.lastActivity,
-      boilerInfo: session.boilerInfo
-    });
-    
-  } catch (error) {
-    console.error('[Session] Error retrieving session:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Reliability metrics endpoint
-app.get('/api/reliability/metrics', async (req, res) => {
-  try {
-    const metrics = reliabilityGuarantee.getReliabilityMetrics();
-    res.json(metrics);
-  } catch (error) {
-    console.error('[Reliability] Error getting metrics:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Chat session endpoint - get session info
-app.get('/api/chat/session', async (req, res) => {
-  try {
-    const sessionId = req.query.sessionId;
     if (!sessionId) {
       return res.status(400).json({ error: 'Session ID required' });
     }
-
-    const session = await sessionStore.getSession(sessionId);
+    
+    const session = await SessionManager.getSession(sessionId);
     if (!session) {
-      return res.status(404).json({ error: 'Session not found' });
+      return res.status(404).json({ error: 'Session not found or expired' });
     }
-
+    
     res.json({
-      sessionId,
-      messageCount: session.history?.length || 0,
-      lastActivity: session.lastActivity,
-      boilerInfo: session.boilerInfo
+      sessionId: session.session_id,
+      history: session.history || [],
+      expiresAt: session.expires_at
     });
   } catch (error) {
-    console.error('[Session] Error getting session:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    logger.error('[Sessions] Get session error:', error);
+    res.status(500).json({ error: 'Failed to retrieve session' });
   }
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🔧 Enhanced LLM system ready for professional Gas Safe diagnostics`);
-});
-
-/**
- * GET admin analytics endpoint
- * Returns analytics data for admin dashboard
- */
-app.get('/api/admin/analytics', adminAuth, async (req, res) => {
+// Session cleanup job - runs every hour
+setInterval(async () => {
   try {
-    // Return mock analytics data for admin dashboard
-    const analytics = {
-      totalUsers: 1247,
-      activeUsers: 892,
-      revenueThisMonth: 15420.50,
-      averageSessionTime: '12m 34s',
-      lastUpdated: new Date().toISOString(),
-      // Additional metrics
-      conversionRate: 71.5,
-      avgSessionsPerUser: 3.2,
-      totalSessions: 2856,
-      // Growth metrics
-      userGrowth: 12.3,
-      revenueGrowth: 8.7,
-      sessionGrowth: 15.2
-    };
-    
-    res.json(analytics);
+    const cleaned = await SessionManager.cleanupExpiredSessions();
+    if (cleaned > 0) {
+      console.log(`[Cleanup] Removed ${cleaned} expired sessions`);
+    }
   } catch (error) {
-    console.error('Error fetching admin analytics:', error);
-    res.status(500).json({ error: 'Failed to fetch analytics data' });
+    console.error('[Cleanup] Session cleanup failed:', error);
   }
-});
+}, 60 * 60 * 1000); // Every 1 hour
 
-/**
- * GET admin metrics endpoint
- * Returns system metrics for dashboard
- */
-app.get('/api/admin/metrics', adminAuth, async (req, res) => {
-  try {
-    // Get timeframe parameter
-    const timeframe = req.query.timeframe || '7days'; // default to 7 days
-    
-    // Calculate date range
-    let startDate;
-    const now = new Date();
-    
-    switch (timeframe) {
-      case '24hours':
-        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-        break;
-      case '7days':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '30days':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case '90days':
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      default:
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    }
-    
-    // Format dates for SQL
-    const startDateStr = startDate.toISOString();
-    
-    // Run parallel queries
-    const [
-      totalUsersResult,
-      newUsersResult,
-      activeUsersResult,
-      chatCountResult,
-      manualViewsResult,
-      feedbackCountResult
-    ] = await Promise.all([
-      // Total users count
-      supabase.from('users').select('id', { count: 'exact', head: true }),
-      
-      // New users in timeframe
-      supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', startDateStr),
-      
-      // Active users in timeframe (users who signed in)
-      supabase
-        .from('users')
-        .select('id', { count: 'exact', head: true })
-        .gte('last_sign_in_at', startDateStr),
-      
-      // Chat count in timeframe
-      supabase
-        .from('chat_sessions')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', startDateStr),
-      
-      // Manual views in timeframe
-      supabase
-        .from('manual_views')
-        .select('id', { count: 'exact', head: true })
-        .gte('viewed_at', startDateStr),
-      
-      // Feedback count in timeframe
-      supabase
-        .from('feedback')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', startDateStr)
-    ]);
-    
-    // Check for errors
-    const errors = [
-      totalUsersResult.error,
-      newUsersResult.error,
-      activeUsersResult.error,
-      chatCountResult.error,
-      manualViewsResult.error,
-      feedbackCountResult.error
-    ].filter(Boolean);
-    
-    if (errors.length > 0) {
-      console.error('Errors fetching metrics:', errors);
-      return res.status(500).json({ error: 'Failed to fetch some metrics' });
-    }
-    
-    // Build response
-    const metrics = {
-      users: {
-        total: totalUsersResult.count || 0,
-        new: newUsersResult.count || 0,
-        active: activeUsersResult.count || 0
-      },
-      engagement: {
-        chatSessions: chatCountResult.count || 0,
-        manualViews: manualViewsResult.count || 0,
-        feedback: feedbackCountResult.count || 0
-      },
-      timeframe
-    };
-    
-    return res.json(metrics);
-  } catch (error) {
-    console.error('Error in admin metrics API:', error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
+// Initial cleanup on startup
+SessionManager.cleanupExpiredSessions().catch(err => 
+console.error('[Cleanup] Initial cleanup failed:', err)
+);
 
-/**
- * POST admin endpoint to update user role
- * Changes a user's role (e.g., promote to admin)
- */
-app.post('/api/admin/users/:userId/role', adminAuth, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { role } = req.body;
-    
-    if (!userId || !role) {
-      return res.status(400).json({ error: 'Missing userId or role' });
-    }
-    
-    // Update user role in Supabase Auth
-    const { error } = await supabase.auth.admin.updateUserById(userId, {
-      app_metadata: { role }
-    });
-    
-    if (error) {
-      console.error('Error updating user role:', error);
-      return res.status(500).json({ error: 'Failed to update user role' });
-    }
-    
-    return res.json({ message: `User ${userId} role updated to ${role}` });
-  } catch (error) {
-    console.error('Error updating user role:', error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// POST admin endpoint to manually embed knowledge
-app.post('/api/admin/embed-knowledge', adminAuth, async (req, res) => {
-  const { text, tag, source } = req.body;
+// --- POST /api/feedback ---
+// Endpoint to receive user feedback on AI responses
+app.post('/api/feedback', async (req, res) => {
+try {
+  const { messageId, feedback, messageText, timestamp } = req.body;
   
-  if (!text || !tag) {
-    return res.status(400).json({ error: 'Text and tag are required' });
+  logger.info(`[Feedback] Received: ${feedback} for message ${messageId}`);
+  
+  // Store feedback in database for learning
+  const { data, error } = await supabase
+    .from('chat_feedback')
+    .insert({
+      message_id: messageId,
+      feedback_type: feedback,
+      message_text: messageText,
+      created_at: timestamp || new Date().toISOString()
+    });
+  
+  if (error) {
+    // Table might not exist yet - just log it
+    logger.warn('[Feedback] Database insert failed (table may not exist):', error.message);
   }
   
-  try {
-    // Create embedding
-    const vector = await createEmbedding(text);
-    
-    // Store in database
-    const { data, error } = await supabase
-      .from('knowledge_embeddings')
-      .insert({
-        text,
-        vector,
-        tag,
-        source: source || null
-      })
-      .select();
-    
-    if (error) throw error;
-    res.json({ success: true, id: data[0].id });
-    
-  } catch (error) {
-    console.error('Error embedding knowledge:', error);
-    res.status(500).json({ error: 'Failed to embed knowledge' });
-  }
+  res.json({ success: true, message: 'Feedback recorded' });
+} catch (error) {
+  logger.error('[Feedback] Error:', error);
+  res.status(500).json({ error: 'Failed to record feedback' });
+}
 });
 
-// POST endpoint for manual uploads (admin only)
-app.post('/api/manuals/upload', adminAuth, validateCsrf, async (req, res) => {
-  res.status(501).json({ error: 'File upload via API not implemented. Use Supabase dashboard.' });
+// Start server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Boiler Brain server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`CORS origins: ${process.env.ALLOWED_ORIGINS || '*'}`);
 });
-
-// POST endpoint for logs/screenshots upload
-app.post('/api/logs/upload', async (req, res) => {
-  try {
-    const { logType, content, timestamp, userInfo } = req.body;
-    
-    if (!logType || !content) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-    
-    // Store in Supabase
-    const { data, error } = await supabase
-      .from('user_logs')
-      .insert({
-        log_type: logType,
-        content,
-        timestamp: timestamp || new Date().toISOString(),
-        user_info: userInfo || null
-      })
-      .select();
-      
-    if (error) throw error;
-    
-    res.json({ success: true, id: data[0].id });
-  } catch (error) {
-    console.error('Error uploading log:', error);
-    res.status(500).json({ error: 'Failed to upload log' });
-  }
-});
-
-// Catch-all route for React SPA
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
-});
-
-/**
- * Check if a port is available
- * @param {number} port - The port to check
- * @returns {Promise<boolean>} True if port is available, false if in use
- */
-const isPortAvailable = (port) => {
-  return new Promise((resolve) => {
-    const server = net.createServer();
-    server.once('error', () => {
-      resolve(false); // Port is in use
-    });
-    server.once('listening', () => {
-      // Close the server and resolve with true (port is available)
-      server.close();
-      resolve(true);
-    });
-    server.listen(port);
-  });
-};
-
-/**
- * Find an available port starting from the given port
- * @param {number} startPort - The port to start checking from
- * @returns {Promise<number>} The first available port
- */
-const findAvailablePort = async (startPort) => {
-  let port = startPort;
-  // Try up to 10 ports to find an available one
-  for (let i = 0; i < 10; i++) {
-    const isAvailable = await isPortAvailable(port);
-    if (isAvailable) {
-      return port;
-    }
-    port++;
-  }
-  // If no port was found, return the original port and let the system handle the error
-  return startPort;
-};
-
-/**
- * PUT admin user update endpoint
- * Updates user information (admin only)
- */
-app.put('/api/admin/users/:userId', adminAuth, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updates = req.body;
-    
-    // Validate user ID
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
-    
-    // Only allow certain fields to be updated for security
-    const allowedFields = ['name', 'tier', 'active', 'email'];
-    const safeUpdates = {};
-    
-    Object.keys(updates).forEach(key => {
-      if (allowedFields.includes(key)) {
-        safeUpdates[key] = updates[key];
-      }
-    });
-    
-    if (Object.keys(safeUpdates).length === 0) {
-      return res.status(400).json({ error: 'No valid fields to update' });
-    }
-    
-    // Add updated timestamp
-    safeUpdates.updated_at = new Date().toISOString();
-    
-    // Update user in database
-    const { data, error } = await supabase
-      .from('users')
-      .update(safeUpdates)
-      .eq('id', userId)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error updating user:', error);
-      return res.status(500).json({ error: 'Failed to update user' });
-    }
-    
-    // Log admin action for audit trail
-    
-    return res.json({
-      success: true,
-      user: data,
-      message: 'User updated successfully'
-    });
-    
-  } catch (error) {
-    console.error('Error in admin user update:', error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-
-/**
- * DELETE admin user endpoint
- * Soft deletes a user (admin only)
- */
-app.delete('/api/admin/users/:userId', adminAuth, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
-    
-    // Soft delete by setting active to false
-    const { data, error } = await supabase
-      .from('users')
-      .update({ 
-        active: false, 
-        deleted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', userId)
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error deleting user:', error);
-      return res.status(500).json({ error: 'Failed to delete user' });
-    }
-    
-    // Log admin action for audit trail
-    
-    return res.json({
-      success: true,
-      message: 'User deleted successfully'
-    });
-    
-  } catch (error) {
-    console.error('Error in admin user delete:', error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-
-/**
- * GET admin audit log endpoint
- * Returns audit trail of admin actions
- */
-app.get('/api/admin/audit-log', adminAuth, async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 20;
-    const offset = (page - 1) * pageSize;
-    
-    // For now, return mock audit data
-    // In production, implement proper audit logging to database
-    const mockAuditLog = [
-      {
-        id: 1,
-        admin_email: req.user.email,
-        action: 'user_updated',
-        target_id: 'user-123',
-        details: 'Updated user tier from basic to pro',
-        timestamp: new Date().toISOString()
-      },
-      {
-        id: 2,
-        admin_email: req.user.email,
-        action: 'user_deleted',
-        target_id: 'user-456',
-        details: 'Soft deleted inactive user',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-      }
-    ];
-    
-    return res.json({
-      auditLog: mockAuditLog.slice(offset, offset + pageSize),
-      pagination: {
-        total: mockAuditLog.length,
-        page,
-        pageSize,
-        totalPages: Math.ceil(mockAuditLog.length / pageSize)
-      }
-    });
-    
-  } catch (error) {
-    console.error('Error fetching audit log:', error);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Start the server with dynamic port selection
-(async () => {
-  try {
-    // Initialize enhanced integration service
-    await enhancedIntegration.initialize();
-    
-    const availablePort = await findAvailablePort(PORT);
-    app.listen(availablePort, () => {
-      
-      // Log enhanced capabilities
-      const capabilities = enhancedIntegration.getCapabilities();
-      console.log(`   - Enhanced functions: ${capabilities.enhancedFunctions} (${capabilities.functionCount} functions)`);
-      console.log(`   - Real-time monitoring: ${capabilities.realTimeMonitoring} (${capabilities.monitoringSources} sources)`);
-      console.log(`   - Available models: ${capabilities.availableModels.join(', ')}`);
-      
-      // Log environment variables for debugging
-      
-      // Log port info
-      if (availablePort !== PORT) {
-      }
-      
-      // Log API key presence for debugging
-      
-      console.log(`SUPABASE_ANON_KEY: ${process.env.SUPABASE_ANON_KEY ? 'present' : 'not set'}`);
-      
-      // Log API key status
-      const keyCount = deepseekApiKeys.length + (process.env.OPENAI_API_KEY ? 1 : 0);
-      
-      if (keyCount === 0) {
-        console.warn('⚠️ WARNING: No API keys configured! Chat functionality will fail.');
-      }
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-})();
-
-// Serve static files from the React app (placed after API routes)
-app.use(express.static(path.join(__dirname, '../build')));
-
-// Catch-all handler: send back React's index.html file for any non-API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../build/index.html'));
-});
-
-// Export for testing
-export default app;

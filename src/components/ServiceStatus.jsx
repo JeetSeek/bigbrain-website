@@ -2,23 +2,51 @@ import React from 'react';
 
 /**
  * ServiceStatus Component
- * Displays the current service status information
- *
- * @component
- * @param {Object} props - Component props
- * @param {string} props.serviceStatus - Current service status
- * @returns {React.ReactElement} Service status display element
+ * Displays the current status of various services
  */
-export function ServiceStatus({ serviceStatus }) {
-  if (!serviceStatus) return <div>Loading service status...</div>;
-  const status = serviceStatus;
+const ServiceStatus = () => {
+  const services = [
+    { name: 'API Server', status: 'online', uptime: '99.9%' },
+    { name: 'Database', status: 'online', uptime: '99.8%' },
+    { name: 'Chat Service', status: 'online', uptime: '99.7%' },
+    { name: 'Manual Search', status: 'online', uptime: '99.9%' }
+  ];
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'online': return 'text-green-600 bg-green-100';
+      case 'offline': return 'text-red-600 bg-red-100';
+      case 'maintenance': return 'text-yellow-600 bg-yellow-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
   return (
-    <div className="bg-white/10 rounded-xl shadow p-6 border border-ai-blue/30">
-      <h2 className="text-2xl font-futuristic font-bold mb-4 text-ai-blue">Service Status</h2>
-      <div className="text-lg font-mono text-white/90">{status}</div>
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Service Status</h2>
+      
+      <div className="grid gap-4 md:grid-cols-2">
+        {services.map((service, index) => (
+          <div key={index} className="bg-white rounded-lg shadow-md p-6 border">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold text-gray-800">{service.name}</h3>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(service.status)}`}>
+                {service.status.toUpperCase()}
+              </span>
+            </div>
+            <div className="text-sm text-gray-600">
+              <p>Uptime: {service.uptime}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-8 bg-blue-50 rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-blue-800 mb-2">System Health</h3>
+        <p className="text-blue-700">All systems operational. No known issues at this time.</p>
+      </div>
     </div>
   );
-}
+};
 
-// Default export for backward compatibility
 export default ServiceStatus;

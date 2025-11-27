@@ -195,9 +195,18 @@ body {
 .ios-content-card {
   background-color: var(--ios-bg-grouped-secondary);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
   margin: var(--spacing-md);
-  overflow: hidden;
+  overflow: visible;
+  transition: all 0.3s ease;
+}
+
+.ios-content-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12),
+              0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .ios-safe-area {
@@ -241,26 +250,37 @@ body {
   min-height: var(--touch-target-min);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
-  background-color: var(--ios-blue);
+  background: linear-gradient(180deg, #007AFF 0%, #0051D5 100%);
   color: white;
   border: none;
   font-weight: 600;
   font-size: 17px;
+  letter-spacing: -0.3px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .ios-button:hover {
-  background-color: var(--ios-blue-dark);
-  transform: scale(0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .ios-button:active {
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 4px rgba(0, 122, 255, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ios-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.3);
 }
 
 .ios-button-secondary {
@@ -426,7 +446,84 @@ body {
   100% { background-position: -200% 0%; }
 }
 
+/**
+ * Professional Micro-Interactions
+ * Smooth animations for delightful UX
+ */
+
+/* Message slide-in animation */
+@keyframes message-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Button press feedback */
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.96); }
+  100% { transform: scale(1); }
+}
+
+/* Typing indicator dots */
+@keyframes typing-dot {
+  0%, 60%, 100% { 
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% { 
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from { 
+    opacity: 0;
+  }
+  to { 
+    opacity: 1;
+  }
+}
+
+/* Smooth scale in */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Utility animation classes */
+.animate-message-in {
+  animation: message-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-button-press {
+  animation: button-press 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Professional iOS-style background - removed conflicting gradient */
 body {
-  background: linear-gradient(135deg, #0a0a23 0%, #3751FF 50%, #7B61FF 100%);
+  background-color: var(--ios-bg-grouped-primary);
   min-height: 100vh;
+  transition: background-color 0.3s ease;
 }

@@ -39,6 +39,22 @@ class ErrorBoundary extends React.Component {
 
     // Send error logs using CSRF-protected endpoint
     this.reportError(error, errorInfo);
+    
+    // Store error in localStorage for diagnostics
+    try {
+      const errorLog = JSON.parse(localStorage.getItem('bb_error_log') || '[]');
+      errorLog.push({
+        component: this.props.componentName,
+        message: error?.message,
+        timestamp: new Date().toISOString(),
+        url: window.location.href
+      });
+      // Keep only last 10 errors
+      if (errorLog.length > 10) errorLog.shift();
+      localStorage.setItem('bb_error_log', JSON.stringify(errorLog));
+    } catch (e) {
+      console.error('Failed to store error log:', e);
+    }
   }
 
   /**

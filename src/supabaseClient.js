@@ -11,14 +11,15 @@ import { createClient } from '@supabase/supabase-js';
  * This should point to your Supabase project URL
  * @type {string}
  */
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : process.env || {};
+const supabaseUrl = env.VITE_SUPABASE_URL;
 
 /**
  * Anonymous API key from environment variables
  * This key should have limited permissions based on Row Level Security (RLS)
  * @type {string}
  */
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
 
 // Validate required environment variables
 if (!supabaseUrl) {

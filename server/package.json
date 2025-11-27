@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "rag:ingest": "node scripts/ingestKnowledgeChunks.js",
+    "ft:export": "node scripts/exportFineTuneDataset.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
@@ -16,11 +18,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.5.0",
+    "express-rate-limit": "^7.5.1",
+    "morgan": "^1.10.1",
     "node-fetch": "^3.3.2",
     "openai": "^5.2.0",
     "ora": "^8.2.0",
-    "uuid": "^11.1.0"
+    "pdf-parse": "^1.1.1",
+    "pg": "^8.11.5",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import { useAuth } from './contexts/AuthContext';
 import { TAB_IDS, STORAGE_KEYS, ROUTES, DEMO } from './utils/constants';
+import './styles/chat-professional.css';
+import './styles/ui-enhancements.css';
 
 // Mobile-first iOS components
 import MobileNavigation, { MobileHeader, MobileContainer } from './components/MobileNavigation';
@@ -39,12 +41,31 @@ const MainContent = lazy(() => import('./components/MainContent'));
  * @returns {React.ReactElement} Loading spinner with component name
  */
 const LoadingFallback = ({ componentName = 'Component' }) => (
-  <div className="flex items-center justify-center h-full w-full bg-slate-900 bg-opacity-50">
-    <div className="flex flex-col items-center p-4 rounded-lg bg-gray-800 bg-opacity-70 shadow-lg">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-3"></div>
-      <p className="text-blue-300">Loading {componentName}...</p>
-      <p className="text-gray-400 text-sm mt-2">Please wait, this may take a moment</p>
+  <div className="loading-container-enhanced">
+    <div className="ios-spinner">
+      <svg viewBox="0 0 50 50">
+        <circle 
+          cx="25" 
+          cy="25" 
+          r="20" 
+          fill="none" 
+          stroke="var(--ios-blue)" 
+          strokeWidth="4"
+          strokeDasharray="31.4 31.4"
+          strokeLinecap="round"
+        >
+          <animateTransform 
+            attributeName="transform"
+            type="rotate" 
+            from="0 25 25" 
+            to="360 25 25"
+            dur="1s" 
+            repeatCount="indefinite"
+          />
+        </circle>
+      </svg>
     </div>
+    <p className="loading-text">{componentName}</p>
   </div>
 );
 
@@ -183,7 +204,7 @@ const Dashboard = () => {
               <Suspense fallback={<LoadingFallback componentName="Main Content Area" />}>
                 {/* Content based on active tab */}
                 {activeTab === TAB_IDS.MANUAL_FINDER && (
-                  <div className="ios-content-card">
+                  <div className="ios-content-card" style={{overflow: 'visible'}}>
                     <ManualFinderStandalone />
                   </div>
                 )}
@@ -287,19 +308,24 @@ const Dashboard = () => {
  * @returns {React.ReactElement} The main application UI with routing
  */
 export function App() {
+  // Proper authentication flow - check if in demo mode via environment variable
+  if (import.meta.env.DEV && import.meta.env.VITE_DEMO_MODE === 'true') {
+    console.warn('⚠️ Running in DEMO MODE - authentication bypassed');
+    return <Dashboard />;
+  }
+
+  // Router is already provided by main.jsx, just return Routes
   return (
-    /* Router removed to prevent nested router error - main.jsx already has BrowserRouter */
     <Routes>
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route
-        path={ROUTES.HOME}
+        path="/*"
         element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   );
 }

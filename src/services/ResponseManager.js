@@ -11,17 +11,24 @@ import {
 } from '../utils/nlpUtils';
 import { extractFaultCodes } from '../utils/faultCodeUtils';
 import faultCodeService from './FaultCodeService';
-import conversationStateManager from './ConversationStateManager';
+import ConversationStateManager from './ConversationStateManager';
 import { safelyAddResponseToContext } from '../utils/contextUtils';
 
-// System prompt for the AI assistant
-const SYSTEM_PROMPT = `
-You are BoilerBrain, a virtual assistant that specializes in helping with heating system problems.
-Your expertise is in diagnosing boiler issues, explaining fault codes, and recommending solutions.
-Keep responses concise but helpful, focusing on practical advice.
-When discussing technical issues, prioritize safety and recommend professional help when appropriate.
-If you're not sure about something, acknowledge that limitation instead of providing potentially incorrect information.
-If the user mentions a fault code, explain what it means and suggest common fixes.
+// System prompt for the AI assistant (engineer-level)
+const SYSTEM_PROMPT = `You're a lead Gas Safe engineer with 20+ years on-the-tools experience.
+
+STYLE:
+- Talk like one engineer to another. Keep it short, practical, and conversational (2–4 sentences).
+- If info is missing, ask ONE focused question. Otherwise, do not re-ask for details the user already provided.
+- Use previous messages and session memory. Assume the same job unless the user says otherwise.
+
+FAULT CODES:
+- If a fault code is mentioned, give the most likely cause first, then a quick check, then the next step.
+- Reference model/manufacturer-specific nuances when known.
+
+SAFETY & PRACTICALITY:
+- Always include relevant safety notes briefly when needed.
+- Give realistic time hints and field tips where appropriate.
 `;
 
 class ResponseManager {
@@ -39,7 +46,53 @@ class ResponseManager {
     if (process.env.NODE_ENV === 'development') {
     }
   }
+
+  /**
+   * Format a diagnostic response for display
+   * @param {object|null} diagnosticData
+   * @returns {string}
+   */
+  formatDiagnosticResponse(diagnosticData) {
+    if (!diagnosticData || typeof diagnosticData !== 'object') {
+      return 'No diagnostic information is available at this time.';
+    }
+    const { faultCode, manufacturer, description, solutions } = diagnosticData;
+    const parts = [];
+    if (faultCode) parts.push(`Fault Code: ${faultCode}`);
+    if (manufacturer) parts.push(`Manufacturer: ${manufacturer}`);
+    if (description) parts.push(`Description: ${description}`);
+    if (Array.isArray(solutions) && solutions.length) {
+      parts.push(`Possible solutions: ${solutions.join(', ')}`);
+    }
+    return parts.join(' | ') || 'No diagnostic information is available at this time.';
+  }
+
+  /**
+   * Format an error response safely (without leaking secrets)
+   * @param {Error|string} error
+   * @returns {string}
+   */
+  formatErrorResponse(error) {
+    const message = typeof error === 'string' ? error : error?.message || 'Unknown error';
+    // Simple sanitization to avoid leaking obvious secrets/tokens
+    const sanitized = message.replace(/(api|key|password|token)[:=\s]*[^\s]+/gi, '$1:[redacted]');
+    return `An error occurred: ${sanitized}`;
+  }
+
+  /**
+   * Validate a standard response shape
+   * @param {object} response
+   * @returns {boolean}
+   */
+  validateResponse(response) {
+    if (!response || typeof response !== 'object') return false;
+    const hasSuccess = typeof response.success === 'boolean';
+    const hasMessage = 'message' in response || 'text' in response;
+    const hasData = 'data' in response ? typeof response.data === 'object' || response.data === null : true;
+    return hasSuccess && hasMessage && hasData;
+  }
   
+
   /**
    * Generate a response to the user's query
    * 
@@ -60,15 +113,37 @@ class ResponseManager {
       
       // Get conversation state if sessionId is provided
       let conversationState = {};
+      let csm = null;
       if (sessionId) {
-        conversationState = await conversationStateManager.getConversationState(sessionId);
+        csm = new ConversationStateManager(sessionId);
+        conversationState = csm.getContext();
       }
       
-      // Build the context for the AI
-      const context = this.buildContext(sanitizedQuery, extractedInfo, conversationState);
+      // Build the context for the AI (includes fault code lookups)
+      const context = await this.buildContext(sanitizedQuery, extractedInfo, conversationState);
       
-      // Generate response using the AI model
-      const response = await this.reasoner(sanitizedQuery, context);
+      // Build a dynamic per-call system prompt to avoid re-asking for info already supplied
+      let promptOverride = null;
+      try {
+        const details = [];
+        const bi = extractedInfo?.boilerInfo || {};
+        const manuf = bi.manufacturer ? String(bi.manufacturer).trim() : '';
+        const model = bi.model ? String(bi.model).trim() : '';
+        if (manuf || model) {
+          details.push(`Boiler: ${[manuf, model].filter(Boolean).join(' ')}`);
+        }
+        if (Array.isArray(extractedInfo?.faultCodes) && extractedInfo.faultCodes.length > 0) {
+          details.push(`Fault codes: ${extractedInfo.faultCodes.join(', ')}`);
+        }
+        if (details.length) {
+          promptOverride = `${SYSTEM_PROMPT}\n\nContext from user message: ${details.join(' | ')}\nDo not ask for these details again; proceed with targeted diagnostic guidance.`;
+        }
+      } catch (_) {
+        // non-fatal; fall back to base prompt
+      }
+
+      // Generate response using the AI model, passing sessionId for server memory and prompt override
+      const response = await this.reasoner(sanitizedQuery, context, { sessionId, systemPromptOverride: promptOverride });
       
       // Process the response to include any additional information
       const processedResponse = await this.processResponse(
@@ -91,16 +166,13 @@ class ResponseManager {
       );
       
       // Update conversation state if sessionId is provided
-      if (sessionId) {
-        await conversationStateManager.updateConversationState(
-          sessionId, 
-          {
-            lastQuery: sanitizedQuery,
-            lastResponse: processedResponse,
-            extractedInfo,
-            timestamp: new Date().toISOString()
-          }
-        );
+      if (csm) {
+        csm.updateSession({
+          lastQuery: sanitizedQuery,
+          lastResponse: processedResponse,
+          extractedInfo,
+          timestamp: new Date().toISOString()
+        });
       }
       
       return processedResponse;
@@ -155,33 +227,33 @@ class ResponseManager {
    * @param {Object} conversationState - Current conversation state
    * @returns {Array} Context messages for the AI model
    */
-  buildContext(query, extractedInfo, conversationState = {}) {
+  async buildContext(query, extractedInfo, conversationState = {}) {
     // Start with the existing conversation context
     const context = [...this.conversationContext];
     
     // Add fault code information if detected
     if (extractedInfo.faultCodes && extractedInfo.faultCodes.length > 0) {
-      // Look up each fault code
-      extractedInfo.faultCodes.forEach(code => {
+      // Look up each fault code (sequential to keep order deterministic)
+      for (const code of extractedInfo.faultCodes) {
         // Try with the manufacturer if we have it
         let manufacturer = null;
         if (extractedInfo.boilerInfo && extractedInfo.boilerInfo.manufacturer) {
           manufacturer = extractedInfo.boilerInfo.manufacturer;
         }
-        
+
         // Look up the fault code
-        const faultCodeInfo = faultCodeService.findFaultCode(code, manufacturer);
-        
-        if (faultCodeInfo.found && faultCodeInfo.matches.length > 0) {
-          // We found information about this fault code, add it to the context
+        const faultCodeInfo = await faultCodeService.findFaultCode(code, manufacturer);
+
+        if (faultCodeInfo?.found && Array.isArray(faultCodeInfo.matches) && faultCodeInfo.matches.length > 0) {
           const match = faultCodeInfo.matches[0];
-          
+          const solutions = Array.isArray(match.solutions) ? match.solutions.join(', ') : '';
+          const manufacturerText = match.manufacturer || manufacturer || 'the relevant';
           context.push({
             role: 'system',
-            content: `The user mentioned fault code ${code}. This fault code is for ${match.manufacturer} boilers and means: "${match.description}". Common solutions include: ${match.solutions.join(', ')}.`
+            content: `The user mentioned fault code ${code}. This fault code is for ${manufacturerText} boilers and means: "${match.description || 'No description available'}".${solutions ? ` Common solutions include: ${solutions}.` : ''}`
           });
         }
-      });
+      }
     }
     
     // Add boiler information if detected
@@ -230,9 +302,9 @@ class ResponseManager {
       for (const code of extractedInfo.faultCodes) {
         // Only add if the fault code isn't already clearly explained in the response
         if (!response.includes(`fault code ${code}`) && !response.includes(`code ${code}`)) {
-          const faultCodeInfo = faultCodeService.findFaultCode(code);
+          const faultCodeInfo = await faultCodeService.findFaultCode(code);
           
-          if (faultCodeInfo.found && faultCodeInfo.matches.length > 0) {
+          if (faultCodeInfo?.found && Array.isArray(faultCodeInfo.matches) && faultCodeInfo.matches.length > 0) {
             faultCodeDetails.push(faultCodeInfo.matches[0]);
           }
         }

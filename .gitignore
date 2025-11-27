@@ -58,3 +58,6 @@ functional_test_suite.js
 fault_finder_test_results_*.json
 windsurf_deployment.yaml
 backend-clean/
+
+# Local Netlify folder
+.netlify

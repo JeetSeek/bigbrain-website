@@ -1,98 +1,24 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useChatSession } from '../hooks/useChatSession';
-import { engineerChatService } from '../services/engineerChatService';
 import { HiMicrophone, HiChevronDown } from 'react-icons/hi';
 import { IoIosSend } from 'react-icons/io';
 import { BiError } from 'react-icons/bi';
 import { MdSignalWifiOff, MdAccessTimeFilled, MdWarning } from 'react-icons/md';
 import ErrorBoundary from './ErrorBoundary';
+import ChatErrorBoundary from './chat/ChatErrorBoundary';
 import useVoskSpeech from '../hooks/useVoskSpeech';
 import EmptyStateMessage from './chat/EmptyStateMessage';
+import MessageBubble from './chat/MessageBubble';
+import TypingIndicator from './chat/TypingIndicator';
+import { http } from '../utils/http';
+import DOMPurify from 'dompurify';
 
 const DEBUG = import.meta.env.MODE === 'development';
 
-const MessageBubble = React.memo(({ message }) => {
-  const isUser = message.sender === 'user';
-  const isError = message.isError;
-  
-  // Determine appropriate class for the bubble based on sender and error status
-  let bubbleClass = isUser 
-    ? 'bg-blue-500 text-white self-end'
-    : isError
-      ? 'bg-red-50 text-red-800 border border-red-200 self-start' 
-      : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100 self-start';
-  
-  const timestamp = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+// Removed duplicate MessageBubble and TypingIndicator - now imported from separate files
 
-  // Highlight fault codes with color and styling
-  const highlightFaultCodes = (text) => {
-    if (!text) return '';
-    
-    // Match boiler fault codes (e.g. F1, E123, A10, L5)
-    return text.replace(/\b([FELA]\d{1,3})\b/gi, match => (
-      `<span class="inline-block bg-red-100 text-red-800 rounded-md px-1 py-0.5 text-xs font-medium mx-0.5">${match}</span>`
-    ));
-  };
-
-  // Highlight technical terms
-  const highlightTechTerms = (text) => {
-    if (!text) return '';
-    const terms = [
-      'gas supply', 'PCB', 'heat exchanger', 'pressure sensor', 'NTC', 
-      'thermistor', 'pump', 'fan', 'diverter valve', 'ignition', 'electrode',
-      'flue', 'condense trap', 'gas valve', 'CH circuit', 'DHW circuit',
-      'PRV', 'AAV', 'expansion vessel', 'inhibitor', 'pressure gauge'
-    ];
-    
-    // Create a regex that matches any of the terms
-    const termsRegex = new RegExp(`\\b(${terms.join('|')})\\b`, 'gi');
-    
-    // Replace matched terms with highlighted versions
-    return text.replace(termsRegex, match => (
-      `<span class="text-blue-700 font-medium">${match}</span>`
-    ));
-  };
-
-  // Process the text with both highlighting functions
-  const processMessageText = (text) => {
-    if (!text) return '';
-    let processed = highlightFaultCodes(text);
-    processed = highlightTechTerms(processed);
-    return processed;
-  };
-
-  const processedText = processMessageText(message.text);
-
-  return (
-    <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} mb-4`}>
-      <div className={`rounded-lg px-3 py-2 max-w-[85%] sm:max-w-sm md:max-w-md ${bubbleClass}`}>
-        {isError && (
-          <div className="flex items-center mb-2 text-red-600">
-            <BiError className="mr-1" size={16} />
-            <span className="text-xs font-bold">Connection Error</span>
-          </div>
-        )}
-        <p 
-          className="text-sm whitespace-pre-wrap"
-          dangerouslySetInnerHTML={{ __html: processedText }}
-        />
-      </div>
-      <span className="text-xs text-gray-700 dark:text-gray-200 mt-1 px-1">{timestamp}</span>
-    </div>
-  );
-});
-
-const TypingIndicator = () => (
-  <div className="flex items-center space-x-1 p-2 bg-blue-50 rounded-md">
-    <span className="text-sm text-blue-700 font-medium">BoilerBrain is diagnosing...</span>
-    <div className="h-2 w-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-    <div className="h-2 w-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-    <div className="h-2 w-2 bg-blue-600 rounded-full animate-bounce"></div>
-  </div>
-);
-
-// Quick start prompts for gas fault-finding
-const QuickStartPrompts = ({ onSelectPrompt, isVisible }) => {
+// Quick start prompts for gas fault-finding - memoized to prevent unnecessary re-renders
+const QuickStartPrompts = React.memo(({ onSelectPrompt, isVisible }) => {
   const prompts = [
     {
       title: "New Fault Call",
@@ -126,153 +52,40 @@ const QuickStartPrompts = ({ onSelectPrompt, isVisible }) => {
           <button
             key={index}
             onClick={() => onSelectPrompt(prompt)}
-            className="flex items-center p-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors text-left"
+            className="flex items-center p-2 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all text-left animate-button-press"
+            style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <span className="mr-2">{prompt.icon}</span>
-            <div>
+            <span className="mr-2 text-lg">{prompt.icon}</span>
+            <div className="flex-1">
               <div className="text-xs font-medium text-blue-700">{prompt.title}</div>
               <div className="text-xs text-gray-600 truncate">{prompt.text}</div>
             </div>
+            <span className="text-blue-400 ml-2">→</span>
           </button>
         ))}
       </div>
     </div>
   );
-};
+});
 
-// Contextual quick actions based on conversation state
-const ContextualActions = ({ onSelectAction, onNewChat, history, isVisible }) => {
-  if (!isVisible || history.length < 2) return null;
-
-  // Analyze conversation context to determine relevant actions
-  const lastMessages = history.slice(-3).map(msg => msg.text.toLowerCase());
-  const conversationText = lastMessages.join(' ');
-  
-  let contextualActions = [];
-
-  // Detect fault codes and suggest common responses
-  const faultCodeMatch = conversationText.match(/\b([fela]\d{1,3})\b/i);
-  if (faultCodeMatch) {
-    const faultCode = faultCodeMatch[1].toUpperCase();
-    contextualActions.push({
-      text: `${faultCode} fault resolved - boiler working`,
-      icon: "✅",
-      type: "success"
-    });
-    contextualActions.push({
-      text: `Need more help with ${faultCode}`,
-      icon: "❓",
-      type: "help"
-    });
-  }
-
-  // Detect diagnostic questions and provide common answers
-  if (conversationText.includes('gas supply') || conversationText.includes('gas valve')) {
-    contextualActions.push({
-      text: "Gas supply is present",
-      icon: "✅",
-      type: "confirm"
-    });
-    contextualActions.push({
-      text: "No gas supply detected",
-      icon: "❌",
-      type: "issue"
-    });
-  }
-
-  if (conversationText.includes('pressure') || conversationText.includes('gauge')) {
-    contextualActions.push({
-      text: "Pressure is 1.2 bar (normal)",
-      icon: "📊",
-      type: "reading"
-    });
-    contextualActions.push({
-      text: "Pressure is low (0.5 bar)",
-      icon: "📉",
-      type: "issue"
-    });
-  }
-
-  if (conversationText.includes('ignition') || conversationText.includes('electrode')) {
-    contextualActions.push({
-      text: "Ignition working - boiler lights",
-      icon: "🔥",
-      type: "success"
-    });
-    contextualActions.push({
-      text: "No ignition - not lighting",
-      icon: "❌",
-      type: "issue"
-    });
-  }
-
-  if (conversationText.includes('flame sensor') || conversationText.includes('clean')) {
-    contextualActions.push({
-      text: "Sensor cleaned - looks good",
-      icon: "🧽",
-      type: "success"
-    });
-    contextualActions.push({
-      text: "Sensor dirty/damaged",
-      icon: "⚠️",
-      type: "issue"
-    });
-  }
-
-  // Generic helpful actions
-  if (contextualActions.length === 0) {
-    contextualActions = [
-      {
-        text: "That worked - issue resolved",
-        icon: "✅",
-        type: "success"
-      },
-      {
-        text: "Still having the same problem",
-        icon: "❌",
-        type: "issue"
-      },
-      {
-        text: "Need to order parts",
-        icon: "📦",
-        type: "parts"
-      }
-    ];
-  }
-
-  return (
-    <div className="p-2 bg-gray-50 border-t border-gray-200">
-      <div className="text-xs text-gray-600 mb-2">Quick responses:</div>
-      <div className="flex flex-wrap gap-1">
-        {contextualActions.slice(0, 3).map((action, index) => (
-          <button
-            key={index}
-            onClick={() => onSelectAction(action)}
-            className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium transition-colors ${
-              action.type === 'success' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
-              action.type === 'issue' ? 'bg-red-100 text-red-800 hover:bg-red-200' :
-              action.type === 'help' ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' :
-              'bg-gray-100 text-gray-800 hover:bg-gray-200'
-            }`}
-          >
-            <span className="mr-1">{action.icon}</span>
-            {action.text}
-          </button>
-        ))}
-        <button
-          onClick={onNewChat}
-          className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200"
-        >
-          <span className="mr-1">🔄</span>
-          New Chat
-        </button>
-      </div>
-    </div>
-  );
-};
+// ContextualActions removed - replaced with feedback buttons on individual messages
 
 const ChatDock = ({ userName, embedMode = false, className = '' }) => {
-  const { sessionId, history, setHistory, addMessage, sessionStatus, clearSession, isSessionExpired } = useChatSession(userName);
+  // Initialize chat session hook first to avoid React hook order issues
+  const chatSession = useChatSession(userName);
+  
+  // Safely destructure after hook is initialized - ensure we have fallback values
+  const { 
+    sessionId, 
+    history = [], 
+    setHistory, 
+    addMessage, 
+    sendMessage,
+    sessionStatus, 
+    clearSession, 
+    isSessionExpired 
+  } = chatSession || {};
+  
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [waiting, setWaiting] = useState(false);
@@ -293,10 +106,21 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   } = useVoskSpeech();
   const [transcriptUsed, setTranscriptUsed] = useState(false);
 
-  const handleSendMessage = async (e) => {
+  // Auto-focus input field on mount and after sending messages
+  useEffect(() => {
+    if (inputRef.current && (embedMode || open)) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [embedMode, open, waiting]); // Re-focus after waiting changes (message sent)
+
+  const handleSendMessage = useCallback(async (e) => {
     e.preventDefault();
     
-    if (!input.trim() || waiting) return;
+    if (!input.trim() || waiting || !sendMessage) return;
     
     const messageText = input.trim();
     setInput('');
@@ -305,43 +129,15 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     setShowQuickStart(false);
     setLastActivity(Date.now());
     
-    // Add user message to history using the new addMessage function
-    const userMessage = {
-      sender: 'user',
-      text: messageText,
-      timestamp: new Date().toISOString(),
-    };
-    
-    addMessage(userMessage);
-    
-    // Clear any existing typing timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    
     try {
-      // Set a realistic typing timeout based on message complexity
-      const estimatedResponseTime = Math.min(Math.max(messageText.length * 100, 3000), 15000);
-      typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping(false);
-      }, estimatedResponseTime);
+      // Use the sendMessage function from useChatSession hook which handles the full flow
+      await sendMessage(messageText);
       
-      const response = await engineerChatService.getResponse(sessionId, messageText, history);
-      
-      // Clear typing indicator immediately when response arrives
+      // Clear any existing typing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
       }
-      
-      // Add AI response to history
-      const aiMessage = {
-        sender: 'assistant',
-        text: response.text,
-        timestamp: new Date().toISOString(),
-        isError: response.isError || false
-      };
-      
-      addMessage(aiMessage);
       
     } catch (error) {
       console.error('Error sending message:', error);
@@ -349,6 +145,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       // Clear typing indicator
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
       }
       
       // Determine error type and provide appropriate message
@@ -363,20 +160,25 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
         errorText = 'Too many requests. Please wait a moment before trying again.';
       }
       
-      // Add error message to history
-      const errorMessage = {
-        sender: 'assistant',
-        text: errorText,
-        timestamp: new Date().toISOString(),
-        isError: true
-      };
-      
-      addMessage(errorMessage);
+      // Add error message to history using addMessage
+      if (addMessage) {
+        const errorMessage = {
+          sender: 'assistant',
+          text: errorText,
+          timestamp: new Date().toISOString(),
+          isError: true
+        };
+        
+        addMessage(errorMessage);
+      }
     } finally {
       setWaiting(false);
       setIsTyping(false);
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
     }
-  };
+  }, [input, waiting, sendMessage, addMessage]);
 
   // Handle quick start prompt selection
   const handleQuickStartPrompt = useCallback((prompt) => {
@@ -400,8 +202,10 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
 
   // Handle new chat reset
   const handleNewChat = useCallback(() => {
-    // Clear the current session and start fresh
-    clearSession();
+    // Clear the current session and start fresh using clearSession
+    if (clearSession) {
+      clearSession();
+    }
     setInput('');
     setWaiting(false);
     setIsTyping(false);
@@ -410,6 +214,11 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     // Clear any pending timeouts
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    if (activityTimeoutRef.current) {
+      clearTimeout(activityTimeoutRef.current);
+      activityTimeoutRef.current = null;
     }
     
     // Reset activity tracking
@@ -428,6 +237,24 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     setShowQuickStart(history.length === 0 && open && !waiting);
   }, [history.length, open, waiting]);
 
+  // Auto-focus input when chat opens (like messaging platforms)
+  useEffect(() => {
+    if (open && inputRef.current) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 100);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (embedMode && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current.focus();
+      }, 100);
+    }
+  }, [embedMode]);
+
   // Initialize speech recognition
   useEffect(() => {
     if (transcript && transcript.trim()) {
@@ -436,41 +263,50 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     }
   }, [transcript]);
   
-  // Connection status monitoring
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        const response = await fetch('/api/health', { 
-          method: 'GET',
-          signal: AbortSignal.timeout(5000)
-        });
-        if (response.ok) {
-          setConnectionStatus('connected');
-        } else {
-          setConnectionStatus('disconnected');
-        }
-      } catch (error) {
-        setConnectionStatus('disconnected');
-      }
+    if (chatEndRef.current && history?.length > 0) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [history]);
+
+  // Handle session expiration
+  useEffect(() => {
+    if (isSessionExpired) {
+      setShowQuickStart(true);
+    }
+  }, [isSessionExpired]);
+  
+  // Connection status monitoring - simplified for frontend-only mode
+  useEffect(() => {
+    // Set connection status based on online status
+    setConnectionStatus(navigator.onLine ? 'connected' : 'disconnected');
+    
+    const handleOnline = () => setConnectionStatus('connected');
+    const handleOffline = () => setConnectionStatus('disconnected');
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
-    
-    // Check connection every 30 seconds
-    const connectionInterval = setInterval(checkConnection, 30000);
-    checkConnection(); // Initial check
-    
-    return () => clearInterval(connectionInterval);
-  }, []);
+  }, []); 
   
   // Auto-clear session after inactivity
   useEffect(() => {
     const resetActivityTimeout = () => {
       if (activityTimeoutRef.current) {
         clearTimeout(activityTimeoutRef.current);
+        activityTimeoutRef.current = null;
       }
       
       // Clear session after 30 minutes of inactivity
       activityTimeoutRef.current = setTimeout(() => {
-        clearSession();
+        if (clearSession) {
+          clearSession();
+        }
         setShowQuickStart(true);
       }, 30 * 60 * 1000); // 30 minutes
     };
@@ -480,28 +316,29 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     return () => {
       if (activityTimeoutRef.current) {
         clearTimeout(activityTimeoutRef.current);
+        activityTimeoutRef.current = null;
       }
     };
   }, [lastActivity, clearSession]);
 
   if (embedMode) {
     return (
-      <ErrorBoundary>
+      <ChatErrorBoundary>
         <div className={`bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full min-h-0 max-h-full ${className}`}>
-          <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-3 rounded-t-lg flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-6 h-6" />
+          <header className="bg-gradient-to-b from-blue-600 to-blue-700 text-white p-4 rounded-t-lg flex items-center justify-between shadow-lg">
+            <div className="flex items-center space-x-3">
+              <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-8 h-8 drop-shadow-md" />
               <div className="flex flex-col">
-                <h3 className="font-semibold text-sm">BoilerBrain Assistant</h3>
-                <div className="flex items-center space-x-2 text-xs">
-                  <span className="bg-blue-500 px-2 py-0.5 rounded-full">Gas Safe</span>
+                <h3 className="font-bold text-base tracking-tight">BoilerBrain Assistant</h3>
+                <div className="flex items-center space-x-2 text-xs mt-0.5">
+                  <span className="bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full font-medium">Gas Safe</span>
                   <div className="flex items-center space-x-1">
-                    <div className={`w-2 h-2 rounded-full ${
-                      connectionStatus === 'connected' ? 'bg-green-400' :
-                      connectionStatus === 'reconnecting' ? 'bg-yellow-400 animate-pulse' :
-                      'bg-red-400'
+                    <div className={`w-2 h-2 rounded-full shadow-sm ${
+                      connectionStatus === 'connected' ? 'bg-green-400 shadow-green-300' :
+                      connectionStatus === 'reconnecting' ? 'bg-yellow-400 animate-pulse shadow-yellow-300' :
+                      'bg-red-400 shadow-red-300'
                     }`}></div>
-                    <span className="text-xs opacity-90">
+                    <span className="text-xs opacity-95 font-medium">
                       {connectionStatus === 'connected' ? 'Online' :
                        connectionStatus === 'reconnecting' ? 'Reconnecting...' :
                        'Offline'}
@@ -510,34 +347,51 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 </div>
               </div>
             </div>
-            {history.length > 1 && (
-              <button
-                onClick={() => {
-                  if (window.confirm('Clear chat history? This will start a new session.')) {
+            <button
+              onClick={() => {
+                if (history.length > 1) {
+                  if (window.confirm('Start a new chat? This will clear the current conversation.')) {
                     clearSession();
                     setShowQuickStart(true);
                   }
-                }}
-                className="text-white hover:text-gray-200 transition-colors p-1 rounded text-xs"
-                title="Clear chat history"
-              >
-                🗑️
-              </button>
-            )}
+                } else {
+                  clearSession();
+                  setShowQuickStart(true);
+                }
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-sm font-medium"
+              title="Start new chat"
+              aria-label="Start new chat"
+            >
+              <span className="text-base">🔄</span>
+              <span>New Chat</span>
+            </button>
           </header>
           
-          <div className="flex-1 overflow-y-auto p-3 space-y-2" role="log" aria-label="Chat messages">
-            {history.length === 0 || (history.length === 1 && history[0].sender === 'ai') ? (
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-container" role="log" aria-label="Chat messages" style={{backgroundColor: 'var(--ios-bg-grouped-primary)'}}>
+            {history.length === 0 || (history.length === 1 && (history[0].sender === 'assistant' || history[0].sender === 'ai')) ? (
               <EmptyStateMessage />
             ) : (
               <div className="flex flex-col space-y-3">
-                {history.map((message, index) => (
-                  <MessageBubble 
-                    key={`${sessionId}-${index}`} 
-                    message={message} 
-                    aria-label={`${message.sender === 'user' ? 'You' : 'Boiler Brain'} said: ${message.text}`}
-                  />
-                ))}
+                {history.map((message, index) => {
+                  const isUser = message.sender === 'user';
+                  const isFirst = index === 0 || history[index - 1]?.sender !== message.sender;
+                  const isLast = index === history.length - 1 || history[index + 1]?.sender !== message.sender;
+                  const labelTextRaw = message?.text;
+                  const labelText = typeof labelTextRaw === 'string' ? labelTextRaw : (labelTextRaw && typeof labelTextRaw === 'object' && typeof labelTextRaw.text === 'string' ? labelTextRaw.text : '');
+                  
+                  return (
+                    <div key={`${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
+                      <MessageBubble 
+                        message={message} 
+                        isUser={isUser}
+                        isFirst={isFirst}
+                        isLast={isLast}
+                        aria-label={`${message.sender === 'user' ? 'You' : 'Boiler Brain'} said: ${labelText}`}
+                      />
+                    </div>
+                  );
+                })}
                 {isTyping && <TypingIndicator />}
                 <div ref={chatEndRef} className="h-1" aria-hidden="true" />
               </div>
@@ -550,67 +404,61 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
             )}
           </div>
 
-          {/* Contextual Actions - appear during active conversations */}
-          <ContextualActions 
-            onSelectAction={handleContextualAction}
-            onNewChat={handleNewChat}
-            history={history}
-            isVisible={!showQuickStart && history.length > 1 && !waiting}
-          />
-
-          <footer className="border-t border-gray-200 p-3 flex-shrink-0 bg-white">
+          <footer className="chat-input-container">
             <form
-              className="flex items-center gap-2 w-full"
               onSubmit={handleSendMessage}
               aria-label="Chat message form"
             >
-              <button 
-                type="button" 
-                onClick={toggleListening} 
-                className={`p-2 rounded-full transition-colors flex-shrink-0 ${
-                  isListening 
-                    ? 'bg-red-500 text-white shadow-lg' 
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-                disabled={!speechSupported}
-                title={isListening ? 'Stop listening' : 'Voice input'}
-                aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
-                aria-pressed={isListening}
-              >
-                <HiMicrophone size={18} />
-                <span className="sr-only">{isListening ? 'Stop voice input' : 'Start voice input'}</span>
-              </button>
-              
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Describe the boiler issue or enter a fault code..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-500 min-w-0"
-                disabled={waiting}
-                aria-label="Message input"
-              />
-              
-              <button 
-                type="submit" 
-                className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex-shrink-0" 
-                disabled={!input.trim() || waiting}
-                title="Send message"
-                aria-label="Send message"
-              >
-                <IoIosSend size={18} />
-                <span className="sr-only">Send</span>
-              </button>
+              <div className="chat-input-wrapper-enhanced">
+                <button 
+                  type="button" 
+                  onClick={toggleListening} 
+                  className={`btn-icon-enhanced ${
+                    isListening 
+                      ? 'bg-red-500 text-white shadow-lg scale-110' 
+                      : ''
+                  } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={!speechSupported}
+                  title={isListening ? 'Stop listening' : 'Voice input'}
+                  aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                  aria-pressed={isListening}
+                >
+                  <HiMicrophone size={20} />
+                  <span className="sr-only-enhanced">{isListening ? 'Stop voice input' : 'Start voice input'}</span>
+                </button>
+                
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Describe the issue..."
+                  className="chat-input-field-enhanced"
+                  disabled={waiting}
+                  aria-label="Message input"
+                  autoFocus
+                />
+                
+                <button 
+                  type="submit" 
+                  className="btn-icon-enhanced animate-button-press" 
+                  disabled={!input.trim() || waiting}
+                  title="Send message"
+                  aria-label="Send message"
+                >
+                  <IoIosSend size={20} />
+                  <span className="sr-only-enhanced">Send</span>
+                </button>
+              </div>
             </form>
           </footer>
         </div>
-      </ErrorBoundary>
+      </ChatErrorBoundary>
     );
   }
 
   return (
-    <ErrorBoundary>
+    <ChatErrorBoundary>
       <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col max-w-full w-[95vw] sm:w-[450px] md:w-[480px]">
         {open && (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-4 w-full border border-gray-200 flex flex-col h-[65vh] md:h-[70vh]">
@@ -637,20 +485,25 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                {history.length > 1 && (
-                  <button
-                    onClick={() => {
-                      if (window.confirm('Clear chat history? This will start a new session.')) {
+                <button
+                  onClick={() => {
+                    if (history.length > 1) {
+                      if (window.confirm('Start a new chat? This will clear the current conversation.')) {
                         clearSession();
                         setShowQuickStart(true);
                       }
-                    }}
-                    className="text-white hover:text-gray-200 transition-colors p-1 rounded text-xs"
-                    title="Clear chat history"
-                  >
-                    🗑️
-                  </button>
-                )}
+                    } else {
+                      clearSession();
+                      setShowQuickStart(true);
+                    }
+                  }}
+                  className="flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-all text-white text-xs font-medium"
+                  title="Start new chat"
+                  aria-label="Start new chat"
+                >
+                  <span>🔄</span>
+                  <span>New</span>
+                </button>
                 <button 
                   onClick={() => setOpen(false)} 
                   className="text-white hover:text-gray-200 transition-colors p-1 rounded"
@@ -662,17 +515,29 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
             </header>
 
             <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0" role="log" aria-label="Chat messages">
-              {history.length === 0 || (history.length === 1 && history[0].sender === 'ai') ? (
+              {history.length === 0 || (history.length === 1 && (history[0].sender === 'assistant' || history[0].sender === 'ai')) ? (
                 <EmptyStateMessage />
               ) : (
                 <div className="flex flex-col space-y-3">
-                  {history.map((message, index) => (
-                    <MessageBubble 
-                      key={`${sessionId}-${index}`} 
-                      message={message} 
-                      aria-label={`${message.sender === 'user' ? 'You' : 'Boiler Brain'} said: ${message.text}`}
-                    />
-                  ))}
+                  {history.map((message, index) => {
+                    const isUser = message.sender === 'user';
+                    const isFirst = index === 0 || history[index - 1]?.sender !== message.sender;
+                    const isLast = index === history.length - 1 || history[index + 1]?.sender !== message.sender;
+                    const labelTextRaw = message?.text;
+                    const labelText = typeof labelTextRaw === 'string' ? labelTextRaw : (labelTextRaw && typeof labelTextRaw === 'object' && typeof labelTextRaw.text === 'string' ? labelTextRaw.text : '');
+                    
+                    return (
+                      <div key={`${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
+                        <MessageBubble 
+                          message={message} 
+                          isUser={isUser}
+                          isFirst={isFirst}
+                          isLast={isLast}
+                          aria-label={`${message.sender === 'user' ? 'You' : 'Boiler Brain'} said: ${labelText}`}
+                        />
+                      </div>
+                    );
+                  })}
                   {isTyping && <TypingIndicator />}
                   <div ref={chatEndRef} className="h-1" aria-hidden="true" />
                 </div>
@@ -691,44 +556,47 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 onSubmit={handleSendMessage}
                 aria-label="Chat message form"
               >
-                <button 
-                  type="button" 
-                  onClick={toggleListening} 
-                  className={`p-2 rounded-full transition-colors ${
-                    isListening 
-                      ? 'bg-red-500 text-white shadow-lg' 
-                      : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
-                  } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={!speechSupported}
-                  title={isListening ? 'Stop listening' : 'Voice input'}
-                  aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
-                  aria-pressed={isListening}
-                >
-                  <HiMicrophone size={18} />
-                  <span className="sr-only">{isListening ? 'Stop voice input' : 'Start voice input'}</span>
-                </button>
-                
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Describe the boiler issue or enter a fault code..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-gray-900 placeholder-gray-600"
-                  disabled={waiting}
-                  aria-label="Message input"
-                />
-                
-                <button 
-                  type="submit" 
-                  className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors" 
-                  disabled={!input.trim() || waiting}
-                  title="Send message"
-                  aria-label="Send message"
-                >
-                  <IoIosSend size={18} />
-                  <span className="sr-only">Send</span>
-                </button>
+                <div className="chat-input-wrapper-enhanced flex-1">
+                  <button 
+                    type="button" 
+                    onClick={toggleListening} 
+                    className={`btn-icon-enhanced ${
+                      isListening 
+                        ? 'bg-red-500 text-white shadow-lg' 
+                        : ''
+                    } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={!speechSupported}
+                    title={isListening ? 'Stop listening' : 'Voice input'}
+                    aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                    aria-pressed={isListening}
+                  >
+                    <HiMicrophone size={18} />
+                    <span className="sr-only-enhanced">{isListening ? 'Stop voice input' : 'Start voice input'}</span>
+                  </button>
+                  
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Describe the issue..."
+                    className="chat-input-field-enhanced"
+                    disabled={waiting}
+                    aria-label="Message input"
+                    autoFocus
+                  />
+                  
+                  <button 
+                    type="submit" 
+                    className="btn-icon-enhanced animate-button-press" 
+                    disabled={!input.trim() || waiting}
+                    title="Send message"
+                    aria-label="Send message"
+                  >
+                    <IoIosSend size={18} />
+                    <span className="sr-only-enhanced">Send</span>
+                  </button>
+                </div>
               </form>
             </footer>
           </div>
@@ -747,7 +615,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
           <span className="sr-only">Open boiler diagnostic assistant</span>
         </button>
       </div>
-    </ErrorBoundary>
+    </ChatErrorBoundary>
   );
 };
 

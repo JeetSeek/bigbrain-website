@@ -1,241 +1,133 @@
 import React, { useState } from 'react';
 
 /**
- * Support Center Component
- * Comprehensive help center with UI guides and direct messaging
- *
- * @component
- * @param {Object} props - Component props
- * @returns {React.ReactElement} Support center interface
+ * SupportTickets Component
+ * Displays and manages user support tickets
  */
-export function SupportTickets({ supportTickets }) {
-  const [activeSection, setActiveSection] = useState('guides');
-  const [messageForm, setMessageForm] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    priority: 'normal'
-  });
+const SupportTickets = ({ supportTickets = [] }) => {
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [newTicket, setNewTicket] = useState({ title: '', description: '' });
+  const [showNewTicketForm, setShowNewTicketForm] = useState(false);
 
-  const uiGuides = [
-    {
-      title: "Getting Started with Chat Diagnostics",
-      description: "Learn how to use the AI chat for boiler fault finding",
-      icon: "💬",
-      steps: [
-        "Click on the Chat tab in the sidebar",
-        "Describe your boiler issue (make, model, fault codes)",
-        "Follow the AI's diagnostic questions",
-        "Get step-by-step troubleshooting guidance"
-      ]
-    },
-    {
-      title: "Finding Boiler Manuals",
-      description: "How to search and download boiler manuals",
-      icon: "📚",
-      steps: [
-        "Go to the Manuals tab",
-        "Enter boiler make and model",
-        "Browse available manuals",
-        "Download PDF manuals directly"
-      ]
-    },
-    {
-      title: "Using Gas Rate Calculator",
-      description: "Calculate gas rates for different boiler types",
-      icon: "🔥",
-      steps: [
-        "Navigate to Gas Rate tab",
-        "Select your boiler type",
-        "Enter gas meter readings",
-        "Get accurate gas rate calculations"
-      ]
-    },
-    {
-      title: "Room BTU Calculator",
-      description: "Calculate heating requirements for rooms",
-      icon: "🏠",
-      steps: [
-        "Open Room BTU tab",
-        "Enter room dimensions",
-        "Select insulation type",
-        "Get BTU requirements"
-      ]
-    }
-  ];
-
-  const handleInputChange = (e) => {
-    setMessageForm({
-      ...messageForm,
-      [e.target.name]: e.target.value
-    });
+  const handleCreateTicket = () => {
+    if (!newTicket.title.trim() || !newTicket.description.trim()) return;
+    
+    // In a real app, this would make an API call
+    console.log('Creating new ticket:', newTicket);
+    
+    // Reset form
+    setNewTicket({ title: '', description: '' });
+    setShowNewTicketForm(false);
   };
 
-  const handleSubmitMessage = (e) => {
-    e.preventDefault();
-    // TODO: Implement actual message sending to support
-    alert('Message sent! We\'ll get back to you within 24 hours.');
-    setMessageForm({
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-      priority: 'normal'
-    });
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'open': return 'text-red-600 bg-red-100';
+      case 'in_progress': return 'text-yellow-600 bg-yellow-100';
+      case 'closed': return 'text-green-600 bg-green-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Support Center</h1>
-        <p className="text-gray-300">Get help with Boiler Brain features or contact our support team</p>
-      </div>
-
-      {/* Navigation Tabs */}
-      <div className="flex space-x-4 mb-6">
+    <div className="max-w-4xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Support Tickets</h2>
         <button
-          onClick={() => setActiveSection('guides')}
-          className={`px-6 py-3 rounded-lg font-medium transition-all ${
-            activeSection === 'guides'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
+          onClick={() => setShowNewTicketForm(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
-          📖 User Guides
-        </button>
-        <button
-          onClick={() => setActiveSection('contact')}
-          className={`px-6 py-3 rounded-lg font-medium transition-all ${
-            activeSection === 'contact'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
-        >
-          💬 Contact Support
+          New Ticket
         </button>
       </div>
 
-      {/* UI Guides Section */}
-      {activeSection === 'guides' && (
-        <div className="space-y-6">
-          <h2 className="text-2xl font-semibold text-white mb-4">How to Use Boiler Brain</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {uiGuides.map((guide, index) => (
-              <div key={index} className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">{guide.icon}</span>
-                  <h3 className="text-xl font-semibold text-white">{guide.title}</h3>
-                </div>
-                <p className="text-gray-300 mb-4">{guide.description}</p>
-                <div className="space-y-2">
-                  <h4 className="font-medium text-white">Steps:</h4>
-                  <ol className="list-decimal list-inside space-y-1 text-gray-300">
-                    {guide.steps.map((step, stepIndex) => (
-                      <li key={stepIndex} className="text-sm">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Contact Support Section */}
-      {activeSection === 'contact' && (
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-semibold text-white mb-6">Contact Support</h2>
-          <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-            <form onSubmit={handleSubmitMessage} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={messageForm.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={messageForm.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-                <input
-                  type="text"
-                  name="subject"
-                  value={messageForm.subject}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Priority</label>
-                <select
-                  name="priority"
-                  value={messageForm.priority}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="low">Low - General inquiry</option>
-                  <option value="normal">Normal - Standard support</option>
-                  <option value="high">High - Urgent issue</option>
-                  <option value="critical">Critical - System down</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
-                <textarea
-                  name="message"
-                  value={messageForm.message}
-                  onChange={handleInputChange}
-                  required
-                  rows={6}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Describe your issue or question in detail..."
-                />
-              </div>
-
+      {/* New Ticket Form */}
+      {showNewTicketForm && (
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6 border">
+          <h3 className="text-lg font-semibold mb-4">Create New Support Ticket</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Title
+              </label>
+              <input
+                type="text"
+                value={newTicket.title}
+                onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Brief description of the issue"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                value={newTicket.description}
+                onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Detailed description of the issue"
+              />
+            </div>
+            <div className="flex gap-2">
               <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
+                onClick={handleCreateTicket}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
               >
-                Send Message
+                Create Ticket
               </button>
-            </form>
-
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <h3 className="text-lg font-medium text-white mb-3">Other Ways to Reach Us</h3>
-              <div className="space-y-2 text-gray-300">
-                <p>📧 Email: support@boilerbrain.com</p>
-                <p>📞 Phone: +44 (0) 123 456 7890</p>
-                <p>⏰ Support Hours: Mon-Fri 9AM-6PM GMT</p>
-                <p>🚨 Emergency: 24/7 for critical system issues</p>
-              </div>
+              <button
+                onClick={() => setShowNewTicketForm(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Tickets List */}
+      <div className="space-y-4">
+        {supportTickets.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p>No support tickets found.</p>
+            <p className="text-sm">Create your first ticket to get help with any issues.</p>
+          </div>
+        ) : (
+          supportTickets.map((ticket) => (
+            <div
+              key={ticket.id}
+              className="bg-white rounded-lg shadow-md p-6 border hover:shadow-lg transition-shadow cursor-pointer"
+              onClick={() => setSelectedTicket(selectedTicket === ticket.id ? null : ticket.id)}
+            >
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    {ticket.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-2">
+                    Created: {new Date(ticket.date).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(ticket.status)}`}>
+                  {ticket.status.replace('_', ' ').toUpperCase()}
+                </span>
+              </div>
+              
+              {selectedTicket === ticket.id && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <h4 className="font-medium text-gray-800 mb-2">Description:</h4>
+                  <p className="text-gray-600">{ticket.description}</p>
+                </div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
-}
+};
 
-// Default export for backward compatibility
 export default SupportTickets;

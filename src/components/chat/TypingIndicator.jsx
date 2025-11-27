@@ -3,11 +3,12 @@ import React from 'react';
 /**
  * TypingIndicator - Shows an animated typing indicator for chat messages
  * Uses Apple-style animation with delayed dots
+ * Memoized as it never changes
  * 
  * @component
  * @returns {React.ReactElement} Animated typing indicator
  */
-const TypingIndicator = () => {
+const TypingIndicator = React.memo(() => {
   const ANIMATION_DELAYS = [0, 200, 400]; // in milliseconds
 
   return (
@@ -24,6 +25,8 @@ const TypingIndicator = () => {
       ))}
     </div>
   );
-};
+});
+
+TypingIndicator.displayName = 'TypingIndicator';
 
 export default TypingIndicator;

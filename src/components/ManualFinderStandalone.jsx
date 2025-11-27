@@ -167,32 +167,25 @@ export default function ManualFinderStandalone() {
   const manufacturerListRef = useRef(null);
   const debouncedQuery = useDebounce(query, 500);
 
+
   // Definition order is important - define fetchAllIdealBoilers first
   // before it's referenced in handleSearch
   const fetchAllIdealBoilers = useCallback(async () => {
-    if (import.meta.env.DEV) {
-    }
     setLoading(true);
     setError('');
 
     try {
-      // Use backend API to fetch Ideal boilers
-      const apiUrl = new URL('/api/manuals', window.location.origin);
-      apiUrl.searchParams.set('manufacturer', 'Ideal');
-
-      const response = await fetch(apiUrl.toString());
+      // Use backend API for Ideal boiler search
+      const apiUrl = new URL('/api/manuals', import.meta.env.VITE_API_URL || 'http://localhost:3204');
+      apiUrl.searchParams.set('manufacturer', 'ideal');
       
+      const response = await fetch(apiUrl.toString());
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const result = await response.json();
-      const data = result.manuals || [];
-
-      if (import.meta.env.DEV) {
-      }
-
-      setManuals(data);
+      setManuals(result.data || []);
     } catch (error) {
       console.error('Error in specialized Ideal boiler fetching:', error);
       setError('Error loading all Ideal boilers. Please try again.');
@@ -241,8 +234,8 @@ export default function ManualFinderStandalone() {
     try {
       // Fetch all pages of results
       while (hasMore) {
-        // Use backend API instead of direct Supabase calls
-        const apiUrl = new URL('/api/manuals', window.location.origin);
+        // Use backend API for manual search
+        const apiUrl = new URL('/api/manuals', import.meta.env.VITE_API_URL || 'http://localhost:3204');
         
         if (debouncedQuery) {
           apiUrl.searchParams.set('search', debouncedQuery);
@@ -252,26 +245,32 @@ export default function ManualFinderStandalone() {
           apiUrl.searchParams.set('manufacturer', selectedManufacturer);
         }
 
-        // Execute API call
+        // Apply server-side pagination
+        apiUrl.searchParams.set('limit', String(pageSize));
+        apiUrl.searchParams.set('offset', String(page * pageSize));
+
         const response = await fetch(apiUrl.toString());
-        
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
-        const data = result.manuals || [];
-
+        const currentPageData = result.data || [];
+        
         // Add current page results to our collection
-        if (data && data.length > 0) {
-          allResults = [...allResults, ...data];
+        if (currentPageData && currentPageData.length > 0) {
+          allResults = [...allResults, ...currentPageData];
         }
 
-        // Check if we need to fetch more results
-        if (!data || data.length < pageSize) {
+        // Check if we need to fetch more results based on API response
+        if (!result.hasMore || currentPageData.length < pageSize) {
           hasMore = false;
         } else {
           page++;
+          // Safety cap to avoid infinite loops
+          if (page >= UI.LIST.MAX_PAGES) {
+            hasMore = false;
+          }
         }
       }
 
@@ -417,7 +416,7 @@ export default function ManualFinderStandalone() {
           'bemo',
           'benson',
           'biasi',
-          'boilermanuals_ideal',
+          'ideal',
           'broag',
           'buderas',
           'buderus',
@@ -466,41 +465,15 @@ export default function ManualFinderStandalone() {
           'worcester',
         ];
 
-        // Use backend API to fetch manufacturers
-        try {
-          const response = await fetch('/api/manufacturers');
-          
-          if (response.ok) {
-            const result = await response.json();
-            const allManufacturers = result.manufacturers || [];
+        // Use local manufacturers list directly (no API call needed)
+        const finalManufacturers = [...knownManufacturers].sort((a, b) =>
+          a.localeCompare(b, undefined, { sensitivity: 'base' })
+        );
 
-            if (import.meta.env.DEV) {
-            }
+        setManufacturers(finalManufacturers);
 
-            // Merge with known manufacturers list to ensure completeness
-            knownManufacturers.forEach(manufacturer => {
-              if (!allManufacturers.includes(manufacturer)) {
-                allManufacturers.push(manufacturer);
-              }
-            });
-
-            // Sort alphabetically, case-insensitive
-            const finalManufacturers = [...allManufacturers].sort((a, b) =>
-              a.localeCompare(b, undefined, { sensitivity: 'base' })
-            );
-
-            setManufacturers(finalManufacturers);
-
-            // Cache the final manufacturers list
-            setCachedData(MANUFACTURERS_CACHE_KEY, finalManufacturers, CACHE.MANUFACTURER_TTL);
-          } else {
-            // API failed, use fallback manufacturers
-            throw new Error('API request failed');
-          }
-        } catch (apiError) {
-          console.error('Error fetching manufacturers from API:', apiError);
-          // Fall through to fallback manufacturers
-        }
+        // Cache the final manufacturers list
+        setCachedData(MANUFACTURERS_CACHE_KEY, finalManufacturers, CACHE.MANUFACTURER_TTL);
       } catch (error) {
         console.error('Error in manufacturer fetch:', error);
         // Use the hardcoded list as a fallback if all else fails
@@ -517,7 +490,7 @@ export default function ManualFinderStandalone() {
           'bemo',
           'benson',
           'biasi',
-          'boilermanuals_ideal',
+          'ideal',
           'broag',
           'buderas',
           'buderus',
@@ -618,21 +591,21 @@ export default function ManualFinderStandalone() {
   }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-6 text-blue-600 dark:text-blue-300">
+    <div className="w-full max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-blue-600 dark:text-blue-300">
         Boiler Manual Finder
       </h2>
 
-      <div className="mb-8">
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4" style={{position: 'relative', zIndex: 1}}>
           {/* Manufacturer dropdown */}
-          <div className="relative w-full md:w-1/3" ref={manufacturerListRef}>
+          <div className="relative w-full sm:w-1/2" ref={manufacturerListRef} style={{zIndex: 10000}}>
             <button
-              className="w-full flex justify-between items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white font-medium"
+              className="w-full flex justify-between items-center px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white font-medium"
               onClick={() => setShowManufacturers(!showManufacturers)}
             >
-              <span>{selectedManufacturer || 'All Manufacturers'}</span>
-              <span className="ml-2">{showManufacturers ? '▲' : '▼'}</span>
+              <span className="truncate pr-2">{selectedManufacturer || 'All Manufacturers'}</span>
+              <span className="ml-2 flex-shrink-0">{showManufacturers ? '▲' : '▼'}</span>
             </button>
 
             {selectedManufacturer && (
@@ -645,8 +618,17 @@ export default function ManualFinderStandalone() {
               </button>
             )}
 
-            {showManufacturers && (
-              <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+            {showManufacturers && manufacturers.length > 0 && (
+              <div 
+                className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-80 overflow-y-auto"
+                style={{
+                  zIndex: 999999,
+                  maxHeight: '320px',
+                  overflowY: 'auto',
+                  boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.15)',
+                  position: 'absolute'
+                }}
+              >
                 {/* Display number of manufacturers */}
                 <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                   {manufacturers.length} manufacturers available
@@ -688,14 +670,14 @@ export default function ManualFinderStandalone() {
           </div>
 
           {/* Search input */}
-          <div className="w-full md:w-2/3">
+          <div className="w-full sm:w-1/2">
             <div className="relative">
               <input
                 type="text"
-                placeholder="boiler model"
+                placeholder="Search boiler model..."
                 value={query}
                 onChange={handleSearchChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {query && (
                 <button
@@ -712,20 +694,20 @@ export default function ManualFinderStandalone() {
 
         {/* Status indicators */}
         {loading && (
-          <div className="flex justify-center items-center my-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mr-2"></div>
-            <p className="text-gray-600 dark:text-gray-300">Searching for manuals...</p>
+          <div className="flex justify-center items-center my-6 sm:my-8">
+            <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-t-2 border-b-2 border-blue-500 mr-2"></div>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Searching for manuals...</p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 p-4 rounded-lg my-4">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 p-3 sm:p-4 rounded-lg my-4 text-sm sm:text-base">
             <p>{error}</p>
           </div>
         )}
 
         {!loading && !error && manuals.length === 0 && (debouncedQuery || selectedManufacturer) && (
-          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 p-4 rounded-lg my-4">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 p-3 sm:p-4 rounded-lg my-4 text-sm sm:text-base">
             <p>
               No manuals found for your search criteria. Try adjusting your search or selecting a
               different manufacturer.
@@ -736,14 +718,14 @@ export default function ManualFinderStandalone() {
 
       {/* Results list */}
       {!loading && manuals.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-3 text-blue-600 dark:text-blue-300">
+        <div className="w-full">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 text-blue-600 dark:text-blue-300">
             Found {manuals.length} manuals
           </h3>
 
-          <div className="w-full" style={{ height: '600px' }}>
+          <div className="w-full" style={{ height: 'min(600px, 70vh)' }}>
             <List
-              height={600}
+              height={Math.min(600, window.innerHeight * 0.7)}
               itemCount={manuals.length}
               itemSize={200}
               width="100%"

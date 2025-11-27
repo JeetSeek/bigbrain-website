@@ -1,0 +1,50 @@
+# Cleanup Summary - Manual Extraction Test Project
+
+## Files to Keep (Core System)
+✅ server/supabaseClient.js - Database connection
+✅ server/index.js - Main backend API
+✅ All frontend files - React app
+✅ All existing fault code services
+✅ MANUAL_EXTRACTION_README.md - Project documentation
+
+## Files to Remove (Test/Experimental)
+❌ server/services/PDFIntelligenceExtractor.js - Test extraction service
+❌ server/scripts/processExistingManuals.js - Test processing script
+❌ server/scripts/checkExtractionResults.js - Test results viewer
+❌ Test database tables (will be recreated in new project)
+
+## Database Tables to Clean
+The following test tables will be KEPT but can be dropped in new project:
+- manual_intelligence (10 test records)
+- manual_content_intelligence (60 test chunks)
+- gc_number_registry (6 test GC numbers)
+- fault_code_manual_index (empty)
+- manual_metadata (old test table)
+- manual_content_chunks (old test table)
+- manual_gc_mappings (old test table)
+
+## Recommended Actions
+
+1. Keep README for reference
+2. Delete test scripts (listed above)
+3. Keep database tables for now (reference data)
+4. Start fresh project for production data extraction
+5. Use lessons learned from this POC
+
+## What Was Proven
+
+✅ GC numbers CAN be extracted from PDFs
+✅ Content CAN be chunked and made searchable
+✅ Database schema works well
+✅ Integration approach is sound
+
+## What Needs Work
+
+❌ Extraction patterns need refinement
+❌ Need systematic testing across manufacturers
+❌ Quality verification process needed
+❌ Better error handling required
+
+---
+Created: October 1, 2025
+Status: Ready for cleanup and new project
