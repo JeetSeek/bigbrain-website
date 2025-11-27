@@ -4,6 +4,7 @@ import { FixedSizeList as List } from 'react-window';
 import { getCachedData, setCachedData } from '../utils/cacheUtils';
 import { useDebounce } from '../utils/useDebounce';
 import { UI, CACHE, TIME } from '../utils/constants';
+import http from '../utils/http';
 
 // Toast notification display time
 const TOAST_DISPLAY_TIME = 3 * TIME.SECOND;
@@ -175,16 +176,8 @@ export default function ManualFinderStandalone() {
     setError('');
 
     try {
-      // Use backend API for Ideal boiler search
-      const apiUrl = new URL('/api/manuals', import.meta.env.VITE_API_URL || 'http://localhost:3204');
-      apiUrl.searchParams.set('manufacturer', 'ideal');
-      
-      const response = await fetch(apiUrl.toString());
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const result = await response.json();
+      // Use http utility for Ideal boiler search
+      const result = await http.get('/api/manuals?manufacturer=ideal');
       setManuals(result.data || []);
     } catch (error) {
       console.error('Error in specialized Ideal boiler fetching:', error);
@@ -234,27 +227,15 @@ export default function ManualFinderStandalone() {
     try {
       // Fetch all pages of results
       while (hasMore) {
-        // Use backend API for manual search
-        const apiUrl = new URL('/api/manuals', import.meta.env.VITE_API_URL || 'http://localhost:3204');
-        
-        if (debouncedQuery) {
-          apiUrl.searchParams.set('search', debouncedQuery);
-        }
-        
-        if (selectedManufacturer) {
-          apiUrl.searchParams.set('manufacturer', selectedManufacturer);
-        }
+        // Build query params
+        const params = new URLSearchParams();
+        if (debouncedQuery) params.set('search', debouncedQuery);
+        if (selectedManufacturer) params.set('manufacturer', selectedManufacturer);
+        params.set('limit', String(pageSize));
+        params.set('offset', String(page * pageSize));
 
-        // Apply server-side pagination
-        apiUrl.searchParams.set('limit', String(pageSize));
-        apiUrl.searchParams.set('offset', String(page * pageSize));
-
-        const response = await fetch(apiUrl.toString());
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
+        // Use http utility for API calls with proper auth
+        const result = await http.get(`/api/manuals?${params.toString()}`);
         const currentPageData = result.data || [];
         
         // Add current page results to our collection

@@ -1,16 +1,19 @@
 /**
  * API Client for Production Deployment
- * Configured for Railway backend deployment
+ * Configured for Supabase Edge Functions
  */
 
-// Get API URL from environment or use Railway production URL
+// Supabase configuration
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+
+// Get API URL from environment or use Supabase Edge Functions
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
-  // Production default: Railway backend
+  // Production default: Supabase Edge Functions
   if (import.meta.env.PROD) {
-    return 'https://boilerbrain-api-production.up.railway.app';
+    return `${SUPABASE_URL}/functions/v1`;
   }
   // Development default: localhost
   return 'http://localhost:3204';
