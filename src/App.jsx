@@ -221,12 +221,10 @@ const Dashboard = () => {
                 )}
                 
                 {activeTab === TAB_IDS.CHAT && (
-                  <div className="absolute inset-0 flex flex-col bg-white" style={{ bottom: '49px', top: '0px' }}>
+                  <div className="h-full flex flex-col bg-white">
                     <ErrorBoundary componentName="Chat Interface">
                       <Suspense fallback={<LoadingFallback componentName="Chat Interface" />}>
-                        <div className="h-full flex flex-col">
-                          <ChatDock embedMode={true} className="h-full w-full flex flex-col" />
-                        </div>
+                        <ChatDock embedMode={true} className="h-full w-full flex flex-col" />
                       </Suspense>
                     </ErrorBoundary>
                   </div>
