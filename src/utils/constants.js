@@ -131,7 +131,8 @@ export const TAB_IDS = {
   MANUAL_FINDER: 'manualFinder',
   TICKETS: 'tickets',
   FEEDBACK: 'feedback',
-  SUPPORT: 'support', // Support tab for mobile navigation
+  SUPPORT: 'support', // Support (moved to settings/help)
+  TOOLS: 'tools', // Tools page with calculators
   ADMIN: 'adminDashboard', // New admin dashboard tab
   KNOWLEDGE_MGMT: 'knowledgeManagement', // Knowledge Management tab
   GAS_RATE: 'gasRateCalculator', // Gas Rate Calculator tool

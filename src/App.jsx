@@ -22,6 +22,7 @@ import ChatDock from './components/ChatDock';
 import KnowledgeManagement from './components/KnowledgeManagement';
 import GasRateCalculator from './components/tools/gas-rate/GasRateCalculator';
 import RoomBtuCalculator from './components/tools/room-btu/RoomBtuCalculator';
+import ToolsPage from './components/ToolsPage';
 
 // Import pages
 import Login from './pages/Login';
@@ -163,6 +164,7 @@ const Dashboard = () => {
       [TAB_IDS.CHAT]: 'Fault Finder Chat',
       [TAB_IDS.GAS_RATE]: 'Gas Rate Calculator',
       [TAB_IDS.ROOM_BTU]: 'BTU Calculator',
+      [TAB_IDS.TOOLS]: 'Engineering Tools',
       [TAB_IDS.SUPPORT]: 'Support',
       [TAB_IDS.FEEDBACK]: 'Feedback',
       [TAB_IDS.ADMIN]: 'Admin Dashboard',
@@ -236,6 +238,16 @@ const Dashboard = () => {
                     <ErrorBoundary componentName="Room BTU Calculator">
                       <Suspense fallback={<LoadingFallback componentName="Room BTU Calculator" />}>
                         <RoomBtuCalculator />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.TOOLS && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="Tools">
+                      <Suspense fallback={<LoadingFallback componentName="Tools" />}>
+                        <ToolsPage onNavigate={setActiveTab} />
                       </Suspense>
                     </ErrorBoundary>
                   </div>

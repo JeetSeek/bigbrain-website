@@ -58,18 +58,11 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
       description: 'Calculate gas consumption'
     },
     {
-      id: TAB_IDS.ROOM_BTU,
-      label: 'BTU Calc',
-      icon: '🌡️',
-      sfSymbol: 'thermometer',
-      description: 'Room BTU calculator'
-    },
-    {
-      id: TAB_IDS.SUPPORT,
-      label: 'Support',
-      icon: '💬',
-      sfSymbol: 'message.fill',
-      description: 'Get help and support'
+      id: TAB_IDS.TOOLS,
+      label: 'Tools',
+      icon: '🛠️',
+      sfSymbol: 'wrench.and.screwdriver.fill',
+      description: 'Engineering calculators and tools'
     },
     ...(isAdmin ? [{
       id: TAB_IDS.ADMIN,
