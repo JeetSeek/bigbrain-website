@@ -23,6 +23,8 @@ import KnowledgeManagement from './components/KnowledgeManagement';
 import GasRateCalculator from './components/tools/gas-rate/GasRateCalculator';
 import RoomBtuCalculator from './components/tools/room-btu/RoomBtuCalculator';
 import GasPipeSizing from './components/tools/gas-pipe/GasPipeSizing';
+import CP12Form from './components/tools/forms/CP12Form';
+import WarningNotice from './components/tools/forms/WarningNotice';
 import ToolsPage from './components/ToolsPage';
 
 // Import pages
@@ -166,6 +168,8 @@ const Dashboard = () => {
       [TAB_IDS.GAS_RATE]: 'Gas Rate Calculator',
       [TAB_IDS.ROOM_BTU]: 'BTU Calculator',
       [TAB_IDS.GAS_PIPE]: 'Gas Pipe Sizing',
+      [TAB_IDS.CP12_FORM]: 'CP12 Gas Safety',
+      [TAB_IDS.WARNING_NOTICE]: 'Warning Notice',
       [TAB_IDS.TOOLS]: 'Engineering Tools',
       [TAB_IDS.SUPPORT]: 'Support',
       [TAB_IDS.FEEDBACK]: 'Feedback',
@@ -250,6 +254,26 @@ const Dashboard = () => {
                     <ErrorBoundary componentName="Gas Pipe Sizing">
                       <Suspense fallback={<LoadingFallback componentName="Gas Pipe Sizing" />}>
                         <GasPipeSizing />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.CP12_FORM && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="CP12 Form">
+                      <Suspense fallback={<LoadingFallback componentName="CP12 Form" />}>
+                        <CP12Form />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </div>
+                )}
+                
+                {activeTab === TAB_IDS.WARNING_NOTICE && (
+                  <div className="ios-content-card">
+                    <ErrorBoundary componentName="Warning Notice">
+                      <Suspense fallback={<LoadingFallback componentName="Warning Notice" />}>
+                        <WarningNotice />
                       </Suspense>
                     </ErrorBoundary>
                   </div>
