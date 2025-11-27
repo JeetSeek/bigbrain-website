@@ -6,36 +6,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-/**
- * Supabase URL from environment variables
- * This should point to your Supabase project URL
- * @type {string}
- */
-const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : process.env || {};
-const supabaseUrl = env.VITE_SUPABASE_URL;
-
-/**
- * Anonymous API key from environment variables
- * This key should have limited permissions based on Row Level Security (RLS)
- * @type {string}
- */
-const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
-
-// Validate required environment variables
-if (!supabaseUrl) {
-  throw new Error('Missing required environment variable: VITE_SUPABASE_URL');
-}
-
-if (!supabaseAnonKey) {
-  throw new Error('Missing required environment variable: VITE_SUPABASE_ANON_KEY');
-}
-
-// Validate URL format
-try {
-  new URL(supabaseUrl);
-} catch (error) {
-  throw new Error('Invalid VITE_SUPABASE_URL format. Must be a valid URL.');
-}
+// Supabase configuration - fallback to production values if env vars not set
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME';
 
 /**
  * Configured Supabase client

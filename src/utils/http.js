@@ -4,34 +4,29 @@
 const DEFAULT_TIMEOUT = 30000; // 30s
 
 // Deployment modes
-const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE || 'local'; // 'local' | 'supabase'
+const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE || (import.meta.env.PROD ? 'supabase' : 'local');
+
+// Production fallbacks for Supabase
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME';
 
 const getBaseUrl = () => {
-  // Supabase Edge Functions mode
+  // Supabase Edge Functions mode (production)
   if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    if (supabaseUrl) {
-      return `${supabaseUrl}/functions/v1`;
-    }
+    return `${SUPABASE_URL}/functions/v1`;
   }
   
-  // Local Express backend mode
-  if (import.meta.env.PROD) {
-    return import.meta.env.VITE_API_URL || '/api';
-  }
+  // Local Express backend mode (development)
   return import.meta.env.VITE_DEV_API_URL || 'http://localhost:3204';
 };
 
 const getAuthHeaders = () => {
   // Add Supabase auth headers for Edge Functions
   if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    if (anonKey) {
-      return {
-        'apikey': anonKey,
-        'Authorization': `Bearer ${anonKey}`,
-      };
-    }
+    return {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    };
   }
   return {};
 };
