@@ -24,8 +24,6 @@ import GasRateCalculator from './components/tools/gas-rate/GasRateCalculator';
 import RoomBtuCalculator from './components/tools/room-btu/RoomBtuCalculator';
 import GasPipeSizing from './components/tools/gas-pipe/GasPipeSizing';
 import GasMeterDiversity from './components/tools/gas-diversity/GasMeterDiversity';
-import CP12Form from './components/tools/forms/CP12Form';
-import WarningNotice from './components/tools/forms/WarningNotice';
 import ToolsPage from './components/ToolsPage';
 
 // Import pages
@@ -35,7 +33,10 @@ import Chat from './pages/Chat';
 // Code-split larger/less critical components
 const Sidebar = lazy(() => import('./components/Sidebar'));
 const MainContent = lazy(() => import('./components/MainContent'));
-// ChatDock moved to direct import to fix dynamic loading issue
+
+// Lazy load PDF-heavy form components (jspdf + html2canvas = 535KB)
+const CP12Form = lazy(() => import('./components/tools/forms/CP12Form'));
+const WarningNotice = lazy(() => import('./components/tools/forms/WarningNotice'));
 
 /**
  * Loading fallback component shown during lazy-loaded component loading

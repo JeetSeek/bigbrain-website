@@ -136,16 +136,20 @@ The `/server` directory contains backup files:
 
 ## 5. Performance Analysis
 
-### Build Output
-| Asset | Size | Gzipped |
-|-------|------|---------|
-| Main JS bundle | 874 KB | 244 KB |
-| Vendor JS | 140 KB | 45 KB |
-| Supabase JS | 115 KB | 30 KB |
-| CSS | 82 KB | 14 KB |
-| **Total** | ~1.2 MB | ~340 KB |
+### Build Output (OPTIMIZED)
+| Asset | Size | Gzipped | Notes |
+|-------|------|---------|-------|
+| Main JS bundle | 175 KB | 42 KB | ✅ Reduced from 874KB |
+| Vendor JS | 247 KB | 83 KB | Other libraries |
+| React DOM | 129 KB | 41 KB | Core React |
+| Supabase JS | 114 KB | 30 KB | Auth & DB |
+| PDF libs | 536 KB | 154 KB | Lazy loaded |
+| CSS | 81 KB | 14 KB | Styles |
 
-**Warning:** Main bundle exceeds 500KB recommended limit
+**Improvements Made:**
+- ✅ Main bundle reduced from 874KB → 175KB (80% reduction)
+- ✅ PDF libraries (jspdf, html2canvas) now lazy loaded
+- ✅ Better chunk splitting with function-based manualChunks
 
 ### Optimization Opportunities
 1. **Code Splitting** - Already using lazy() for some components

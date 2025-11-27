@@ -22,13 +22,39 @@ export default defineConfig({
     // Enable code splitting and tree shaking
     rollupOptions: {
       output: {
-        // More aggressive chunk splitting to reduce bundle size
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          icons: ['react-icons'],
-          supabase: ['@supabase/supabase-js', '@supabase/auth-ui-react'],
-          utils: ['uuid', 'js-yaml'],
+        // Aggressive chunk splitting to reduce bundle size
+        manualChunks(id) {
+          // Core React
+          if (id.includes('node_modules/react-dom')) {
+            return 'react-dom';
+          }
+          if (id.includes('node_modules/react/')) {
+            return 'react';
+          }
+          // Router
+          if (id.includes('node_modules/react-router')) {
+            return 'router';
+          }
+          // Icons - often large
+          if (id.includes('node_modules/react-icons')) {
+            return 'icons';
+          }
+          // Supabase
+          if (id.includes('node_modules/@supabase')) {
+            return 'supabase';
+          }
+          // PDF generation
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
+            return 'pdf';
+          }
+          // Speech recognition
+          if (id.includes('node_modules/vosk')) {
+            return 'speech';
+          }
+          // Other vendor libs
+          if (id.includes('node_modules/')) {
+            return 'vendor';
+          }
         },
       },
     },
