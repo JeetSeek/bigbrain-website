@@ -13,7 +13,6 @@ const SupportTickets = ({ supportTickets = [] }) => {
     if (!newTicket.title.trim() || !newTicket.description.trim()) return;
     
     // In a real app, this would make an API call
-    console.log('Creating new ticket:', newTicket);
     
     // Reset form
     setNewTicket({ title: '', description: '' });

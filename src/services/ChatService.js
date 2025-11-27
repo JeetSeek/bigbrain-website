@@ -220,7 +220,6 @@ class ChatService {
 
     // Log to console for debugging
     if (success) {
-      console.log(`Chat performance: ${duration}ms using ${apiUsed}`);
     } else {
       console.error(`Chat error: ${errorMessage} (${duration}ms)`);
     }

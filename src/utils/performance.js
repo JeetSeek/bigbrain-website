@@ -198,7 +198,6 @@ export function trackInteraction(action, metadata = {}) {
     
     // Log important interactions
     if (metadata.important) {
-      console.log('[Interaction]', action, metadata);
     }
   } catch (error) {
     console.error('[Performance] Failed to track interaction:', error);
@@ -226,7 +225,6 @@ export function measurePageLoad() {
       timestamp: Date.now()
     };
 
-    console.log('[Performance] Page Load Metrics:', metrics);
     
     // Store metrics
     localStorage.setItem('bb_page_load', JSON.stringify(metrics));

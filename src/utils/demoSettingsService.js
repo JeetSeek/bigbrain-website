@@ -20,7 +20,6 @@ export const demoSettingsService = {
     const updatedUser = { ...currentUser, ...profile };
     localStorage.setItem('demo_user', JSON.stringify(updatedUser));
     
-    console.log('Demo: Updated user profile:', profile);
   },
 
   /**
@@ -33,7 +32,6 @@ export const demoSettingsService = {
     await new Promise(resolve => setTimeout(resolve, 800));
     
     // In demo mode, just log the action
-    console.log('Demo: Password reset requested');
     
     // Simulate success
     return Promise.resolve();
@@ -53,7 +51,6 @@ export const demoSettingsService = {
     currentUser.tier = newTier;
     localStorage.setItem('demo_user', JSON.stringify(currentUser));
     
-    console.log('Demo: Plan updated to:', newTier);
   },
 
   /**
@@ -70,7 +67,6 @@ export const demoSettingsService = {
     currentUser.notifications_enabled = enabled;
     localStorage.setItem('demo_user', JSON.stringify(currentUser));
     
-    console.log('Demo: Notifications', enabled ? 'enabled' : 'disabled');
   }
 };
 

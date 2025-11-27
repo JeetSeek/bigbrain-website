@@ -167,7 +167,6 @@ export const useVoiceEnhancement = () => {
       noiseGateRef.current.connect(gainNode);
       gainNode.connect(audioContext.destination);
 
-      console.log(`Voice enhancement started with ${enhancementLevel} level`);
     } catch (error) {
       console.error('Failed to start voice enhancement:', error);
       setIsEnhancing(false);
@@ -186,7 +185,6 @@ export const useVoiceEnhancement = () => {
     }
 
     setIsEnhancing(false);
-    console.log('Voice enhancement stopped');
   }, []);
 
   const setEnhancement = React.useCallback((level) => {

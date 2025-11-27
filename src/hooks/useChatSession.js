@@ -95,7 +95,6 @@ export const useChatSession = (userName) => {
             try {
               const backendSession = await http.post('/api/sessions/get', { sessionId: storedSessionId });
               if (backendSession?.history && Array.isArray(backendSession.history) && backendSession.history.length > 0) {
-                console.log('[useChatSession] Restored session from backend');
                 setHistory(backendSession.history);
                 // Update localStorage with backend data
                 localStorage.setItem(`bb_chat_history_${storedSessionId}`, JSON.stringify(backendSession.history));
@@ -104,7 +103,6 @@ export const useChatSession = (userName) => {
             } catch (backendError) {
               // This is expected on first load - session doesn't exist in backend yet
               if (import.meta.env.DEV) {
-                console.log('[useChatSession] No backend session found, using localStorage (this is normal on first load)');
               }
             }
             
@@ -113,7 +111,6 @@ export const useChatSession = (userName) => {
             if (storedHistory) {
               const parsedHistory = JSON.parse(storedHistory);
               if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
-                console.log('[useChatSession] Restored session from localStorage');
                 setHistory(parsedHistory);
                 return;
               }
@@ -218,7 +215,6 @@ export const useChatSession = (userName) => {
   const sendMessage = useCallback(async (messageText) => {
     if (!messageText?.trim()) return;
 
-    console.log(`[useChatSession] Sending message with sessionId: ${sessionId}`);
 
     const userMessage = addMessage({
       sender: 'user',
@@ -281,7 +277,6 @@ export const useChatSession = (userName) => {
         detail: false
       });
 
-      console.log(`[useChatSession] Received response:`, response);
 
       if (response?.reply || response?.response) {
         const replyText = response.reply || response.response;

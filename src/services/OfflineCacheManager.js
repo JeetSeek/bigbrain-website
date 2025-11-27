@@ -239,7 +239,6 @@ class OfflineCacheManager {
       delete this.cache.faultCodes[code];
     });
 
-    console.log(`Evicted ${toRemove} old fault codes from cache`);
   }
 
   /**
@@ -266,7 +265,6 @@ class OfflineCacheManager {
       delete this.cache.manuals[id];
     });
 
-    console.log(`Evicted ${toRemove} old manuals from cache`);
   }
 
   /**
