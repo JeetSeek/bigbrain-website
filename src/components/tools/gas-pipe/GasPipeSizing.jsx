@@ -30,12 +30,15 @@ const GasPipeSizing = () => {
     30: { 15: 0.55, 22: 2.05, 28: 4.64,  35: 8.99 },
   };
 
-  // Conversions to m³/h (natural gas CV = 39.3 MJ/m³ gross)
+  // Conversions to m³/h (UK Natural Gas CV = 39.5 MJ/m³ gross per GOV.UK)
+  // Alternative quick method: kW × 0.0911 (per BS 6891:2015)
+  const CV_MJ = 39.5; // UK standard average calorific value
+  
   const toM3h = (value, unit) => {
     const v = parseFloat(value) || 0;
     switch (unit) {
-      case 'kW': return (v * 3.6) / 39.3; // kW × 3.6 MJ/kWh ÷ 39.3 MJ/m³
-      case 'BTU': return v / 37800; // BTU/h ÷ 37,800 BTU/m³
+      case 'kW': return (v * 3.6) / CV_MJ; // kW × 3.6 MJ/kWh ÷ 39.5 MJ/m³
+      case 'BTU': return v / 37546; // BTU/h ÷ ~37,546 BTU/m³ (39.5 MJ = 37,546 BTU)
       case 'm³/h': return v;
       default: return v;
     }
@@ -105,11 +108,18 @@ const GasPipeSizing = () => {
     if (totalRate <= 0) return;
 
     // Calculate each pipe run
+    // BS 6891:2015 fitting equivalent lengths (average for domestic copper):
+    // - 90° elbow: 0.5m (15mm), 0.6m (22mm), 0.8m (28mm)
+    // - Tee (branch): 0.6m (15mm), 0.8m (22mm), 1.0m (28mm)
+    // Using conservative average values for domestic installations
+    const ELBOW_EQ_LENGTH = 0.5; // metres
+    const TEE_EQ_LENGTH = 0.8;   // metres (branch flow)
+    
     const runResults = pipeRuns.map(run => {
       const length = parseFloat(run.length) || 0;
       const elbows = parseInt(run.elbows) || 0;
       const tees = parseInt(run.tees) || 0;
-      const fittingsLength = (elbows * 0.5) + (tees * 0.6);
+      const fittingsLength = (elbows * ELBOW_EQ_LENGTH) + (tees * TEE_EQ_LENGTH);
       const effectiveLength = length + fittingsLength;
       
       if (effectiveLength <= 0) return null;

@@ -14,11 +14,15 @@ const GasRateCalculator = () => {
   
   const timerRef = useRef(null);
 
-  // Gas type configurations
+  // Gas type configurations (UK Standard Values)
+  // CV in MJ/m³ - Natural gas range is 38-41, using 39.5 as standard average
+  // Correction factor 1.02264 accounts for temperature/pressure
+  const CORRECTION_FACTOR = 1.02264;
+  
   const gasTypes = {
-    natural: { name: 'Natural Gas', cv: 39.3, color: 'blue' },
-    lpg: { name: 'LPG', cv: 95.8, color: 'orange' },
-    butane: { name: 'Butane', cv: 121.8, color: 'red' }
+    natural: { name: 'Natural Gas', cvMJ: 39.5, cvKWh: 10.97, color: 'blue' },
+    lpg: { name: 'LPG (Propane)', cvMJ: 95.0, cvKWh: 26.39, color: 'orange' },
+    butane: { name: 'Butane', cvMJ: 121.0, cvKWh: 33.61, color: 'red' }
   };
 
   const getCurrentGasType = () => gasTypes[gasType];
@@ -92,17 +96,29 @@ const GasRateCalculator = () => {
 
     const gasTypeConfig = getCurrentGasType();
     const hourlyConsumption = consumption / timeInHours; // m³/hour
-    const grossKW = hourlyConsumption * gasTypeConfig.cv;
-    const netKW = grossKW * 0.9; // Assuming 90% efficiency
-    const btuPerHour = grossKW * 3412.14; // Convert kW to BTU/hour
+    
+    // UK Formula: kW = (m³/h × CV in MJ/m³ × Correction Factor) ÷ 3.6
+    // Using MJ/m³ values for accuracy per GOV.UK guidance
+    const grossKW = (hourlyConsumption * gasTypeConfig.cvMJ * CORRECTION_FACTOR) / 3.6;
+    
+    // Net = Gross × 0.9 (Gross includes latent heat of water vapour, Net excludes it)
+    // UK appliances and Gas Safe use Gross, Europe uses Net
+    const netKW = grossKW * 0.9;
+    
+    // BTU conversion: 1 kW = 3412.14 BTU/h
+    const grossBtu = grossKW * 3412.14;
+    const netBtu = netKW * 3412.14;
 
     return {
       consumption: consumption.toFixed(4),
       hourlyConsumption: hourlyConsumption.toFixed(4),
       grossKW: grossKW.toFixed(2),
       netKW: netKW.toFixed(2),
-      btuPerHour: btuPerHour.toFixed(0),
+      grossBtu: grossBtu.toFixed(0),
+      netBtu: netBtu.toFixed(0),
       gasType: gasTypeConfig.name,
+      cvUsed: gasTypeConfig.cvMJ,
+      correctionFactor: CORRECTION_FACTOR,
       testDuration: timeElapsed,
       timestamp: new Date().toLocaleString()
     };
@@ -137,7 +153,7 @@ const GasRateCalculator = () => {
             <div className="text-right">
               <div className="text-sm opacity-75">Current Gas Type</div>
               <div className="text-lg font-semibold">{getCurrentGasType().name}</div>
-              <div className="text-xs opacity-75">{getCurrentGasType().cv} kWh/m³</div>
+              <div className="text-xs opacity-75">{getCurrentGasType().cvMJ} MJ/m³</div>
             </div>
           </div>
         </div>
@@ -180,7 +196,7 @@ const GasRateCalculator = () => {
                 onClick={() => setGasType('natural')}
               >
                 Natural Gas
-                <div className="text-xs opacity-75 mt-1">39.3 kWh/m³</div>
+                <div className="text-xs opacity-75 mt-1">39.5 MJ/m³</div>
               </button>
               <button
                 className={`flex-1 py-3 px-4 text-sm font-medium transition-all border-l border-gray-200 ${
@@ -190,8 +206,8 @@ const GasRateCalculator = () => {
                 }`}
                 onClick={() => setGasType('lpg')}
               >
-                LPG
-                <div className="text-xs opacity-75 mt-1">95.8 kWh/m³</div>
+                LPG (Propane)
+                <div className="text-xs opacity-75 mt-1">95.0 MJ/m³</div>
               </button>
               <button
                 className={`flex-1 py-3 px-4 text-sm font-medium transition-all border-l border-gray-200 ${
@@ -202,7 +218,7 @@ const GasRateCalculator = () => {
                 onClick={() => setGasType('butane')}
               >
                 Butane
-                <div className="text-xs opacity-75 mt-1">121.8 kWh/m³</div>
+                <div className="text-xs opacity-75 mt-1">121.0 MJ/m³</div>
               </button>
             </div>
           </div>
@@ -361,26 +377,37 @@ const GasRateCalculator = () => {
                 <div className="grid grid-cols-3 bg-gray-200 text-sm font-semibold text-gray-700">
                   <div className="px-4 py-3 text-center">Unit</div>
                   <div className="px-4 py-3 text-center text-blue-600">Gross</div>
-                  <div className="px-4 py-3 text-center text-red-600">Net</div>
+                  <div className="px-4 py-3 text-center text-green-600">Net (90%)</div>
                 </div>
                 <div className="grid grid-cols-3 bg-white">
-                  <div className="px-4 py-4 text-center font-semibold text-gray-900">kW/Hour</div>
-                  <div className="px-4 py-4 text-center text-blue-600 font-semibold">
+                  <div className="px-4 py-4 text-center font-semibold text-gray-900">kW</div>
+                  <div className="px-4 py-4 text-center text-blue-600 font-bold text-xl">
                     {result.grossKW}
                   </div>
-                  <div className="px-4 py-4 text-center text-red-600 font-semibold">
+                  <div className="px-4 py-4 text-center text-green-600 font-bold text-xl">
                     {result.netKW}
                   </div>
                 </div>
                 <div className="grid grid-cols-3 bg-gray-50">
-                  <div className="px-4 py-4 text-center font-semibold text-gray-900">BTU/Hour</div>
+                  <div className="px-4 py-4 text-center font-semibold text-gray-900">BTU/h</div>
                   <div className="px-4 py-4 text-center text-blue-600 font-semibold">
-                    {result.btuPerHour}
+                    {result.grossBtu}
                   </div>
-                  <div className="px-4 py-4 text-center text-red-600 font-semibold">
-                    {result.btuPerHour}
+                  <div className="px-4 py-4 text-center text-green-600 font-semibold">
+                    {result.netBtu}
                   </div>
                 </div>
+                <div className="grid grid-cols-3 bg-white border-t">
+                  <div className="px-4 py-3 text-center text-sm text-gray-600">Gas Rate</div>
+                  <div className="px-4 py-3 text-center text-sm text-gray-900 font-medium col-span-2">
+                    {result.hourlyConsumption} m³/h
+                  </div>
+                </div>
+              </div>
+              {/* Formula info */}
+              <div className="mt-4 p-3 bg-blue-50 rounded-lg text-xs text-blue-800">
+                <p><strong>Formula:</strong> kW = (m³/h × CV × CF) ÷ 3.6</p>
+                <p className="mt-1">CV: {result.cvUsed} MJ/m³ | CF: {result.correctionFactor} | Net = Gross × 0.9</p>
               </div>
             </div>
           )}

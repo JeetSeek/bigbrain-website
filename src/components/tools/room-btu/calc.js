@@ -35,15 +35,22 @@ export const WINDOW_TYPES = {
 };
 
 /**
- * Room usage adjustment factors
- * Different room types have different heating requirements
+ * Room usage BTU factors per cubic metre (UK Standard)
+ * Based on typical UK room temperatures:
+ * - Living Room: 21°C (70°F)
+ * - Bathroom: 22°C (72°F) 
+ * - Kitchen: 18°C (64°F)
+ * - Bedroom: 16-18°C (61-64°F)
+ * - Hallway: 15-18°C (59-64°F)
+ * 
+ * Factors derived from Viessmann UK, CIBSE, and industry calculators
  */
 export const ROOM_USAGE = {
-  LIVING: { name: "Living Room", factor: 1.0, description: "Standard living space" },
-  BEDROOM: { name: "Bedroom", factor: 0.9, description: "Typically lower temperature" },
-  KITCHEN: { name: "Kitchen", factor: 0.8, description: "Additional heat from appliances" },
-  BATHROOM: { name: "Bathroom", factor: 1.1, description: "Higher temperature requirement" },
-  OFFICE: { name: "Office/Study", factor: 1.0, description: "Standard working environment" }
+  LIVING: { name: "Living Room", btuPerM3: 135, btuPerFt3: 3.82, description: "21°C target temperature" },
+  BEDROOM: { name: "Bedroom", btuPerM3: 108, btuPerFt3: 3.06, description: "16-18°C for comfortable sleep" },
+  KITCHEN: { name: "Kitchen", btuPerM3: 100, btuPerFt3: 2.83, description: "18°C - heat from appliances" },
+  BATHROOM: { name: "Bathroom", btuPerM3: 153, btuPerFt3: 4.33, description: "22°C - highest temperature" },
+  OFFICE: { name: "Office/Study", btuPerM3: 120, btuPerFt3: 3.40, description: "20°C working environment" }
 };
 
 /**
@@ -56,18 +63,27 @@ export const FLOOR_TYPES = {
 };
 
 /**
- * Calculate base BTU requirements for a room based on volume
+ * Calculate base BTU requirements for a room based on volume and room type
+ * Uses UK standard BTU per cubic foot/metre values
  * 
- * @param {number} length - Room length in feet
- * @param {number} width - Room width in feet
- * @param {number} height - Room ceiling height in feet
+ * @param {number} length - Room length (in feet for imperial, metres for metric)
+ * @param {number} width - Room width
+ * @param {number} height - Room ceiling height
+ * @param {string} roomUsage - Room type (LIVING, BEDROOM, KITCHEN, BATHROOM, OFFICE)
+ * @param {string} unit - 'imperial' (feet) or 'metric' (metres)
  * @returns {number} Base BTU requirement
  */
-export const calculateBaseBtu = (length, width, height) => {
-  // Standard calculation: 20 BTU per cubic foot as base value
-  const volumeInCubicFeet = length * width * height;
-  const baseBtu = volumeInCubicFeet * 20;
-  return baseBtu;
+export const calculateBaseBtu = (length, width, height, roomUsage = 'LIVING', unit = 'imperial') => {
+  const roomConfig = ROOM_USAGE[roomUsage] || ROOM_USAGE.LIVING;
+  const volume = length * width * height;
+  
+  if (unit === 'metric') {
+    // Volume in cubic metres × BTU per m³
+    return volume * roomConfig.btuPerM3;
+  } else {
+    // Volume in cubic feet × BTU per ft³
+    return volume * roomConfig.btuPerFt3;
+  }
 };
 
 /**
@@ -91,80 +107,98 @@ export const calculateRoomBtu = ({
   wallInsulation,
   ceilingInsulation,
   roomUsage,
+  unit = 'imperial', // Add unit parameter for correct calculation
   // Climate zone and occupants removed from UI but defaults provided here
 }) => {
   // Default values for removed UI elements
-  const climateZone = 'COLD'; // Default to COLD climate
+  const climateZone = 'COLD'; // Default to COLD climate (UK)
   const occupants = 2; // Default to 2 occupants
 
-  // Calculate base BTU requirement
+  // Calculate room volume
   const roomVolume = length * width * height;
-  const baseBtu = calculateBaseBtu(length, width, height);
   
-  // Base factors
-  const insulationFactor = INSULATION_QUALITY[wallInsulation].factor;
-  const windowTypeFactor = WINDOW_TYPES[windowType].factor;
-  const climateFactor = CLIMATE_ZONES[climateZone].factor;
-  const usageFactor = ROOM_USAGE[roomUsage].factor;
-  const floorFactor = FLOOR_TYPES[floorType].factor;
+  // Calculate base BTU using UK standard room-type-specific factors
+  const baseBtu = calculateBaseBtu(length, width, height, roomUsage, unit);
   
-  // Calculate exterior wall adjustment
-  const totalWallCount = 4; // Assuming rectangular room
-  const exteriorWallFactor = 1 + (0.1 * exteriorWalls);
+  // Adjustment factors
+  const insulationFactor = INSULATION_QUALITY[wallInsulation]?.factor || 1.0;
+  const windowTypeFactor = WINDOW_TYPES[windowType]?.factor || 1.0;
+  const climateFactor = CLIMATE_ZONES[climateZone]?.factor || 1.0;
+  const floorFactor = FLOOR_TYPES[floorType]?.factor || 1.0;
   
-  // Window and door adjustments
-  // Each window adds 1000 BTU/hr heat loss on average, adjusted by window type
-  const windowAdjustment = windowCount * windowArea * 15 * windowTypeFactor;
+  // Calculate exterior wall adjustment (10% increase per external wall)
+  const exteriorWallFactor = 1 + (0.1 * (parseInt(exteriorWalls) || 1));
   
-  // Each exterior door adds about 1000 BTU/hr heat loss
-  const doorAdjustment = exteriorDoors * 1000;
+  // Window heat loss adjustments
+  // UK standard: ~100 BTU per sq ft for single glazing, scaled by window type
+  const windowSqFt = unit === 'metric' ? windowArea * 10.764 : windowArea;
+  const windowAdjustment = windowCount * windowSqFt * 40 * windowTypeFactor;
   
-  // Patio doors add about 1500 BTU/hr heat loss per door
-  const patioDoorAdjustment = patioDoors * 1500;
+  // Door adjustments (UK standards)
+  // Exterior door: ~500 BTU heat loss
+  const doorAdjustment = exteriorDoors * 500;
   
-  // Occupant adjustment: each person adds body heat (negative BTU requirement)
-  // We use the default occupants value (2) since this field was removed from UI
+  // Patio doors: ~800 BTU heat loss per door (larger glass area)
+  const patioDoorAdjustment = patioDoors * 800;
+  
+  // Occupant adjustment: each person adds ~400 BTU body heat (reduces requirement)
   const occupantAdjustment = occupants * -400;
   
   // Room orientation adjustment
   let orientationFactor = 1.0;
   if (roomOrientation === 'NORTH') {
-    orientationFactor = 1.1; // North-facing rooms are cooler
+    orientationFactor = 1.1; // North-facing rooms are cooler (10% more heat needed)
   } else if (roomOrientation === 'SOUTH') {
-    orientationFactor = 0.9; // South-facing rooms get more solar gain
+    orientationFactor = 0.95; // South-facing rooms get solar gain (5% less heat)
+  } else if (roomOrientation === 'EAST' || roomOrientation === 'WEST') {
+    orientationFactor = 1.0; // Neutral
   }
   
   // Calculate total BTU requirement
-  const adjustedBtu = baseBtu * insulationFactor * climateFactor * usageFactor * exteriorWallFactor * floorFactor * orientationFactor;
+  // Apply multiplicative factors to base BTU
+  const adjustedBtu = baseBtu * insulationFactor * climateFactor * exteriorWallFactor * floorFactor * orientationFactor;
   
-  // Add/subtract the specific adjustments
+  // Add/subtract the specific heat loss adjustments
   const totalBtu = adjustedBtu + windowAdjustment + doorAdjustment + patioDoorAdjustment + occupantAdjustment;
   
   // Round to nearest 1000 BTU (common practice for heating appliances)
   const roundedBtu = Math.round(totalBtu / 1000) * 1000;
   
   // Create a detailed breakdown for educational purposes
+  const roomConfig = ROOM_USAGE[roomUsage] || ROOM_USAGE.LIVING;
   const breakdown = {
     roomVolume: roomVolume,
+    unit: unit,
+    roomType: roomConfig.name,
+    btuPerUnit: unit === 'metric' ? roomConfig.btuPerM3 : roomConfig.btuPerFt3,
     baseBtu: Math.round(baseBtu),
+    insulationFactor: insulationFactor,
     insulationAdjustment: Math.round(baseBtu * (insulationFactor - 1)),
+    climateFactor: climateFactor,
     climateAdjustment: Math.round(baseBtu * insulationFactor * (climateFactor - 1)),
+    exteriorWalls: exteriorWalls,
     exteriorWallsAdjustment: Math.round(baseBtu * insulationFactor * climateFactor * (exteriorWallFactor - 1)),
+    floorFactor: floorFactor,
     floorAdjustment: Math.round(baseBtu * insulationFactor * climateFactor * exteriorWallFactor * (floorFactor - 1)),
-    usageAdjustment: Math.round(baseBtu * insulationFactor * climateFactor * exteriorWallFactor * floorFactor * (usageFactor - 1)),
-    orientationAdjustment: Math.round(baseBtu * insulationFactor * climateFactor * exteriorWallFactor * floorFactor * usageFactor * (orientationFactor - 1)),
+    orientationFactor: orientationFactor,
+    orientationAdjustment: Math.round(baseBtu * insulationFactor * climateFactor * exteriorWallFactor * floorFactor * (orientationFactor - 1)),
+    windowCount: windowCount,
     windowAdjustment: Math.round(windowAdjustment),
     doorAdjustment: Math.round(doorAdjustment),
     patioDoorAdjustment: Math.round(patioDoorAdjustment),
     occupantAdjustment: Math.round(occupantAdjustment),
+    adjustedBtu: Math.round(adjustedBtu),
     totalBtu: Math.round(totalBtu),
     roundedBtu: roundedBtu,
-    kilowatts: Math.round(roundedBtu / 3412 * 100) / 100, // Convert BTU to kW for reference
+    kilowatts: Math.round(roundedBtu / 3412 * 100) / 100, // Convert BTU to kW (1 kW = 3412 BTU/h)
   };
   
+  // Ensure minimum of 1000 BTU for any heated space
+  const finalBtu = Math.max(roundedBtu, 1000);
+  
   return {
-    btu: roundedBtu,
-    kilowatts: Math.round(roundedBtu / 3412 * 100) / 100,
+    btu: finalBtu,
+    kilowatts: Math.round(finalBtu / 3412 * 100) / 100,
     breakdown: breakdown
   };
 };
