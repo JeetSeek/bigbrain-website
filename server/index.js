@@ -76,9 +76,21 @@ app.use(morgan('combined', {
 }));
 
 // CORS configuration with origin whitelist
+// Include all production and development origins
+const defaultOrigins = [
+  'http://localhost:5176',
+  'http://localhost:5177',
+  'http://localhost:3000',
+  'https://boiler-brain.netlify.app',
+  'https://boiler-brain-ai.netlify.app',
+  'https://boilerbrain.netlify.app'
+];
+
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-  : ['http://localhost:5176', 'http://localhost:5177'];
+  ? [...defaultOrigins, ...process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())]
+  : defaultOrigins;
+
+console.log('[CORS] Allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -87,6 +99,7 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Blocked request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
