@@ -1,0 +1,355 @@
+/**
+ * iOS Chat Interface - Apple Developer Best Practices
+ * Following Apple Human Interface Guidelines for iOS Web Apps
+ * 
+ * Key Principles:
+ * - Use dvh/svh for dynamic viewport handling
+ * - Proper safe area insets with env()
+ * - Hardware-accelerated transforms
+ * - Touch-optimized interactions
+ * - Keyboard-aware layout
+ */
+
+/* ============================================
+   CSS Custom Properties for iOS
+   ============================================ */
+:root {
+  /* Dynamic viewport units with fallbacks */
+  --chat-height: 100dvh;
+  --keyboard-offset: 0px;
+  
+  /* Safe areas with fallbacks */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  
+  /* iOS standard heights */
+  --ios-header-height: 44px;
+  --ios-tab-bar-height: 49px;
+  --ios-input-height: 48px;
+}
+
+/* Fallback for browsers without dvh support */
+@supports not (height: 100dvh) {
+  :root {
+    --chat-height: 100vh;
+  }
+}
+
+/* ============================================
+   Main Chat Container - Full Screen
+   ============================================ */
+.ios-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  /* Prevent overscroll */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   Chat Header - Fixed at Top
+   ============================================ */
+.ios-chat-header {
+  flex-shrink: 0;
+  z-index: 10;
+  /* Ensure header doesn't get squished */
+  min-height: var(--ios-header-height);
+}
+
+/* ============================================
+   Messages Area - Scrollable Middle
+   ============================================ */
+.ios-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Critical: Allow flex to shrink this area */
+  min-height: 0;
+  /* Smooth iOS scrolling */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  /* Padding for content */
+  padding: 16px;
+  padding-bottom: 8px;
+}
+
+/* Scroll behavior */
+.ios-chat-messages {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar on iOS for cleaner look */
+.ios-chat-messages::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* ============================================
+   Input Area - Sticky at Bottom
+   ============================================ */
+.ios-chat-input-area {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  background: rgba(255, 255, 255, 0.95);
+  /* Glassmorphism effect */
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+  /* Safe area padding */
+  padding: 8px 12px;
+  padding-bottom: calc(8px + var(--safe-bottom));
+  /* Hardware acceleration for keyboard */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+
+/* When keyboard is visible, remove safe area padding */
+.ios-chat-input-area.keyboard-visible {
+  padding-bottom: 8px;
+}
+
+/* ============================================
+   Input Field - iOS Style
+   ============================================ */
+.ios-chat-input-field {
+  width: 100%;
+  min-height: var(--ios-input-height);
+  /* CRITICAL: 16px minimum prevents iOS zoom */
+  font-size: 16px;
+  line-height: 1.4;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 22px;
+  background: rgba(142, 142, 147, 0.12);
+  color: #000;
+  outline: none;
+  /* Smooth transitions */
+  transition: background-color 0.2s ease;
+  /* Touch optimization */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ios-chat-input-field::placeholder {
+  color: rgba(60, 60, 67, 0.3);
+}
+
+.ios-chat-input-field:focus {
+  background: rgba(142, 142, 147, 0.18);
+}
+
+/* ============================================
+   Input Wrapper - Flex Container
+   ============================================ */
+.ios-chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(142, 142, 147, 0.12);
+  border-radius: 22px;
+  padding: 4px 8px;
+  transition: all 0.2s ease;
+}
+
+.ios-chat-input-wrapper:focus-within {
+  background: rgba(142, 142, 147, 0.18);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3);
+}
+
+/* ============================================
+   Send Button - iOS Style
+   ============================================ */
+.ios-chat-send-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #007AFF 0%, #0051D5 100%);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios-chat-send-btn:active {
+  transform: scale(0.92);
+}
+
+.ios-chat-send-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   Mic Button - iOS Style
+   ============================================ */
+.ios-chat-mic-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: transparent;
+  color: #007AFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios-chat-mic-btn:active {
+  background: rgba(0, 122, 255, 0.1);
+  transform: scale(0.92);
+}
+
+.ios-chat-mic-btn.listening {
+  background: #FF3B30;
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ============================================
+   Dark Mode Support
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  .ios-chat-input-area {
+    background: rgba(28, 28, 30, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .ios-chat-input-wrapper {
+    background: rgba(118, 118, 128, 0.24);
+  }
+  
+  .ios-chat-input-wrapper:focus-within {
+    background: rgba(118, 118, 128, 0.32);
+  }
+  
+  .ios-chat-input-field {
+    color: #fff;
+    background: transparent;
+  }
+  
+  .ios-chat-input-field::placeholder {
+    color: rgba(235, 235, 245, 0.3);
+  }
+  
+  .ios-chat-mic-btn {
+    color: #0A84FF;
+  }
+}
+
+/* ============================================
+   Keyboard Handling - iOS Safari
+   ============================================ */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific */
+  .ios-chat-container {
+    /* Use 100% instead of dvh as fallback */
+    height: 100%;
+  }
+  
+  .ios-chat-input-area {
+    /* Ensure input stays above keyboard */
+    position: sticky;
+    bottom: 0;
+  }
+  
+  /* When virtual keyboard is open */
+  .ios-chat-container.keyboard-open .ios-chat-messages {
+    /* Reduce height to accommodate keyboard */
+    padding-bottom: 0;
+  }
+  
+  .ios-chat-container.keyboard-open .ios-chat-input-area {
+    padding-bottom: 8px;
+  }
+}
+
+/* ============================================
+   Small Screen Optimizations
+   ============================================ */
+@media (max-width: 375px) {
+  .ios-chat-input-area {
+    padding: 6px 8px;
+    padding-bottom: calc(6px + var(--safe-bottom));
+  }
+  
+  .ios-chat-input-wrapper {
+    gap: 6px;
+    padding: 3px 6px;
+  }
+  
+  .ios-chat-send-btn,
+  .ios-chat-mic-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .ios-chat-input-field {
+    padding: 10px 12px;
+    min-height: 40px;
+  }
+}
+
+/* ============================================
+   Landscape Mode
+   ============================================ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .ios-chat-header {
+    min-height: 36px;
+    padding: 4px 12px;
+  }
+  
+  .ios-chat-messages {
+    padding: 8px 16px;
+  }
+  
+  .ios-chat-input-area {
+    padding: 4px 12px;
+    padding-bottom: calc(4px + var(--safe-bottom));
+  }
+}
+
+/* ============================================
+   Reduced Motion Support
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .ios-chat-messages {
+    scroll-behavior: auto;
+  }
+  
+  .ios-chat-send-btn,
+  .ios-chat-mic-btn,
+  .ios-chat-input-wrapper {
+    transition: none;
+  }
+  
+  .ios-chat-mic-btn.listening {
+    animation: none;
+  }
+}

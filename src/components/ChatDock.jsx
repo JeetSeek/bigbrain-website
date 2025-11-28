@@ -12,6 +12,7 @@ import MessageBubble from './chat/MessageBubble';
 import TypingIndicator from './chat/TypingIndicator';
 import { http } from '../utils/http';
 import DOMPurify from 'dompurify';
+import '../styles/ios-chat.css';
 
 const DEBUG = import.meta.env.MODE === 'development';
 
@@ -93,8 +94,10 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   const [showQuickStart, setShowQuickStart] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState('connected'); // connected, disconnected, reconnecting
   const [lastActivity, setLastActivity] = useState(Date.now());
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const typingTimeoutRef = useRef(null);
   const activityTimeoutRef = useRef(null);
   const {
@@ -117,26 +120,45 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     }
   }, [embedMode, open, waiting]); // Re-focus after waiting changes (message sent)
 
-  // Handle iOS keyboard - scroll to bottom when keyboard appears
+  // Handle iOS keyboard - Apple best practice using visualViewport API
   useEffect(() => {
-    const handleResize = () => {
-      // When keyboard opens on iOS, scroll to keep input visible
-      if (chatEndRef.current) {
+    if (!window.visualViewport) return;
+
+    const viewport = window.visualViewport;
+    let initialHeight = viewport.height;
+
+    const handleViewportChange = () => {
+      const currentHeight = viewport.height;
+      const heightDiff = initialHeight - currentHeight;
+      
+      // Keyboard is visible if viewport height decreased significantly (> 100px)
+      const isKeyboardOpen = heightDiff > 100;
+      setKeyboardVisible(isKeyboardOpen);
+      
+      // Scroll to bottom when keyboard opens
+      if (isKeyboardOpen && chatEndRef.current) {
         setTimeout(() => {
           chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }, 100);
+        }, 50);
       }
     };
 
-    // Use visualViewport API for better iOS keyboard detection
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      return () => window.visualViewport.removeEventListener('resize', handleResize);
-    }
-    
-    // Fallback for older browsers
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // Update initial height on orientation change
+    const handleOrientationChange = () => {
+      setTimeout(() => {
+        initialHeight = viewport.height;
+      }, 100);
+    };
+
+    viewport.addEventListener('resize', handleViewportChange);
+    viewport.addEventListener('scroll', handleViewportChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    return () => {
+      viewport.removeEventListener('resize', handleViewportChange);
+      viewport.removeEventListener('scroll', handleViewportChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
   }, []);
 
   const handleSendMessage = useCallback(async (e) => {
@@ -346,8 +368,11 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   if (embedMode) {
     return (
       <ChatErrorBoundary>
-        <div className={`bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full min-h-0 max-h-full overflow-hidden ${className}`} style={{ height: '100%', maxHeight: '100%' }}>
-          <header className="bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shadow-lg flex-shrink-0">
+        <div 
+          ref={chatContainerRef}
+          className={`ios-chat-container bg-white rounded-lg shadow-lg border border-gray-200 ${keyboardVisible ? 'keyboard-open' : ''} ${className}`}
+        >
+          <header className="ios-chat-header bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shadow-lg">
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-md flex-shrink-0" />
               <div className="flex flex-col min-w-0">
@@ -390,7 +415,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
             </button>
           </header>
           
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 chat-messages-container" role="log" aria-label="Chat messages" style={{backgroundColor: 'var(--ios-bg-grouped-primary)'}}>
+          <div className="ios-chat-messages" role="log" aria-label="Chat messages" style={{backgroundColor: 'var(--ios-bg-grouped-primary)'}}>
             {history.length === 0 || (history.length === 1 && (history[0].sender === 'assistant' || history[0].sender === 'ai')) ? (
               <EmptyStateMessage />
             ) : (
@@ -426,27 +451,22 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
             )}
           </div>
 
-          <footer className="chat-input-container">
+          <footer className={`ios-chat-input-area ${keyboardVisible ? 'keyboard-visible' : ''}`}>
             <form
               onSubmit={handleSendMessage}
               aria-label="Chat message form"
             >
-              <div className="chat-input-wrapper-enhanced">
+              <div className="ios-chat-input-wrapper">
                 <button 
                   type="button" 
                   onClick={toggleListening} 
-                  className={`btn-icon-enhanced ${
-                    isListening 
-                      ? 'bg-red-500 text-white shadow-lg scale-110' 
-                      : ''
-                  } ${!speechSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`ios-chat-mic-btn ${isListening ? 'listening' : ''} ${!speechSupported ? 'opacity-50' : ''}`}
                   disabled={!speechSupported}
                   title={isListening ? 'Stop listening' : 'Voice input'}
                   aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
                   aria-pressed={isListening}
                 >
-                  <HiMicrophone size={20} />
-                  <span className="sr-only-enhanced">{isListening ? 'Stop voice input' : 'Start voice input'}</span>
+                  <HiMicrophone size={18} />
                 </button>
                 
                 <input
@@ -454,22 +474,28 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onFocus={() => {
+                    // Ensure scroll to bottom on focus for iOS
+                    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+                  }}
                   placeholder="Describe the issue..."
-                  className="chat-input-field-enhanced"
+                  className="ios-chat-input-field flex-1"
                   disabled={waiting}
                   aria-label="Message input"
-                  autoFocus
+                  enterKeyHint="send"
+                  autoComplete="off"
+                  autoCorrect="on"
+                  spellCheck="true"
                 />
                 
                 <button 
                   type="submit" 
-                  className="btn-icon-enhanced animate-button-press" 
+                  className="ios-chat-send-btn" 
                   disabled={!input.trim() || waiting}
                   title="Send message"
                   aria-label="Send message"
                 >
-                  <IoIosSend size={20} />
-                  <span className="sr-only-enhanced">Send</span>
+                  <IoIosSend size={18} />
                 </button>
               </div>
             </form>
