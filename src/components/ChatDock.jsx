@@ -121,43 +121,56 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   }, [embedMode, open, waiting]); // Re-focus after waiting changes (message sent)
 
   // Handle iOS keyboard - Apple best practice using visualViewport API
+  // This sets a CSS variable that the input uses to position itself above the keyboard
   useEffect(() => {
     if (!window.visualViewport) return;
 
     const viewport = window.visualViewport;
-    let initialHeight = viewport.height;
+    // Store the initial viewport height (without keyboard)
+    let initialHeight = window.innerHeight;
 
     const handleViewportChange = () => {
-      const currentHeight = viewport.height;
-      const heightDiff = initialHeight - currentHeight;
+      // Calculate keyboard height from the difference
+      // visualViewport.height shrinks when keyboard opens
+      const keyboardHeight = window.innerHeight - viewport.height;
+      const isKeyboardOpen = keyboardHeight > 100;
       
-      // Keyboard is visible if viewport height decreased significantly (> 100px)
-      const isKeyboardOpen = heightDiff > 100;
+      // Set CSS variable for keyboard height
+      document.documentElement.style.setProperty(
+        '--keyboard-height', 
+        isKeyboardOpen ? `${keyboardHeight}px` : '0px'
+      );
+      
       setKeyboardVisible(isKeyboardOpen);
       
       // Scroll to bottom when keyboard opens
       if (isKeyboardOpen && chatEndRef.current) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }, 50);
+        });
       }
     };
 
     // Update initial height on orientation change
     const handleOrientationChange = () => {
       setTimeout(() => {
-        initialHeight = viewport.height;
-      }, 100);
+        initialHeight = window.innerHeight;
+        // Reset keyboard height on orientation change
+        document.documentElement.style.setProperty('--keyboard-height', '0px');
+      }, 300);
     };
 
     viewport.addEventListener('resize', handleViewportChange);
-    viewport.addEventListener('scroll', handleViewportChange);
     window.addEventListener('orientationchange', handleOrientationChange);
+
+    // Initial check
+    handleViewportChange();
 
     return () => {
       viewport.removeEventListener('resize', handleViewportChange);
-      viewport.removeEventListener('scroll', handleViewportChange);
       window.removeEventListener('orientationchange', handleOrientationChange);
+      // Reset keyboard height on unmount
+      document.documentElement.style.setProperty('--keyboard-height', '0px');
     };
   }, []);
 

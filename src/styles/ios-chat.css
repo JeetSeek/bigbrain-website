@@ -2,21 +2,18 @@
  * iOS Chat Interface - Apple Developer Best Practices
  * Following Apple Human Interface Guidelines for iOS Web Apps
  * 
- * Key Principles:
- * - Use dvh/svh for dynamic viewport handling
- * - Proper safe area insets with env()
- * - Hardware-accelerated transforms
- * - Touch-optimized interactions
- * - Keyboard-aware layout
+ * CRITICAL FIX FOR iOS SAFARI KEYBOARD:
+ * iOS Safari doesn't resize viewport when keyboard opens.
+ * We use visualViewport API in JS to set --keyboard-height CSS variable,
+ * and position input container with position:fixed.
  */
 
 /* ============================================
    CSS Custom Properties for iOS
    ============================================ */
 :root {
-  /* Dynamic viewport units with fallbacks */
-  --chat-height: 100dvh;
-  --keyboard-offset: 0px;
+  /* Keyboard height - set by JavaScript via visualViewport */
+  --keyboard-height: 0px;
   
   /* Safe areas with fallbacks */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -27,18 +24,11 @@
   /* iOS standard heights */
   --ios-header-height: 44px;
   --ios-tab-bar-height: 49px;
-  --ios-input-height: 48px;
-}
-
-/* Fallback for browsers without dvh support */
-@supports not (height: 100dvh) {
-  :root {
-    --chat-height: 100vh;
-  }
+  --ios-input-height: 52px;
 }
 
 /* ============================================
-   Main Chat Container - Full Screen
+   Main Chat Container
    ============================================ */
 .ios-chat-container {
   display: flex;
@@ -50,9 +40,6 @@
   /* Hardware acceleration */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  /* Prevent overscroll */
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* ============================================
@@ -79,11 +66,8 @@
   overscroll-behavior-y: contain;
   /* Padding for content */
   padding: 16px;
-  padding-bottom: 8px;
-}
-
-/* Scroll behavior */
-.ios-chat-messages {
+  /* CRITICAL: Add bottom padding for input area + keyboard */
+  padding-bottom: calc(var(--ios-input-height) + 24px + var(--keyboard-height));
   scroll-behavior: smooth;
 }
 
@@ -95,29 +79,39 @@
 }
 
 /* ============================================
-   Input Area - Sticky at Bottom
+   Input Area - FIXED at Bottom Above Keyboard
    ============================================ */
 .ios-chat-input-area {
-  flex-shrink: 0;
-  position: relative;
-  z-index: 20;
-  background: rgba(255, 255, 255, 0.95);
-  /* Glassmorphism effect */
+  /* CRITICAL: Use fixed positioning to stay above keyboard */
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Bottom position = keyboard height + safe area (when no keyboard) */
+  bottom: calc(var(--keyboard-height) + var(--ios-tab-bar-height) + var(--safe-bottom));
+  z-index: 100;
+  
+  /* Styling */
+  background: rgba(255, 255, 255, 0.98);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
   border-top: 0.5px solid rgba(0, 0, 0, 0.1);
-  /* Safe area padding */
+  
+  /* Padding */
   padding: 8px 12px;
-  padding-bottom: calc(8px + var(--safe-bottom));
-  /* Hardware acceleration for keyboard */
+  
+  /* Hardware acceleration */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
-  will-change: transform;
+  will-change: bottom;
+  
+  /* Smooth transition when keyboard opens/closes */
+  transition: bottom 0.1s ease-out;
 }
 
-/* When keyboard is visible, remove safe area padding */
+/* When keyboard is visible */
 .ios-chat-input-area.keyboard-visible {
-  padding-bottom: 8px;
+  /* Remove tab bar offset when keyboard is open */
+  bottom: var(--keyboard-height);
 }
 
 /* ============================================
@@ -264,29 +258,19 @@
 }
 
 /* ============================================
-   Keyboard Handling - iOS Safari
+   iOS Safari Specific Fixes
    ============================================ */
 @supports (-webkit-touch-callout: none) {
-  /* iOS Safari specific */
-  .ios-chat-container {
-    /* Use 100% instead of dvh as fallback */
-    height: 100%;
+  /* iOS Safari: ensure proper touch scrolling */
+  .ios-chat-messages {
+    -webkit-overflow-scrolling: touch;
   }
   
-  .ios-chat-input-area {
-    /* Ensure input stays above keyboard */
-    position: sticky;
-    bottom: 0;
-  }
-  
-  /* When virtual keyboard is open */
-  .ios-chat-container.keyboard-open .ios-chat-messages {
-    /* Reduce height to accommodate keyboard */
-    padding-bottom: 0;
-  }
-  
-  .ios-chat-container.keyboard-open .ios-chat-input-area {
-    padding-bottom: 8px;
+  /* Prevent iOS tap highlight */
+  .ios-chat-input-field,
+  .ios-chat-send-btn,
+  .ios-chat-mic-btn {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -296,7 +280,6 @@
 @media (max-width: 375px) {
   .ios-chat-input-area {
     padding: 6px 8px;
-    padding-bottom: calc(6px + var(--safe-bottom));
   }
   
   .ios-chat-input-wrapper {
@@ -331,7 +314,6 @@
   
   .ios-chat-input-area {
     padding: 4px 12px;
-    padding-bottom: calc(4px + var(--safe-bottom));
   }
 }
 
