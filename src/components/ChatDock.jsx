@@ -117,6 +117,28 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     }
   }, [embedMode, open, waiting]); // Re-focus after waiting changes (message sent)
 
+  // Handle iOS keyboard - scroll to bottom when keyboard appears
+  useEffect(() => {
+    const handleResize = () => {
+      // When keyboard opens on iOS, scroll to keep input visible
+      if (chatEndRef.current) {
+        setTimeout(() => {
+          chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 100);
+      }
+    };
+
+    // Use visualViewport API for better iOS keyboard detection
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      return () => window.visualViewport.removeEventListener('resize', handleResize);
+    }
+    
+    // Fallback for older browsers
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleSendMessage = useCallback(async (e) => {
     e.preventDefault();
     
@@ -324,7 +346,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   if (embedMode) {
     return (
       <ChatErrorBoundary>
-        <div className={`bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full min-h-0 max-h-full ${className}`}>
+        <div className={`bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col h-full min-h-0 max-h-full overflow-hidden ${className}`} style={{ height: '100%', maxHeight: '100%' }}>
           <header className="bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shadow-lg flex-shrink-0">
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-md flex-shrink-0" />

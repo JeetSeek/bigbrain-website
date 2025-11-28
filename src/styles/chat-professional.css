@@ -68,15 +68,22 @@
   background: #FFFFFF;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   padding: 12px 16px;
-  /* iOS safe area for home indicator */
+  /* iOS safe area for home indicator - only when keyboard is closed */
   padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  /* Prevent input from being hidden by keyboard */
-  position: relative;
-  z-index: 10;
+  transition: padding 0.1s ease;
+  /* Critical: Keep input above keyboard */
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+/* When keyboard is open (input focused), reduce bottom padding */
+.chat-input-container:focus-within {
+  padding-bottom: 12px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -397,6 +404,8 @@
     /* Fix for iOS keyboard pushing content */
     position: sticky;
     bottom: 0;
+    /* Ensure it stays visible above keyboard */
+    transform: translateZ(0);
   }
   
   .chat-messages-container {
@@ -404,6 +413,14 @@
     -webkit-overflow-scrolling: touch;
     /* Prevent rubber-banding from showing white space */
     overscroll-behavior: contain;
+    /* Ensure proper scroll behavior with keyboard */
+    scroll-behavior: smooth;
+  }
+  
+  /* When input is focused (keyboard open) */
+  .chat-input-field-enhanced:focus {
+    /* Prevent iOS zoom on input focus */
+    font-size: 16px;
   }
 }
 
