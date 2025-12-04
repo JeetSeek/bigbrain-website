@@ -5,6 +5,7 @@ import { useAuth } from './contexts/AuthContext';
 import { TAB_IDS, STORAGE_KEYS, ROUTES, DEMO } from './utils/constants';
 import './styles/chat-professional.css';
 import './styles/ui-enhancements.css';
+import './styles/professional-ui.css';
 
 // Mobile-first iOS components
 import MobileNavigation, { MobileHeader, MobileContainer } from './components/MobileNavigation';

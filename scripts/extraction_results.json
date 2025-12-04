@@ -1,0 +1,942 @@
+{
+  "manual": {
+    "name": "Vaillant ecoTEC exclusive 838",
+    "url": "https://hfyfidpbtoqnqhdywdzw.supabase.co/storage/v1/object/public/boiler-manuals/dhs_manuals_all/vaillant/ecoTEC_exclusive_838_2007-201_installation.pdf",
+    "manufacturer": "Vaillant",
+    "type": "Combi"
+  },
+  "extraction_date": "2025-11-28T17:24:56.560Z",
+  "pdf_info": {
+    "pages": 56,
+    "characters": 139496
+  },
+  "specifications": {
+    "model": {
+      "name": "ecoTEC exclusive 832/838",
+      "manufacturer": "Vaillant",
+      "type": "Gas wall boiler with condensing appliance technology",
+      "gc_number": {
+        "ecoTEC exclusive 832": "47 044 37",
+        "ecoTEC exclusive 838": "47 044 38"
+      },
+      "output_kw": {
+        "ecoTEC exclusive 832 heating": 27,
+        "ecoTEC exclusive 832 dhw": 31.4,
+        "ecoTEC exclusive 838 heating": 30,
+        "ecoTEC exclusive 838 dhw": 37.2
+      }
+    },
+    "gas": {
+      "input_kw": null,
+      "gas_rate_m3h": null,
+      "burner_pressure_mbar": null,
+      "gas_type": "Natural gas H G20, Liquid gas propane G31"
+    },
+    "electrical": {
+      "voltage": null,
+      "frequency": null,
+      "fuse_rating": "3.0 A"
+    },
+    "water": {
+      "dhw_flow_rate_lpm": {
+        "32kw unit": "9.8 l/min",
+        "38kw unit": "11.6 l/min"
+      },
+      "max_pressure_bar": null,
+      "min_pressure_bar": null
+    },
+    "dimensions": {
+      "height_mm": null,
+      "width_mm": null,
+      "depth_mm": null,
+      "weight_kg": null
+    },
+    "flue": {
+      "diameter_mm": {
+        "standard flue pipe": "100 mm",
+        "optional flue pipe": "125 mm"
+      },
+      "max_length_m": {
+        "100 mm": "8 m",
+        "125 mm": "21 m"
+      }
+    }
+  },
+  "fault_codes": {
+    "fault_codes": [
+      {
+        "code": "F.0",
+        "cause_codes": [],
+        "description": "Interruption feed temperature sensor (NTC)",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "NTC faulty",
+          "NTC cable faulty",
+          "faulty plug connection on NTC",
+          "faulty plug connection on the electronics"
+        ],
+        "components": [
+          "NTC",
+          "cable",
+          "plug",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.1",
+        "cause_codes": [],
+        "description": "Interruption return temperature sensor (NTC)",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "NTC faulty",
+          "NTC cable faulty",
+          "faulty plug connection on NTC",
+          "faulty plug connection on the electronics"
+        ],
+        "components": [
+          "NTC",
+          "cable",
+          "plug",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.10",
+        "cause_codes": [],
+        "description": "Short-circuit in feed temperature sensor",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Sensor plug has mass short to the casing",
+          "short-circuit in wiring loom",
+          "sensor faulty"
+        ],
+        "components": [
+          "Sensor",
+          "casing",
+          "wiring loom"
+        ]
+      },
+      {
+        "code": "F.11",
+        "cause_codes": [],
+        "description": "Short-circuit in return temperature sensor",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Sensor plug has mass short to the casing",
+          "short-circuit in wiring loom",
+          "sensor faulty"
+        ],
+        "components": [
+          "Sensor",
+          "casing",
+          "wiring loom"
+        ]
+      },
+      {
+        "code": "F.13",
+        "cause_codes": [],
+        "description": "Short-circuit on heat retention storage tank sensor",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Sensor plug has mass short to the casing",
+          "short-circuit in wiring loom",
+          "sensor faulty"
+        ],
+        "components": [
+          "Sensor",
+          "casing",
+          "wiring loom"
+        ]
+      },
+      {
+        "code": "F.20",
+        "cause_codes": [],
+        "description": "Safety temperature limiter actuated",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Flow probe not connected thermally correct or defective",
+          "appliance does not shut down"
+        ],
+        "components": [
+          "Flow probe",
+          "Safety temperature limiter"
+        ]
+      },
+      {
+        "code": "F.22",
+        "cause_codes": [],
+        "description": "Dry fire Too little water in the appliance",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "water shortage switch defective",
+          "cable to pump or water shortage switch defective",
+          "pump blocked or defective",
+          "pump output too low"
+        ],
+        "components": [
+          "pump",
+          "water shortage switch"
+        ]
+      },
+      {
+        "code": "F.23",
+        "cause_codes": [],
+        "description": "Water shortage, temperature spread between flow and return probe too large",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Pump blocked or defective",
+          "pump output too low",
+          "flow and return sensor swapped over"
+        ],
+        "components": [
+          "Pump",
+          "Flow sensor",
+          "Return sensor"
+        ]
+      },
+      {
+        "code": "F.24",
+        "cause_codes": [],
+        "description": "Water shortage, temperature rise too quick",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Pump blocked",
+          "low output from the pump",
+          "air in appliance",
+          "system pressure too low"
+        ],
+        "components": [
+          "Pump"
+        ]
+      },
+      {
+        "code": "F.25",
+        "cause_codes": [],
+        "description": "Interruption in cable harness",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Cable harness faulty"
+        ],
+        "components": [
+          "Cable harness"
+        ]
+      },
+      {
+        "code": "F.27",
+        "cause_codes": [],
+        "description": "External light",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Gas solenoid valve defective",
+          "flame detector defective"
+        ],
+        "components": [
+          "Gas solenoid valve",
+          "Flame detector"
+        ]
+      },
+      {
+        "code": "F.28",
+        "cause_codes": [],
+        "description": "Appliance does not start: Attempts to ignite during start failed",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Faults in the gas supply such as:",
+          "- Gas meter or gas pressure detector defective",
+          "- Air in gas",
+          "- Gas flow pressure too low",
+          "- Main gas cock closed",
+          "Faults in the gas fitting",
+          "wrong gas setting",
+          "igniter (ignition transformer, ignition cable, ignition plug) defective",
+          "ionisation current stopped (cable, electrode)",
+          "faulty earthing in appliance",
+          "electronics defective"
+        ],
+        "components": [
+          "Gas meter",
+          "Gas pressure detector",
+          "Gas fitting",
+          "igniter",
+          "ignition transformer",
+          "ignition cable",
+          "ignition plug",
+          "electrode",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.29",
+        "cause_codes": [],
+        "description": "Flame goes off during operation and subsequent ignition attempts failed",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Gas supply temporarily stopped",
+          "ignition transformer has spark failure",
+          "faulty earthing of appliance"
+        ],
+        "components": [
+          "Gas valve",
+          "ignition transformer"
+        ]
+      },
+      {
+        "code": "F.32",
+        "cause_codes": [],
+        "description": "Speed deviation Fan",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Fans blocked",
+          "plug not inserted correctly on fan",
+          "hall sensor defective",
+          "fault in cable harness",
+          "electronics defective"
+        ],
+        "components": [
+          "Fan",
+          "hall sensor",
+          "cable harness",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.49",
+        "cause_codes": [],
+        "description": "eBUS undervoltage",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Short-circuit on eBUS input",
+          "eBUS overload or two power supplies with different polarities on the eBUS"
+        ],
+        "components": [
+          "eBUS"
+        ]
+      },
+      {
+        "code": "F.61",
+        "cause_codes": [],
+        "description": "Gas valve control faulty",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Short-circuit to mass in cable harness to the gas valves",
+          "installation fault on gas valve (short-circuit, mass short in the coils)",
+          "electronics faulty"
+        ],
+        "components": [
+          "Gas valve",
+          "cable harness",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.62",
+        "cause_codes": [],
+        "description": "Gas valve shutoff delay defective",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Gas fitting leaking",
+          "electronics defective"
+        ],
+        "components": [
+          "Gas valve",
+          "Gas fitting",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.63",
+        "cause_codes": [],
+        "description": "EEPROM faulty",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Electronics defective"
+        ],
+        "components": [
+          "EEPROM",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.64",
+        "cause_codes": [],
+        "description": "Electronics/sensor fault",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Short-circuit in flow or return sensor or electronics defective"
+        ],
+        "components": [
+          "Electronics",
+          "Flow sensor",
+          "Return sensor"
+        ]
+      },
+      {
+        "code": "F.65",
+        "cause_codes": [],
+        "description": "Electronics temperature too high",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Electronics too hot due to external effect",
+          "electronics defective"
+        ],
+        "components": [
+          "Electronics"
+        ]
+      },
+      {
+        "code": "F.67",
+        "cause_codes": [],
+        "description": "Flame monitor input signal is outside the limits (0 or 5 V)",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "electronics defective"
+        ],
+        "components": [
+          "Flame monitor",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.70",
+        "cause_codes": [],
+        "description": "No valid appliance variant for display and/or electronics",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Spare part case: Display and electronics changed at the same time appliance variant not re-set"
+        ],
+        "components": [
+          "Display",
+          "electronics"
+        ]
+      },
+      {
+        "code": "F.71",
+        "cause_codes": [],
+        "description": "Constant value feed NTC",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Feed NTC faulty"
+        ],
+        "components": [
+          "Feed NTC"
+        ]
+      },
+      {
+        "code": "F.72",
+        "cause_codes": [],
+        "description": "Flow and/or return sensor fault",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Flow and/or return sensor is faulty (tolerance too great)"
+        ],
+        "components": [
+          "Flow sensor",
+          "Return sensor"
+        ]
+      },
+      {
+        "code": "F.73",
+        "cause_codes": [],
+        "description": "Signal water pressure sensor in the wrong range (too low)",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Line to water pressure sensor is interrupted or has a short-circuit to 0V or water pressure sensor faulty"
+        ],
+        "components": [
+          "Water pressure sensor",
+          "cable"
+        ]
+      },
+      {
+        "code": "F.74",
+        "cause_codes": [],
+        "description": "Signal water pressure sensor in the wrong range (too high)",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Line to water pressure sensor has a short-circuit at 5V / 24V or internal fault in water pressure sensor"
+        ],
+        "components": [
+          "Water pressure sensor",
+          "cable"
+        ]
+      },
+      {
+        "code": "F.75",
+        "cause_codes": [],
+        "description": "No sudden change in pressure was detected on turning on the pump",
+        "reset_type": "Reset button",
+        "possible_causes": [
+          "Water pressure sensor or/and pump defective",
+          "Too little water in the appliance; check adjustable bypass",
+          "Connect expansion vessel in return",
+          "Air in the appliance"
+        ],
+        "components": [
+          "Water pressure sensor",
+          "Pump"
+        ]
+      },
+      {
+        "code": "F.76",
+        "cause_codes": [],
+        "description": "Interruption in cable harness",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Cable harness faulty"
+        ],
+        "components": [
+          "Cable harness"
+        ]
+      },
+      {
+        "code": "F.77",
+        "cause_codes": [],
+        "description": "Condensate pump or return signal from accessory module heating",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Condensate pump faulty or return signal from the exhaust gas flap has responded"
+        ],
+        "components": [
+          "Condensate pump",
+          "Exhaust gas flap"
+        ]
+      },
+      {
+        "code": "con",
+        "cause_codes": [],
+        "description": "No communication with the printed circuit board",
+        "reset_type": "Replace component",
+        "possible_causes": [
+          "Communication fault between the display and the printed circuit board in the switchgear box"
+        ],
+        "components": [
+          "Display",
+          "Printed circuit board",
+          "Switchgear box"
+        ]
+      }
+    ],
+    "total_found": 28
+  },
+  "service_procedures": {
+    "procedures": [
+      {
+        "name": "Filling the condense trap",
+        "type": "maintenance",
+        "steps": [
+          "Unscrew the lower section of the trap ( 1 ) from the condense trap.",
+          "Fill the lower section of the trap ( 1 ) 3/4 full with water.",
+          "Screw the lower section of the trap back onto the condense trap."
+        ],
+        "tools_required": [],
+        "safety_warnings": [
+          "If the appliance is started up with an unfilled condense trap, there is a danger of poisoning by exhaust gas emission."
+        ],
+        "expected_readings": {},
+        "page_reference": "24"
+      },
+      {
+        "name": "Dismantle compact thermal module",
+        "type": "removal",
+        "steps": [
+          "Turn the appliance off on the main switch.",
+          "Isolate the unit from the electrical mains.",
+          "Cut off the gas supply to the device.",
+          "Close the maintenance cocks on the appliance.",
+          "Remove the front cover from the device.",
+          "Swing off the electronic box.",
+          "Remove the screw ( 3 ) and remove the air inlet pipe ( 1 ) from the inlet spigot on the gas fitting.",
+          "Separate the gas supply pipe ( 6 ) on the gas fitting. Secure the gas corrugated pipe against twisting by bracing the pipe on the wrench surface while loosening the union nut.",
+          "Pull the two plugs of the ignition und grounding lines off the ignition electrode ( 4 ).",
+          "Only ecoTEC exclusive 832: Pull the cable plug off the fan motor and the cable off the gas fitting. Only ecoTEC exclusive 838: Open the mains coupling to the fan.",
+          "Undo the five nuts ( 2 ).",
+          "Pull the entire compact thermal module ( 5 ) off the heat exchanger.",
+          "After dismantling the burner and the heat exchanger, check for damage and dust and, if necessary, clean the components as described below."
+        ],
+        "tools_required": [
+          "wrench"
+        ],
+        "safety_warnings": [
+          "Danger of explosion through gas leakage! The mixer tube between the gas control unit and burner must not be opened. It can only be guaranteed that this component is gas-tight after it has been inspected at the factory.",
+          "There is danger of being burned or scalded at the compact thermal module and at all components carrying water. Only carry out work on these components once they have cooled down.",
+          "Under no circumstance may the compact thermal module be suspended from the flexible corrugated gas pipe."
+        ],
+        "expected_readings": {},
+        "page_reference": "37"
+      },
+      {
+        "name": "Clean the heat exchanger",
+        "type": "maintenance",
+        "steps": [
+          "Remove the compact thermal module (see Section 8.3.1).",
+          "Clean the pipes ( 3 ) of the heat exchanger ( 4 ) using regular vinegar. Flush with water. The water flows out of the heat exchanger through the water condense trap.",
+          "After a soaking time of approx. 20 minutes, flush away the dirt particles that have come loose with a powerful water jet. Avoid pointing the water jet directly at the insulating surface ( 2 ) on the back of the heat exchanger."
+        ],
+        "tools_required": [],
+        "safety_warnings": [
+          "Protect the electronics box turned down against sprayed water."
+        ],
+        "expected_readings": {},
+        "page_reference": "38"
+      },
+      {
+        "name": "Installing the burner assembly",
+        "type": "repair",
+        "steps": [
+          "Place the entire compact thermal module ( 5 ) onto the integral condensation heat exchanger.",
+          "Tighten the five nuts ( 2 ) across the diagonal until the burner door fits closely and uniformly onto the mating surfaces.",
+          "Insert the ignition cable and the earth cable of the ignition electrode ( 4 ).",
+          "Only ecoTEC exclusive 832: Insert the cables on the fan motor and the cable on the gas fitting. Only ecoTEC exclusive 838: Close the mains coupling to the fan.",
+          "Connect the gas supply ( 6 ) with a new gasket to the gas fitting. Use the spanner flat at the flexible gas line to hold the gas line.",
+          "Check that the blue gasket in the air intake pipe ( 1 ) is correctly located in the gasket seat.",
+          "Insert the air intake pipe on the suction nozzles and secure the pipe with the retaining screw ( 3 )."
+        ],
+        "tools_required": [
+          "spanner"
+        ],
+        "safety_warnings": [
+          "The two seals (1 - Fig. 8.5) on the burner assembly (must be replaced each time the module is removed (for example during maintenance). The burner flange insulation (2 - Fig. 8.5) on the compact thermal module (SP no. 21-0734) may not show any signs of damage; otherwise it must also be replaced.",
+          "Open the gas supply and check the appliance for gas leaks using a leak testing spray. Pay particular attention to the gas fitting (6)."
+        ],
+        "expected_readings": {},
+        "page_reference": "38-39"
+      },
+      {
+        "name": "Maintaining the secondary heat exchanger",
+        "type": "maintenance",
+        "steps": [
+          "Isolate the appliance from the house electricity circuit (see Section 8.3) and close the gas supply.",
+          "Close the maintenance cocks -if fitted- and the cold water inlet valve on the inlet combination, and drain the appliance.",
+          "Release the nut ( 4 ) on the secondary heat exchanger.",
+          "Release the clamp ( 1 ) on the preference changeover valve.",
+          "Release the clamps ( 2 ) and ( 3 ) on the secondary heat exchanger.",
+          "Remove the secondary heat exchanger to the side.",
+          "Flush the secondary heat exchanger thoroughly with clean water.",
+          "When re-assembling, use new O rings and flat seals, the part numbers can be obtained from the parts catalogue."
+        ],
+        "tools_required": [],
+        "safety_warnings": [
+          "All water conducting components present a danger of burning and scalding. Only carry out work on these components once they have cooled down.",
+          "Protect the electronics box turned down against sprayed water."
+        ],
+        "expected_readings": {},
+        "page_reference": "39"
+      },
+      {
+        "name": "Cleaning the condense trap",
+        "type": "maintenance",
+        "steps": [
+          "Unscrew the lower section ( 1 ) of the water condense trap.",
+          "Clean the bottom of the trap by flushing it out with water.",
+          "Fill the lower section with water until about 10 mm below the upper edge.",
+          "Fasten the lower section onto the condense trap again."
+        ],
+        "tools_required": [],
+        "safety_warnings": [
+          "If the device is operated with empty condense trap, there is risk of poisoning through emitting flue gases. Therefore, fill the trap with water again after each cleaning operation."
+        ],
+        "expected_readings": {},
+        "page_reference": "39"
+      },
+      {
+        "name": "Checking the expansion vessel",
+        "type": "maintenance",
+        "steps": [
+          "The maintenance cocks of the central heating system must be closed.",
+          "Release the pressure from the appliance.",
+          "Remove the valve cover from the filling connection of the expansion vessel.",
+          "Check that the internal pressure in the expansion vessel is between 0.75 and 0.9 bar. If the pressure is less than this, the vessel must be pumped up again using an air pump.",
+          "Refit the valve cover.",
+          "Re-pressurise the boiler and the heating system."
+        ],
+        "tools_required": [
+          "air pump"
+        ],
+        "safety_warnings": [],
+        "expected_readings": {
+          "pressure": "0.75 and 0.9 bar"
+        },
+        "page_reference": "40"
+      },
+      {
+        "name": "Replacing fan or gas fittings",
+        "type": "removal",
+        "steps": [
+          "Disconnect the appliance from the mains as described in Section 10.1, and close the gas cock in the gas supply pipe.",
+          "Remove the screw ( 2 ) and remove the air inlet pipe ( 1 ) from the inlet spigot on the gas fitting.",
+          "Release the gas supply pipe ( 4 ) on the gas valve.",
+          "Pull out the plug from the gas valve.",
+          "Only ecoTEC exclusive 832: Pull out the plug from the fan printed circuit board. Only ecoTEC exclusive 838: Open the coupling of the mains input.",
+          "Release the four screws ( 3 ) on the compact thermo module .",
+          "Remove the complete \"gas fitting/fan\" unit.",
+          "Release both fixing screws ( 5 ) on the gas fitting and remove the fan from the gas fitting.",
+          "Replace the defective component."
+        ],
+        "tools_required": [],
+        "safety_warnings": [
+          "Mount the gas valve and the fan in the same position as before."
+        ],
+        "expected_readings": {},
+        "page_reference": "47-48"
+      },
+      {
+        "name": "Replacing primary heat exchanger",
+        "type": "removal",
+        "steps": [
+          "Disconnect the appliance from the mains as described in Section 10.1, and close the gas cock in the gas supply pipe.",
+          "Close the maintenance cocks - if fitted - in the heating flow and return and drain the appliance.",
+          "Dismantle the compact thermo module as described under Section 8.3.1.",
+          "Remove the clamps ( 4 ) on the trap ( 3 ), release the fittings on the trap and remove the trap from the primary heat exchanger.",
+          "Remove the adaptor nuts of the trap from the primary heat exchanger.",
+          "Release the return connection ( 6 ) and the feed connection ( 5 ) on the primary heat exchanger.",
+          "Release the three screws ( 2 ) on the primary heat exchanger and remove the primary heat exchanger from the appliance.",
+          "Mount the new primary heat exchanger in reverse order and replace the seals.",
+          "Fill and bleed the appliance and if needed, the plant after installing the new primary heat exchanger.",
+          "After completing the work, check for gas and water leaks and perform a function check (see Section 6)."
+        ],
+        "tools_required": [],
+        "safety_warnings": [],
+        "expected_readings": {},
+        "page_reference": "48"
+      }
+    ],
+    "total_found": 9
+  },
+  "parts_info": {
+    "parts": [
+      {
+        "name": "Main PCB",
+        "part_number": null,
+        "description": "Electronic system of the boiler (e.g. for external controllers, external sensors etc.)",
+        "location": "Inside electronics box",
+        "common_faults": [],
+        "replacement_notes": "Remove the front cover of the device, and lower the electronic box forward. Unclip the rear cover of the electronic box and hinge the cover upwards."
+      },
+      {
+        "name": "Expansion vessel",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 1",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Air intake pipe",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 2",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Burner assembly",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 3",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Ignition electrode",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 4",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Gas valve",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 5",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Diverter valve",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 6",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Hot water heat exchanger",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 7",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Aqua-Sensor",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 8",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Electronics box",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 9",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Pump",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 10",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Auto air vent",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 11",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Pressure sensor",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 12",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Heat exchanger",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 13",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Air / flue gas duct",
+        "part_number": null,
+        "description": "Component of the appliance",
+        "location": "See Fig 2.1, Item 14",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Pressure relief valve",
+        "part_number": null,
+        "description": "Relieves pressure",
+        "location": "Connected as per figure 5.4",
+        "common_faults": [],
+        "replacement_notes": "The pressure relief valve and filling loop connection is provided within the boiler cardboard box and should be assembled as shown below."
+      },
+      {
+        "name": "Condense trap",
+        "part_number": null,
+        "description": "Collects water condensate where the condensate is continuously diverted into the drain pipe.",
+        "location": "See Fig 5.11",
+        "common_faults": [],
+        "replacement_notes": "The condense trap ( 1 ) must be filled with water as described in the relevant chapter before the boiler is commissioned."
+      },
+      {
+        "name": "Gas valve",
+        "part_number": null,
+        "description": "Multi functional automatic gas valve which ensures that the precise air/gas ratio is provided under all operating conditions",
+        "location": "See Fig 6.6",
+        "common_faults": [],
+        "replacement_notes": "Gas flow rate has been set during production and does not require adjustment"
+      },
+      {
+        "name": "Fan",
+        "part_number": null,
+        "description": "Fan component",
+        "location": "See Fig 5.15 and 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Igniter",
+        "part_number": null,
+        "description": "Igniter component",
+        "location": "See Fig 5.15",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Heating pump",
+        "part_number": null,
+        "description": "Pump component",
+        "location": "See Fig 5.15",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Water through flow sensor",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X 40 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Hot water outlet NTC",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X 40 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Flow temperature sensor (NTC)",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X31 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Preference changeover valve",
+        "part_number": null,
+        "description": "Valve",
+        "location": "X31 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Water pressure sensor",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X31 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Return temperature sensor (NTC)",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X31 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Secondary heat exchanger (NTC)",
+        "part_number": null,
+        "description": "Sensor",
+        "location": "X 2 Fig 5.16",
+        "common_faults": [],
+        "replacement_notes": null
+      },
+      {
+        "name": "Bypass valve",
+        "part_number": null,
+        "description": "Appliance bypass valve",
+        "location": "See Fig 7.3",
+        "common_faults": [],
+        "replacement_notes": "The appliances have a bypass valve. The pressure can be adjusted between 170 and 350 mbar."
+      }
+    ],
+    "total_found": 28
+  }
+}

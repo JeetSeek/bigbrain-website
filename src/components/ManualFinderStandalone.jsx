@@ -25,26 +25,12 @@ const Toast = ({ message, type = 'success', onClose }) => {
 
   return createPortal(
     <div
-      className={`fixed bottom-5 right-5 flex items-center gap-2 py-3 px-4 rounded-lg shadow-lg transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'} ${
-        type === 'success'
-          ? 'bg-green-50 text-green-800 border border-green-200'
-          : type === 'error'
-            ? 'bg-red-50 text-red-800 border border-red-200'
-            : 'bg-blue-50 text-blue-800 border border-blue-200'
+      className={`toast-pro ${visible ? 'visible' : ''} ${
+        type === 'success' ? 'toast-pro-success' : type === 'error' ? 'toast-pro-error' : 'toast-pro-info'
       }`}
     >
-      <span className="text-xl">{type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
-      <p className="body-md">{message}</p>
-      <button
-        onClick={() => {
-          setVisible(false);
-          setTimeout(onClose, TOAST_ANIMATION_TIME);
-        }}
-        className="ml-4 text-current opacity-70 hover:opacity-100"
-        aria-label="Close notification"
-      >
-        ×
-      </button>
+      <span className="text-lg">{type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span>
+      <p className="text-pro-body">{message}</p>
     </div>,
     document.body
   );
@@ -58,10 +44,10 @@ const ManufacturerRow = ({ index, style, data }) => {
   return (
     <button
       style={style}
-      className={`block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${selectedItem === manufacturer ? 'bg-blue-100 dark:bg-blue-900' : ''} text-black dark:text-white font-medium`}
+      className={`list-item-pro w-full text-left ${selectedItem === manufacturer ? 'bg-ios-blue/15' : ''}`}
       onClick={() => onSelect(manufacturer)}
     >
-      {manufacturer}
+      <span className="text-pro-body capitalize">{manufacturer}</span>
     </button>
   );
 };
@@ -76,59 +62,54 @@ const ManualRow = ({ index, style, data }) => {
       style={{
         ...style,
         display: 'flex',
-        padding: '12px 8px',
+        padding: '8px 16px',
       }}
     >
-      <div className="bg-white dark:bg-[#2C2C2E] border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 w-full">
-        <div className="p-5">
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white capitalize">
-                {manual.manufacturer}
-              </h3>
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1 line-clamp-2">
-                {manual.name}
-              </h4>
-            </div>
-          </div>
+      <div className="card-pro w-full p-5">
+        {/* Header */}
+        <div className="mb-3">
+          <h3 className="heading-pro-md capitalize mb-1">
+            {manual.manufacturer}
+          </h3>
+          <p className="text-pro-secondary line-clamp-2">
+            {manual.name}
+          </p>
+        </div>
 
-          <div className="flex flex-wrap gap-2 mb-4">
-            {manual.gc_number && (
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                GC: {manual.gc_number}
-              </span>
-            )}
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
-              PDF Manual
+        {/* Badges */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {manual.gc_number && (
+            <span className="badge-pro badge-pro-blue">
+              GC: {manual.gc_number}
             </span>
-          </div>
+          )}
+          <span className="badge-pro badge-pro-green">
+            PDF Manual
+          </span>
+        </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => handlePreview(manual.id)}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 font-medium transition-colors duration-200"
-            >
-              Preview
-            </button>
-            <button
-              onClick={() => handleDownload(manual.id)}
-              disabled={downloading && downloadingId === manual.id}
-              className={`flex-1 flex justify-center items-center px-4 py-2.5 rounded-lg font-medium transition-colors duration-200 ${
-                downloading && downloadingId === manual.id
-                  ? 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed text-gray-500'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md'
-              }`}
-            >
-              {downloading && downloadingId === manual.id ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
-                  Downloading...
-                </>
-              ) : (
-                'Download'
-              )}
-            </button>
-          </div>
+        {/* Actions */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => handlePreview(manual.id)}
+            className="btn-pro-secondary flex-1 !min-h-[44px] !py-2.5"
+          >
+            Preview
+          </button>
+          <button
+            onClick={() => handleDownload(manual.id)}
+            disabled={downloading && downloadingId === manual.id}
+            className="btn-pro-primary flex-1 !min-h-[44px] !py-2.5"
+          >
+            {downloading && downloadingId === manual.id ? (
+              <>
+                <div className="spinner-pro !w-4 !h-4 !border-white !border-t-transparent"></div>
+                <span>Loading...</span>
+              </>
+            ) : (
+              'Download'
+            )}
+          </button>
         </div>
       </div>
     </div>
