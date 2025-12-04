@@ -9,6 +9,7 @@ import './styles/ui-enhancements.css';
 // Mobile-first iOS components
 import MobileNavigation, { MobileHeader, MobileContainer } from './components/MobileNavigation';
 import ErrorBoundary from './components/ErrorBoundary';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // Import components needed in the main App component directly
 import ManualFinderStandalone from './components/ManualFinderStandalone';
@@ -193,16 +194,19 @@ const Dashboard = () => {
           </div>
         }
         rightAction={
-          <button
-            className="ios-button-secondary px-3 py-1 text-sm"
-            onClick={() => {
-              localStorage.removeItem(STORAGE_KEYS.DEMO_USER_LOGGED_IN);
-              window.location.reload();
-            }}
-            aria-label="Sign out"
-          >
-            Sign Out
-          </button>
+          <div className="flex items-center gap-2">
+            <PWAInstallPrompt />
+            <button
+              className="ios-button-secondary px-3 py-1 text-sm"
+              onClick={() => {
+                localStorage.removeItem(STORAGE_KEYS.DEMO_USER_LOGGED_IN);
+                window.location.reload();
+              }}
+              aria-label="Sign out"
+            >
+              Sign Out
+            </button>
+          </div>
         }
       />
 

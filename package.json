@@ -12,6 +12,7 @@
     "railway:start": "node server/index.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/supabase-js": "^2.51.0",
     "chalk": "^5.4.1",
@@ -22,8 +23,9 @@
     "html2canvas": "^1.4.1",
     "js-yaml": "^4.1.0",
     "jspdf": "^3.0.4",
-    "node-fetch": "^3.3.2",
+    "node-fetch": "^2.7.0",
     "ora": "^8.2.0",
+    "pdfjs-dist": "^3.11.174",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
@@ -41,9 +43,12 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "postcss": "^8.4.49",
     "prettier": "^3.6.0",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.15",
     "terser": "^5.44.1",
     "typescript-eslint": "^8.35.0",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-pwa": "^1.2.0",
+    "workbox-window": "^7.4.0"
   }
 }

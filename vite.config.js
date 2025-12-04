@@ -6,14 +6,30 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 /**
  * Vite configuration object
  * @type {import('vite').UserConfig}
  */
 export default defineConfig({
-  // Enable React plugin for JSX and React refresh support
-  plugins: [react()],
+  // Enable React plugin and PWA support
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'brain-icon-nBG.png'],
+      manifest: false, // Use public/manifest.json
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          { urlPattern: /^https:\/\/api\./i, handler: 'NetworkFirst' },
+          { urlPattern: /\.(?:png|jpg|svg)$/i, handler: 'CacheFirst' }
+        ]
+      },
+      devOptions: { enabled: true }
+    })
+  ],
   
   // Build optimization for production
   build: {

@@ -11,6 +11,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 // AdminDirect removed to prevent router conflicts
 import { STORAGE_KEYS, ROUTES } from './utils/constants';
 import { clearLegacyAuthData } from './services/authUtils';
+import PinWall from './components/PinWall';
 import './index.css';
 
 // Clear any legacy authentication data on app initialization
@@ -110,18 +111,20 @@ class ErrorBoundarySimple extends React.Component {
 }
 
 export const AppWithAuth = () => (
-  <ErrorBoundarySimple>
-    <AuthProvider>
-      <BrowserRouter
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true
-        }}
-      >
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
-  </ErrorBoundarySimple>
+  <PinWall>
+    <ErrorBoundarySimple>
+      <AuthProvider>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundarySimple>
+  </PinWall>
 );
 
 // Initialize the application with proper router and error handling
