@@ -73,9 +73,11 @@ export default function PWAInstallPrompt() {
       {/* Install Button */}
       <button
         onClick={handleInstallClick}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 
-                   text-white rounded-lg transition-colors text-sm font-medium
-                   shadow-lg hover:shadow-xl"
+        className="flex items-center gap-2 px-4 py-2.5 min-h-[44px]
+                   bg-[#007AFF] hover:bg-[#0051D5] active:scale-[0.98]
+                   text-white rounded-[10px] transition-all duration-200 text-[15px] font-semibold
+                   shadow-[0_2px_8px_rgba(0,122,255,0.3)]"
+        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
         aria-label="Install BoilerBrain App"
       >
         <FiDownload className="w-4 h-4" />
@@ -85,58 +87,58 @@ export default function PWAInstallPrompt() {
       {/* iOS Instructions Modal */}
       {showIOSModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-gray-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-gray-700">
+          <div className="bg-[#1C1C1E] rounded-[22px] max-w-sm w-full p-6 shadow-2xl border border-[#38383A]" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Install BoilerBrain</h2>
+              <h2 className="text-[20px] font-semibold text-white tracking-tight">Install BoilerBrain</h2>
               <button
                 onClick={() => setShowIOSModal(false)}
-                className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#2C2C2E] rounded-full transition-colors"
               >
-                <FiX className="w-5 h-5 text-gray-400" />
+                <FiX className="w-5 h-5 text-[#8E8E93]" />
               </button>
             </div>
 
             {/* Instructions */}
             <div className="space-y-4">
-              <p className="text-gray-300 text-sm">
+              <p className="text-[#EBEBF5]/60 text-[15px]">
                 Install this app on your iPhone for quick access and offline use:
               </p>
 
               {/* Step 1 */}
-              <div className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-start gap-3 p-4 bg-[#2C2C2E] rounded-[12px]">
+                <div className="flex-shrink-0 w-8 h-8 bg-[#007AFF] rounded-full flex items-center justify-center text-white font-semibold text-[15px]">
                   1
                 </div>
                 <div>
-                  <p className="text-white font-medium">Tap the Share button</p>
-                  <p className="text-gray-400 text-sm flex items-center gap-1">
-                    Look for <FiShare className="w-4 h-4 text-blue-400" /> at the bottom of Safari
+                  <p className="text-white font-semibold text-[17px]">Tap the Share button</p>
+                  <p className="text-[#8E8E93] text-[15px] flex items-center gap-1.5 mt-0.5">
+                    Look for <FiShare className="w-4 h-4 text-[#007AFF]" /> at the bottom of Safari
                   </p>
                 </div>
               </div>
 
               {/* Step 2 */}
-              <div className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-start gap-3 p-4 bg-[#2C2C2E] rounded-[12px]">
+                <div className="flex-shrink-0 w-8 h-8 bg-[#007AFF] rounded-full flex items-center justify-center text-white font-semibold text-[15px]">
                   2
                 </div>
                 <div>
-                  <p className="text-white font-medium">Scroll down and tap</p>
-                  <p className="text-gray-400 text-sm flex items-center gap-1">
-                    <FiPlusSquare className="w-4 h-4 text-blue-400" /> "Add to Home Screen"
+                  <p className="text-white font-semibold text-[17px]">Scroll down and tap</p>
+                  <p className="text-[#8E8E93] text-[15px] flex items-center gap-1.5 mt-0.5">
+                    <FiPlusSquare className="w-4 h-4 text-[#007AFF]" /> "Add to Home Screen"
                   </p>
                 </div>
               </div>
 
               {/* Step 3 */}
-              <div className="flex items-start gap-3 p-3 bg-gray-800 rounded-lg">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-start gap-3 p-4 bg-[#2C2C2E] rounded-[12px]">
+                <div className="flex-shrink-0 w-8 h-8 bg-[#007AFF] rounded-full flex items-center justify-center text-white font-semibold text-[15px]">
                   3
                 </div>
                 <div>
-                  <p className="text-white font-medium">Tap "Add"</p>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-white font-semibold text-[17px]">Tap "Add"</p>
+                  <p className="text-[#8E8E93] text-[15px] mt-0.5">
                     The app icon will appear on your home screen
                   </p>
                 </div>
@@ -146,8 +148,8 @@ export default function PWAInstallPrompt() {
             {/* Close button */}
             <button
               onClick={() => setShowIOSModal(false)}
-              className="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-700 text-white 
-                         rounded-lg font-medium transition-colors"
+              className="w-full mt-6 py-3.5 min-h-[50px] bg-[#007AFF] hover:bg-[#0051D5] active:scale-[0.98]
+                         text-white rounded-[12px] font-semibold text-[17px] transition-all duration-200"
             >
               Got it!
             </button>
