@@ -6,9 +6,9 @@ const DEFAULT_TIMEOUT = 30000; // 30s
 // Deployment modes
 const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE || (import.meta.env.PROD ? 'supabase' : 'local');
 
-// Production fallbacks for Supabase
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME';
+// Supabase configuration - requires environment variables
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const getBaseUrl = () => {
   // Supabase Edge Functions mode (production)

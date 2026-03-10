@@ -15,7 +15,7 @@ const SignaturePad = ({ onSignatureChange, label = 'Signature', disabled = false
     
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = '#000';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
   }, []);
@@ -87,18 +87,18 @@ const SignaturePad = ({ onSignatureChange, label = 'Signature', disabled = false
           <button
             type="button"
             onClick={clear}
-            className="text-xs text-red-500 hover:text-red-700"
+            className="min-h-[36px] px-3 text-xs font-semibold text-red-500 hover:text-red-700 active:scale-95 transition-transform"
           >
             Clear
           </button>
         )}
       </div>
-      <div className={`border-2 rounded-lg overflow-hidden ${disabled ? 'bg-gray-100' : 'bg-white'} ${hasSignature ? 'border-green-300' : 'border-gray-300'}`}>
+      <div className={`border-2 rounded-xl overflow-hidden transition-colors ${disabled ? 'bg-gray-100' : 'bg-white'} ${hasSignature ? 'border-green-400' : 'border-gray-300 border-dashed'}`}>
         <canvas
           ref={canvasRef}
-          width={400}
-          height={150}
-          className="w-full h-24 touch-none cursor-crosshair"
+          width={600}
+          height={200}
+          className="w-full h-28 touch-none cursor-crosshair"
           onMouseDown={startDrawing}
           onMouseMove={draw}
           onMouseUp={stopDrawing}
@@ -109,7 +109,7 @@ const SignaturePad = ({ onSignatureChange, label = 'Signature', disabled = false
         />
       </div>
       {!hasSignature && !disabled && (
-        <p className="text-xs text-gray-400 text-center">Sign above</p>
+        <p className="text-xs text-gray-400 text-center mt-1">Draw your signature above</p>
       )}
     </div>
   );

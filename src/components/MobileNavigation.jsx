@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TAB_IDS } from '../utils/constants';
+import { FiHome, FiBook, FiMessageCircle, FiFileText, FiTool, FiSettings } from 'react-icons/fi';
 
 /**
  * Mobile Navigation Component
@@ -34,41 +35,42 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
     setTimeout(() => setPressedTab(null), 150);
   };
 
-  // Tab configuration with iOS SF Symbols-style icons
+  // Tab configuration with professional icons
   const tabs = [
+    {
+      id: TAB_IDS.HOME,
+      label: 'Home',
+      Icon: FiHome,
+      description: 'Feature overview'
+    },
     {
       id: TAB_IDS.MANUAL_FINDER,
       label: 'Manuals',
-      icon: '📖',
-      sfSymbol: 'book.fill',
+      Icon: FiBook,
       description: 'Find boiler manuals'
     },
     {
       id: TAB_IDS.CHAT,
       label: 'Chat',
-      icon: '🧠',
-      sfSymbol: 'message.badge.fill',
+      Icon: FiMessageCircle,
       description: 'Fault finder chat assistant'
     },
     {
-      id: TAB_IDS.GAS_RATE,
-      label: 'Gas Rate',
-      icon: '🔥',
-      sfSymbol: 'flame.fill',
-      description: 'Calculate gas consumption'
+      id: TAB_IDS.CP12_FORM,
+      label: 'CP12',
+      Icon: FiFileText,
+      description: 'CP12 Gas Safety Record'
     },
     {
       id: TAB_IDS.TOOLS,
       label: 'Tools',
-      icon: '🛠️',
-      sfSymbol: 'wrench.and.screwdriver.fill',
+      Icon: FiTool,
       description: 'Engineering calculators and tools'
     },
     ...(isAdmin ? [{
       id: TAB_IDS.ADMIN,
       label: 'Admin',
-      icon: '⚙️',
-      sfSymbol: 'gearshape.fill',
+      Icon: FiSettings,
       description: 'Admin dashboard'
     }] : [])
   ];
@@ -78,6 +80,12 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
       className="ios-tab-bar ios-safe-area"
       role="tablist"
       aria-label="Main navigation"
+      style={{
+        background: 'rgba(255, 255, 255, 0.88)',
+        backdropFilter: 'saturate(180%) blur(20px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+        borderTop: '0.5px solid rgba(0, 0, 0, 0.12)',
+      }}
     >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
@@ -89,65 +97,53 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
             role="tab"
             aria-selected={isActive}
             aria-label={tab.description}
-            className={`
-              flex flex-col items-center justify-center
-              min-w-0 flex-1 px-1
-              transition-all duration-150 ease-out
-              ${isPressed ? 'transform scale-95' : ''}
-              ${isActive ? 'opacity-100' : 'opacity-60'}
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
-              rounded-lg mx-1
-            `}
+            className="flex flex-col items-center justify-center min-w-0 flex-1 px-1 py-1 relative focus:outline-none rounded-lg mx-0.5"
             style={{
               minHeight: 'var(--touch-target-min)',
-              color: isActive ? 'var(--ios-blue)' : 'var(--ios-label-secondary)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: isPressed ? 'scale(0.92)' : 'scale(1)',
             }}
             onClick={() => handleTabPress(tab.id)}
             onTouchStart={() => setPressedTab(tab.id)}
             onTouchEnd={() => setPressedTab(null)}
           >
+            {/* Active background pill */}
+            {isActive && (
+              <div
+                className="absolute inset-x-1 top-0.5 bottom-0.5 rounded-xl"
+                style={{
+                  background: 'rgba(0, 122, 255, 0.08)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              />
+            )}
+
             {/* Icon */}
-            <div 
-              className={`
-                text-xl mb-1 transition-transform duration-150
-                ${isPressed ? 'scale-90' : ''}
-                ${isActive ? 'scale-110' : ''}
-              `}
-              aria-hidden="true"
-            >
-              {tab.icon}
+            <div className="relative mb-0.5" aria-hidden="true">
+              <tab.Icon 
+                size={22} 
+                strokeWidth={isActive ? 2.5 : 1.5}
+                style={{
+                  color: isActive ? '#007AFF' : '#8E8E93',
+                  transition: 'all 0.2s ease',
+                  transform: isActive ? 'scale(1.08)' : 'scale(1)',
+                }}
+              />
             </div>
             
             {/* Label */}
             <span 
-              className={`
-                ios-caption2 font-medium leading-none text-center
-                ${isActive ? 'font-semibold' : ''}
-              `}
+              className="text-[10px] leading-none text-center relative"
               style={{
-                color: 'inherit',
-                maxWidth: '100%',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, sans-serif',
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? '#007AFF' : '#8E8E93',
+                letterSpacing: '-0.02em',
+                transition: 'all 0.2s ease',
               }}
             >
               {tab.label}
             </span>
-            
-            {/* Active indicator */}
-            {isActive && (
-              <div 
-                className="absolute -top-1 left-1/2 transform -translate-x-1/2"
-                style={{
-                  width: '4px',
-                  height: '4px',
-                  borderRadius: '2px',
-                  backgroundColor: 'var(--ios-blue)'
-                }}
-                aria-hidden="true"
-              />
-            )}
           </button>
         );
       })}
@@ -168,22 +164,34 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
  */
 export const MobileHeader = ({ title, leftAction, rightAction }) => {
   return (
-    <header className="ios-navigation-bar ios-safe-area">
+    <header 
+      className="ios-navigation-bar ios-safe-area"
+      style={{
+        background: 'rgba(255, 255, 255, 0.88)',
+        backdropFilter: 'saturate(180%) blur(20px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+        borderBottom: '0.5px solid rgba(0, 0, 0, 0.1)',
+      }}
+    >
       {/* Left Action */}
-      <div className="absolute left-4 flex items-center">
+      <div className="flex-shrink-0 pl-3 flex items-center min-w-0">
         {leftAction}
       </div>
       
       {/* Title */}
       <h1 
-        className="ios-headline font-semibold text-center px-16"
-        style={{ color: 'var(--ios-label-primary)' }}
+        className="font-semibold text-center flex-1 truncate px-2"
+        style={{ 
+          color: 'var(--ios-label-primary)',
+          fontSize: '17px',
+          letterSpacing: '-0.4px',
+        }}
       >
         {title}
       </h1>
       
       {/* Right Action */}
-      <div className="absolute right-4 flex items-center">
+      <div className="flex-shrink-0 pr-3 flex items-center min-w-0">
         {rightAction}
       </div>
     </header>

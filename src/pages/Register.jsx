@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { ROUTES, TIME, VALIDATION, INVITE_CODES } from '../utils/constants';
+import { ROUTES, TIME, VALIDATION } from '../utils/constants';
 
 /**
  * Registration Page Component
@@ -23,9 +23,6 @@ export function Register() {
 
   // Payment method selection (default: card)
   const [paymentMethod, setPaymentMethod] = useState('card');
-
-  // Use valid invite codes from constants
-  const validInviteCodes = INVITE_CODES.VALID_CODES;
 
   const navigate = useNavigate();
   const { signUp, createUserProfile, user } = useAuth();
@@ -61,9 +58,6 @@ export function Register() {
     if (form.password.length < VALIDATION.PASSWORD_MIN_LENGTH)
       errs.password = `Min ${VALIDATION.PASSWORD_MIN_LENGTH} characters`;
     if (form.password !== form.confirmPassword) errs.confirmPassword = 'Passwords do not match';
-    // Make invitation code optional - if provided, validate it, but don't require it
-    if (form.inviteCode && !validInviteCodes.includes(form.inviteCode.trim().toUpperCase()))
-      errs.inviteCode = 'Invalid invitation code';
     if (!form.agree) errs.agree = 'You must agree to the terms';
     return errs;
   };
@@ -77,6 +71,21 @@ export function Register() {
       setSubmitting(true);
 
       try {
+        // Validate invite code via backend API (if provided)
+        if (form.inviteCode) {
+          const inviteRes = await fetch('/api/validate-invite', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: form.inviteCode }),
+          });
+          const inviteData = await inviteRes.json();
+          if (!inviteData.valid) {
+            setErrors({ inviteCode: inviteData.reason || 'Invalid invitation code' });
+            setSubmitting(false);
+            return;
+          }
+        }
+
         // Sign up with Supabase Auth
         const { data, error } = await signUp(form.email, form.password, {
           name: form.name,
@@ -109,15 +118,18 @@ export function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4">
-      <div className="w-full max-w-md bg-zinc-900 rounded-2xl shadow-2xl p-8 md:p-12 border border-zinc-800">
+      <div className="w-full max-w-md bg-zinc-900 rounded-2xl shadow-2xl p-5 sm:p-8 md:p-12 border border-zinc-800">
         {success ? (
           <div className="py-8 text-center">
-            <div className="text-green-400 text-4xl mb-3">✓</div>
+            <div className="text-green-400 text-4xl mb-3">✉️</div>
             <h2 className="text-xl font-light tracking-tight text-white mb-4">
-              Registration Successful!
+              Check Your Email
             </h2>
-            <p className="text-zinc-400 mb-8">
-              Your account has been created. You can now log in to access Boiler Brain.
+            <p className="text-zinc-400 mb-4">
+              We've sent a verification link to <span className="text-white font-medium">{form.email}</span>.
+            </p>
+            <p className="text-zinc-500 text-sm mb-8">
+              Click the link in the email to verify your account, then sign in below. Check your spam folder if you don't see it within a few minutes.
             </p>
             <Link
               to={ROUTES.LOGIN}
@@ -125,6 +137,12 @@ export function Register() {
             >
               Continue to Sign In
             </Link>
+            <button
+              onClick={() => setSuccess(false)}
+              className="mt-4 text-zinc-500 hover:text-zinc-300 text-sm transition-colors"
+            >
+              Didn't receive it? Try again
+            </button>
           </div>
         ) : (
           <>
@@ -147,7 +165,7 @@ export function Register() {
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <input
-                className="rounded-lg px-4 py-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
+                className="rounded-lg px-4 py-3 bg-zinc-800 text-white text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
                 type="text"
                 name="inviteCode"
                 placeholder="Invitation Code (Optional)"
@@ -159,7 +177,7 @@ export function Register() {
                 <span className="text-red-400 text-xs mt-1">{errors.inviteCode}</span>
               )}
               <input
-                className="rounded-lg px-4 py-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
+                className="rounded-lg px-4 py-3 bg-zinc-800 text-white text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
                 type="text"
                 name="name"
                 placeholder="Full Name"
@@ -170,7 +188,7 @@ export function Register() {
               {errors.name && <span className="text-red-400 text-xs mt-1">{errors.name}</span>}
 
               <input
-                className="rounded-lg px-4 py-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
+                className="rounded-lg px-4 py-3 bg-zinc-800 text-white text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
                 type="email"
                 name="email"
                 placeholder="Email Address"
@@ -181,7 +199,7 @@ export function Register() {
               {errors.email && <span className="text-red-400 text-xs mt-1">{errors.email}</span>}
 
               <input
-                className="rounded-lg px-4 py-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
+                className="rounded-lg px-4 py-3 bg-zinc-800 text-white text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
                 type="password"
                 name="password"
                 placeholder="Password"
@@ -194,7 +212,7 @@ export function Register() {
               )}
 
               <input
-                className="rounded-lg px-4 py-3 bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
+                className="rounded-lg px-4 py-3 bg-zinc-800 text-white text-[16px] placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500 border border-zinc-700"
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"

@@ -154,25 +154,32 @@ const GasMeterDiversity = () => {
   };
 
   // Input styles
-  const inputClass = "w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500";
-  const selectClass = "w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const inputClass = "w-full px-4 py-3 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent";
+  const selectClass = "w-full px-4 py-3 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent";
 
   // Results Screen
   if (showResults && results) {
     return (
-      <div className="max-w-lg mx-auto bg-gray-50 min-h-screen pb-24">
-        {/* Header */}
-        <div className="bg-slate-700 text-white px-4 py-4 sticky top-0 z-10">
-          <div className="flex items-center justify-between">
-            <button onClick={resetCalculation} className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-xl">←</span>
+      <div className="p-3 sm:p-4 space-y-4 max-w-3xl mx-auto pb-4">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 p-4 sm:p-5">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3 blur-xl" />
+          <div className="relative flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+              ⚡
+            </div>
+            <div className="flex-1">
+              <h1 className="text-lg font-bold text-white">Diversity Results</h1>
+              <p className="text-sm text-white/70 mt-0.5">BS 6400-1 Annex A Calculation</p>
+            </div>
+            <button onClick={resetCalculation} className="px-3 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-semibold text-white hover:bg-white/30 active:scale-95 transition-all">
+              ← Edit
             </button>
-            <h1 className="text-lg font-medium">Diversity Results</h1>
-            <div className="w-10" />
           </div>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="space-y-4">
           {/* Traffic Light Status */}
           <div className={`rounded-2xl p-6 text-center ${
             results.status === 'green' ? 'bg-green-100 border-2 border-green-500' :
@@ -350,30 +357,35 @@ const GasMeterDiversity = () => {
         </div>
 
         {/* Bottom Button */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-10">
-          <div className="max-w-lg mx-auto">
-            <button onClick={resetCalculation} className="w-full py-3 bg-blue-500 text-white font-medium rounded-lg">
-              ← Modify Appliances
-            </button>
-          </div>
-        </div>
+        <button onClick={resetCalculation} className="w-full py-3.5 min-h-[44px] bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 active:scale-[0.98] transition-all">
+          ← Modify Appliances
+        </button>
       </div>
     );
   }
 
   // Input Screen
   return (
-    <div className="max-w-lg mx-auto bg-gray-50 min-h-screen pb-32">
-      {/* Header */}
-      <div className="bg-slate-700 text-white px-4 py-4 sticky top-0 z-10">
-        <h1 className="text-lg font-medium text-center">Gas Meter Diversity</h1>
-        <p className="text-xs text-center text-slate-300 mt-1">BS 6400-1 Annex A Calculation</p>
+    <div className="p-3 sm:p-4 space-y-4 max-w-3xl mx-auto pb-4">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 p-4 sm:p-5">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3 blur-xl" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+            ⚡
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white">Gas Meter Diversity</h1>
+            <p className="text-sm text-white/70 mt-0.5">BS 6400-1 Annex A Calculation</p>
+          </div>
+        </div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="space-y-4">
         {/* Info Banner */}
-        <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-          <p className="text-sm text-blue-800">
+        <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+          <p className="text-sm text-purple-800">
             <span className="font-bold">Add all gas appliances</span> at the property. Each appliance type has a specific diversity factor per BS 6400-1 (e.g., boilers = 100%, cookers = 60%, fires = 50%).
           </p>
         </div>
@@ -454,9 +466,9 @@ const GasMeterDiversity = () => {
         {/* Add Button */}
         <button
           onClick={addAppliance}
-          className="w-full py-4 bg-blue-500 text-white font-medium rounded-xl flex items-center justify-center gap-2 shadow-lg"
+          className="w-full py-3.5 min-h-[44px] border-2 border-dashed border-gray-300 rounded-xl text-sm font-semibold text-gray-500 hover:border-purple-400 hover:text-purple-600 active:scale-[0.98] transition-all"
         >
-          <span className="text-xl">+</span> Add Appliance
+          + Add Appliance
         </button>
 
         {/* Quick Stats */}
@@ -470,22 +482,17 @@ const GasMeterDiversity = () => {
             </div>
           </div>
         )}
+        {/* Calculate Button */}
+        {appliances.length > 0 && (
+          <button
+            onClick={calculate}
+            disabled={appliances.length === 0 || appliances.some(a => !a.kw || !a.type)}
+            className="w-full py-3.5 min-h-[44px] bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            Calculate Diversity
+          </button>
+        )}
       </div>
-
-      {/* Bottom Calculate Button */}
-      {appliances.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 z-10">
-          <div className="max-w-lg mx-auto">
-            <button
-              onClick={calculate}
-              disabled={appliances.length === 0 || appliances.some(a => !a.kw || !a.type)}
-              className="w-full py-4 bg-emerald-500 text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-            >
-              Calculate Diversity
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

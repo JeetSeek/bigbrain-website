@@ -1,124 +1,141 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-
-// Disable Vosk for production deployment to reduce bundle size
-const loadVosk = async () => {
-  console.warn('Vosk speech recognition disabled in production build');
-  return null;
-};
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 /**
- * useVoskSpeech – React hook providing offline speech-to-text via Vosk-browser.
- * Model must be hosted at /models/vosk-model-small-en-us-0.15.tar.gz (or provide custom URL).
- * When browser lacks WebAssembly + AudioWorklet support the hook returns supported = false
- * and the mic UI should be disabled.
+ * useSpeechRecognition - Speech-to-text using Web Speech API
+ * Works on Chrome, Safari, Edge (macOS, iOS, Windows)
  */
-export default function useVoskSpeech({
-  modelUrl = '/models/vosk-model-small-en-us-0.15.tar.gz',
-  sampleRate = 48000
-} = {}) {
+export default function useVoskSpeech() {
   const [supported, setSupported] = useState(false);
-  const [loadingModel, setLoadingModel] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const recognizerRef = useRef(null);
-  const audioContextRef = useRef(null);
-  const workletNodeRef = useRef(null);
+  const recognitionRef = useRef(null);
 
-  // Feature detection – WebAssembly, AudioWorklet, getUserMedia
+  // Check for Web Speech API support
   useEffect(() => {
-    const hasWasm = typeof WebAssembly === 'object';
-    const hasAudioWorklet = (() => {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const available = !!ctx.audioWorklet;
-        ctx.close();
-        return available;
-      } catch {
-        return false;
-      }
-    })();
-    const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-    setSupported(hasWasm && hasAudioWorklet && hasGetUserMedia);
-  }, []);
-
-  // Load model lazily
-  const loadModel = useCallback(async () => {
-    if (recognizerRef.current || loadingModel) return;
-    setLoadingModel(true);
-    try {
-      const model = await createModel(modelUrl);
-      recognizerRef.current = await model.createRecognizer(sampleRate);
-    } catch (err) {
-      console.error('[useVoskSpeech] Failed to load Vosk model:', err);
-      setSupported(false);
-    } finally {
-      setLoadingModel(false);
-    }
-  }, [modelUrl, sampleRate, loadingModel]);
-
-  const startListening = useCallback(async () => {
-    if (!supported || isListening) return;
-    await loadModel();
-    if (!recognizerRef.current) return;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioContextClass({ sampleRate });
-      audioContextRef.current = ctx;
-      await ctx.audioWorklet.addModule('data:application/javascript;base64,'); // dummy module, will inject below
-      // Build a small inline worklet to forward raw PCM to recognizer
-      const workletCode = `class VoskProcessor extends AudioWorkletProcessor{constructor(){super()}process(inputs){const input=inputs[0];if(input&&input[0]){const buf=input[0];const ab=new Float32Array(buf.length);ab.set(buf);this.port.postMessage(ab);}return true;} } registerProcessor('vosk-processor',VoskProcessor);`;
-      const blob = new Blob([workletCode], { type: 'application/javascript' });
-      const moduleUrl = URL.createObjectURL(blob);
-      await ctx.audioWorklet.addModule(moduleUrl);
-      const node = new AudioWorkletNode(ctx, 'vosk-processor');
-      node.port.onmessage = (e) => {
-        const pcm = e.data;
-        // Convert Float32Array [-1,1] to Int16 PCM for Vosk
-        const int16 = new Int16Array(pcm.length);
-        for (let i = 0; i < pcm.length; i++) {
-          const s = Math.max(-1, Math.min(1, pcm[i]));
-          int16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      setSupported(true);
+      
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;  // Keep listening until manually stopped
+      recognition.interimResults = true;
+      recognition.lang = 'en-GB'; // British English for engineer context
+      recognition.maxAlternatives = 1;
+      
+      recognition.onstart = () => {
+        console.log('[Speech] Listening started');
+        setIsListening(true);
+      };
+      
+      recognition.onresult = (event) => {
+        let fullTranscript = '';
+        
+        // Build complete transcript from all results
+        for (let i = 0; i < event.results.length; i++) {
+          fullTranscript += event.results[i][0].transcript;
         }
-        recognizerRef.current.acceptWaveform(int16);
-        const result = recognizerRef.current.result();
-        if (result?.text) {
-          setTranscript(result.text.trim());
+        
+        if (fullTranscript) {
+          console.log('[Speech] Transcript:', fullTranscript);
+          setTranscript(fullTranscript);
         }
       };
-      const source = ctx.createMediaStreamSource(stream);
-      source.connect(node);
-      node.connect(ctx.destination);
-      workletNodeRef.current = node;
-      setIsListening(true);
-    } catch (err) {
-      console.error('[useVoskSpeech] Error starting microphone:', err);
+      
+      recognition.onerror = (event) => {
+        console.error('[Speech] Error:', event.error);
+        setIsListening(false);
+        
+        // Handle specific errors with user-friendly messages
+        switch (event.error) {
+          case 'not-allowed':
+            alert('Microphone access denied. Please allow microphone access in your browser settings.');
+            break;
+          case 'audio-capture':
+            alert('Cannot access microphone. Please:\n1. Open this page directly at localhost:5176\n2. Check your browser has microphone permission\n3. Ensure no other app is using the microphone');
+            break;
+          case 'network':
+            alert('Network error during speech recognition. Please check your internet connection.');
+            break;
+          case 'no-speech':
+            // This is normal - user didn't speak, no alert needed
+            console.log('[Speech] No speech detected');
+            break;
+          default:
+            console.warn('[Speech] Unhandled error:', event.error);
+        }
+      };
+      
+      recognition.onend = () => {
+        console.log('[Speech] Listening ended');
+        setIsListening(false);
+      };
+      
+      recognitionRef.current = recognition;
+      console.log('[Speech] Web Speech API initialized');
+    } else {
+      console.log('[Speech] Web Speech API not supported');
+      setSupported(false);
     }
-  }, [supported, isListening, loadModel, sampleRate]);
+    
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch (e) {
+          // Ignore
+        }
+      }
+    };
+  }, []);
+
+  const startListening = useCallback(() => {
+    if (!recognitionRef.current || isListening) return;
+    
+    try {
+      setTranscript('');
+      recognitionRef.current.start();
+      console.log('[Speech] Starting...');
+    } catch (error) {
+      console.error('[Speech] Start error:', error);
+      // May already be running
+      if (error.name === 'InvalidStateError') {
+        recognitionRef.current.stop();
+      }
+    }
+  }, [isListening]);
 
   const stopListening = useCallback(() => {
-    if (!isListening) return;
+    if (!recognitionRef.current || !isListening) return;
+    
     try {
-      workletNodeRef.current?.disconnect();
-      audioContextRef.current?.close();
-    } catch (err) {
-      console.warn('[useVoskSpeech] error closing audio context', err);
+      recognitionRef.current.stop();
+      console.log('[Speech] Stopping...');
+    } catch (error) {
+      console.error('[Speech] Stop error:', error);
     }
-    setIsListening(false);
   }, [isListening]);
 
   const toggleListening = useCallback(() => {
-    isListening ? stopListening() : startListening();
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
   }, [isListening, startListening, stopListening]);
 
-  const resetTranscript = () => setTranscript('');
+  const resetTranscript = useCallback(() => {
+    setTranscript('');
+  }, []);
 
   return {
     supported,
-    loadingModel,
+    loadingModel: false,
     isListening,
     transcript,
     toggleListening,
+    startListening,
+    stopListening,
     resetTranscript
   };
 }

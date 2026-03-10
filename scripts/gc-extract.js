@@ -7,28 +7,41 @@
 
 import { createRequire } from 'module';
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), 'server/.env') });
+
 const require = createRequire(import.meta.url);
 const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
 
+const OPENAI_KEYS = [
+  process.env.OPENAI_API_KEY,
+  process.env.OPENAI_API_KEY_2,
+  process.env.OPENAI_API_KEY_3
+].filter(Boolean);
+
+if (OPENAI_KEYS.length === 0) {
+  console.error('❌ No OPENAI_API_KEY found. Add it to .env or server/.env');
+  process.exit(1);
+}
+console.log(`🔑 ${OPENAI_KEYS.length} OpenAI API keys loaded`);
+let currentKeyIndex = 0;
+
 const CONFIG = {
-  GEMINI_API_KEY: 'AIzaSyAo52Eu2llZAYzYj27MLMOxFWnapZQ1KDg',
-  SUPABASE_URL: 'https://hfyfidpbtoqnqhdywdzw.supabase.co',
-  SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME',
+  SUPABASE_URL: process.env.SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co',
+  SUPABASE_KEY: process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY,
   RATE_LIMIT_DELAY: 500,  // Faster with paid account
-  MAX_MANUALS: 500,       // Process more with paid account
+  MAX_MANUALS: 2000,      // Process all priority manufacturers
   // Priority: manufacturers with 0 fault codes extracted
-  PRIORITY_MANUFACTURERS: ['Worcester', 'Vaillant', 'Ideal', 'Potterton', 'Glowworm', 'Viessmann', 'Ferroli', 'Ariston', 'Glow-worm'],
+  PRIORITY_MANUFACTURERS: ['Vaillant', 'Worcester', 'Ideal', 'Glow-worm', 'Glowworm'],
   DESKTOP_PATH: path.join(os.homedir(), 'Desktop', 'gc-extraction-results')
 };
 
 const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
-const genAI = new GoogleGenerativeAI(CONFIG.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 // Ensure desktop results folder exists
 if (!fs.existsSync(CONFIG.DESKTOP_PATH)) {
@@ -59,11 +72,9 @@ const stats = {
 
 // API Pricing (per 1M tokens)
 const PRICING = {
-  'gemini-2.0-flash': { input: 0.10, output: 0.40 },
-  'gemini-1.5-pro': { input: 1.25, output: 5.00 },
-  'gemini-1.5-flash': { input: 0.075, output: 0.30 }
+  'gpt-4o-mini': { input: 0.15, output: 0.60 }
 };
-const CURRENT_MODEL = 'gemini-2.0-flash';
+const CURRENT_MODEL = 'gpt-4o-mini';
 
 // GC Number validation regex - must match XX-XXX-XX or XX XXX XX format
 const GC_REGEX = /^\d{2}[-\s]?\d{3}[-\s]?\d{2}$/;
@@ -173,18 +184,44 @@ async function extractPDFText(pdfBuffer) {
   return pages;
 }
 
-async function callGemini(prompt, maxRetries = 3) {
+async function callLLM(prompt, maxRetries = 3) {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const key = OPENAI_KEYS[currentKeyIndex % OPENAI_KEYS.length];
     try {
       stats.apiCalls++;
-      // Estimate input tokens (~4 chars per token)
       const inputTokenEstimate = Math.ceil(prompt.length / 4);
       stats.inputTokens += inputTokenEstimate;
       
-      const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          max_tokens: 4000
+        })
+      });
       
-      // Estimate output tokens
+      if (!response.ok) {
+        const errBody = await response.text();
+        if (response.status === 429) {
+          console.log(`   ⏳ Rate limited on key #${currentKeyIndex + 1}, rotating...`);
+          currentKeyIndex++;
+          if (currentKeyIndex >= OPENAI_KEYS.length * 2) {
+            console.log('\n🛑 ALL KEYS RATE LIMITED - waiting 60s...');
+            await delay(60000);
+            currentKeyIndex = 0;
+          }
+          await delay(2000);
+          continue;
+        }
+        throw new Error(`OpenAI ${response.status}: ${errBody.slice(0, 200)}`);
+      }
+      
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content || '';
+      
       const outputTokenEstimate = Math.ceil(text.length / 4);
       stats.outputTokens += outputTokenEstimate;
       
@@ -192,16 +229,14 @@ async function callGemini(prompt, maxRetries = 3) {
       if (jsonMatch) return JSON.parse(jsonMatch[0]);
       return null;
     } catch (error) {
-      if (error.message.includes('429') || error.message.includes('quota')) {
-        if (error.message.includes('quota')) {
-          console.log('\n🛑 DAILY QUOTA REACHED - Stopping extraction');
-          throw new Error('QUOTA_EXHAUSTED');
-        }
-        console.log(`   ⏳ Rate limited, waiting ${30 * (attempt + 1)}s...`);
-        await delay(30000 * (attempt + 1));
-      } else {
-        throw error;
+      if (error.message.includes('429')) {
+        currentKeyIndex++;
+        await delay(5000);
+        continue;
       }
+      console.log(`   ⚠️ LLM error: ${error.message.slice(0, 100)}`);
+      if (attempt === maxRetries - 1) return null;
+      await delay(3000);
     }
   }
   return null;
@@ -243,7 +278,7 @@ async function processManual(manual) {
     
     console.log('   🔍 Extracting GC numbers...');
     await delay(CONFIG.RATE_LIMIT_DELAY);
-    const metadata = await callGemini(PROMPTS.extractGCAndMetadata + firstPagesText);
+    const metadata = await callLLM(PROMPTS.extractGCAndMetadata + firstPagesText);
     
     if (!metadata) {
       console.log('   ⚠️ Failed to extract metadata');
@@ -291,7 +326,7 @@ async function processManual(manual) {
 
     console.log('   🔍 Extracting fault codes...');
     await delay(CONFIG.RATE_LIMIT_DELAY);
-    const faultCodes = await callGemini(PROMPTS.extractFaultCodes + fullText);
+    const faultCodes = await callLLM(PROMPTS.extractFaultCodes + fullText);
     
     if (faultCodes && Array.isArray(faultCodes) && faultCodes.length > 0) {
       console.log(`   ✅ Found ${faultCodes.length} fault codes`);
@@ -319,7 +354,7 @@ async function processManual(manual) {
 
     console.log('   🔧 Extracting procedures...');
     await delay(CONFIG.RATE_LIMIT_DELAY);
-    const procedures = await callGemini(PROMPTS.extractProcedures + fullText);
+    const procedures = await callLLM(PROMPTS.extractProcedures + fullText);
     
     if (procedures && Array.isArray(procedures) && procedures.length > 0) {
       console.log(`   ✅ Found ${procedures.length} procedures`);
@@ -451,9 +486,6 @@ function saveStats() {
    Remaining manuals: ${remainingManuals.toLocaleString()}
    Projected cost: $${projectedCost.toFixed(2)}
    
-💡 Alternative models:
-   gemini-1.5-pro: ~$${(((projectedInputTokens / 1000000) * 1.25) + ((projectedOutputTokens / 1000000) * 5.00)).toFixed(2)}
-   gemini-1.5-flash: ~$${(((projectedInputTokens / 1000000) * 0.075) + ((projectedOutputTokens / 1000000) * 0.30)).toFixed(2)}
 ================================================================================
 📁 Results saved to: ${CONFIG.DESKTOP_PATH}
 ================================================================================
@@ -469,31 +501,38 @@ async function main() {
   console.log(`📁 Results: ${CONFIG.DESKTOP_PATH}`);
   console.log(`📋 Previously processed: ${processedManuals.length} manuals\n`);
 
-  // Get manuals from database (same as batch-extract.js)
-  const { data: manuals, error } = await supabase
-    .from('boiler_manuals')
-    .select('name, url, manufacturer')
-    .or('name.ilike.%installation%,name.ilike.%service%')
-    .order('manufacturer')
-    .limit(1000);
+  // Get manuals ONLY for priority manufacturers
+  let allManuals = [];
+  for (const mfg of CONFIG.PRIORITY_MANUFACTURERS) {
+    const { data, error } = await supabase
+      .from('boiler_manuals')
+      .select('name, url, manufacturer')
+      .ilike('manufacturer', `%${mfg}%`)
+      .order('name')
+      .limit(500);
+    if (error) {
+      console.error(`Failed to get ${mfg} manuals:`, error);
+      continue;
+    }
+    if (data && data.length > 0) {
+      console.log(`📚 ${mfg}: ${data.length} manuals found`);
+      allManuals = allManuals.concat(data);
+    }
+  }
 
-  if (error || !manuals) {
-    console.error('Failed to get manuals:', error);
+  if (allManuals.length === 0) {
+    console.error('No manuals found for priority manufacturers');
     return;
   }
 
-  console.log(`📚 Found ${manuals.length} manuals in database`);
+  const manuals = allManuals;
+  console.log(`📚 Total: ${manuals.length} manuals from priority manufacturers`);
 
-  // Sort by priority manufacturers
+  // Sort: installation/service manuals first (most useful)
   const sortedManuals = manuals.sort((a, b) => {
-    const aIdx = CONFIG.PRIORITY_MANUFACTURERS.findIndex(m => 
-      a.manufacturer?.toLowerCase().includes(m.toLowerCase()));
-    const bIdx = CONFIG.PRIORITY_MANUFACTURERS.findIndex(m => 
-      b.manufacturer?.toLowerCase().includes(m.toLowerCase()));
-    if (aIdx === -1 && bIdx === -1) return 0;
-    if (aIdx === -1) return 1;
-    if (bIdx === -1) return -1;
-    return aIdx - bIdx;
+    const aScore = /install|service|fault|diagnos/i.test(a.name) ? 0 : 1;
+    const bScore = /install|service|fault|diagnos/i.test(b.name) ? 0 : 1;
+    return aScore - bScore;
   });
 
   // Filter out already processed

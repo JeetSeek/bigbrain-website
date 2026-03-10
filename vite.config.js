@@ -21,13 +21,61 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'brain-icon-nBG.png'],
       manifest: false, // Use public/manifest.json
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Exclude large lazy-loaded chunks from precache
+        globIgnores: ['**/pdf-*.js', '**/vendor-*.js'],
+        maximumFileSizeToCacheInBytes: 400 * 1024,
         runtimeCaching: [
-          { urlPattern: /^https:\/\/api\./i, handler: 'NetworkFirst' },
-          { urlPattern: /\.(?:png|jpg|svg)$/i, handler: 'CacheFirst' }
+          // Supabase API — network first with 5min cache fallback
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\//i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'supabase-api',
+              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
+              networkTimeoutSeconds: 10
+            }
+          },
+          // Supabase Edge Functions — network first
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/functions\/v1\//i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'edge-functions',
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 },
+              networkTimeoutSeconds: 15
+            }
+          },
+          // Supabase Storage (manual PDFs) — cache first, long TTL
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\//i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'supabase-storage',
+              expiration: { maxEntries: 100, maxAgeSeconds: 7 * 24 * 60 * 60 }
+            }
+          },
+          // Google Fonts — cache first
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts',
+              expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 }
+            }
+          },
+          // Images — cache first
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: { maxEntries: 60, maxAgeSeconds: 30 * 24 * 60 * 60 }
+            }
+          }
         ]
       },
-      devOptions: { enabled: true }
+      devOptions: { enabled: false }
     })
   ],
   
@@ -67,6 +115,14 @@ export default defineConfig({
           if (id.includes('node_modules/vosk')) {
             return 'speech';
           }
+          // DOMPurify
+          if (id.includes('node_modules/dompurify')) {
+            return 'vendor';
+          }
+          // Auth UI
+          if (id.includes('node_modules/@supabase/auth-ui')) {
+            return 'auth-ui';
+          }
           // Other vendor libs
           if (id.includes('node_modules/')) {
             return 'vendor';
@@ -78,10 +134,17 @@ export default defineConfig({
     minify: 'terser',
     terserOptions: {
       compress: {
-        drop_console: true, // Remove console logs in production
+        drop_console: true,
         drop_debugger: true,
+        passes: 2, // Extra compression pass
       },
     },
+    // Disable sourcemaps in production for smaller output
+    sourcemap: false,
+    // Enable CSS code splitting
+    cssCodeSplit: true,
+    // Target modern browsers for smaller output
+    target: 'es2020',
   },
   
   // Development server configuration

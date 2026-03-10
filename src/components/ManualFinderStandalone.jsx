@@ -53,27 +53,40 @@ const ManufacturerRow = ({ index, style, data }) => {
 };
 
 // Row component for virtualized manual list
+const FAVORITES_STORAGE_KEY = 'bb_manual_favorites';
+
 const ManualRow = ({ index, style, data }) => {
-  const { manuals, downloading, downloadingId, handleDownload, handlePreview } = data;
+  const { manuals, downloading, downloadingId, handleDownload, handlePreview, favorites, onToggleFavorite } = data;
   const manual = manuals[index];
+  const isFav = favorites?.has(manual.id);
 
   return (
     <div
       style={{
         ...style,
         display: 'flex',
-        padding: '8px 16px',
+        padding: '6px 8px',
       }}
     >
-      <div className="card-pro w-full p-5">
+      <div className="card-pro w-full p-3 sm:p-5">
         {/* Header */}
-        <div className="mb-3">
-          <h3 className="heading-pro-md capitalize mb-1">
-            {manual.manufacturer}
-          </h3>
-          <p className="text-pro-secondary line-clamp-2">
-            {manual.name}
-          </p>
+        <div className="flex items-start justify-between mb-3">
+          <div className="min-w-0 flex-1">
+            <h3 className="heading-pro-md capitalize mb-1">
+              {manual.display_name || manual.name}
+            </h3>
+            <p className="text-pro-secondary text-xs opacity-70 capitalize">
+              {manual.manufacturer}
+            </p>
+          </div>
+          <button
+            onClick={() => onToggleFavorite(manual.id)}
+            className={`ml-2 p-1.5 rounded-lg transition-all ${isFav ? 'text-yellow-500' : 'text-gray-300 hover:text-yellow-400'}`}
+            title={isFav ? 'Remove from favorites' : 'Add to favorites'}
+            aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <span className="text-xl">{isFav ? '★' : '☆'}</span>
+          </button>
         </div>
 
         {/* Badges */}
@@ -140,6 +153,20 @@ export default function ManualFinderStandalone() {
   const [downloadingId, setDownloadingId] = useState(null);
   const [toast, setToast] = useState(null);
   const [showManufacturers, setShowManufacturers] = useState(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [favorites, setFavorites] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem(FAVORITES_STORAGE_KEY) || '[]')); }
+    catch { return new Set(); }
+  });
+
+  const toggleFavorite = useCallback((manualId) => {
+    setFavorites(prev => {
+      const next = new Set(prev);
+      if (next.has(manualId)) { next.delete(manualId); } else { next.add(manualId); }
+      localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...next]));
+      return next;
+    });
+  }, []);
 
   // For pagination
   const [page, setPage] = useState(0);
@@ -150,25 +177,7 @@ export default function ManualFinderStandalone() {
   const debouncedQuery = useDebounce(query, 500);
 
 
-  // Definition order is important - define fetchAllIdealBoilers first
-  // before it's referenced in handleSearch
-  const fetchAllIdealBoilers = useCallback(async () => {
-    setLoading(true);
-    setError('');
-
-    try {
-      // Use http utility for Ideal boiler search
-      const result = await http.get('/api/manuals?manufacturer=ideal');
-      setManuals(result.data || []);
-    } catch (error) {
-      console.error('Error in specialized Ideal boiler fetching:', error);
-      setError('Error loading all Ideal boilers. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Handle search with proper dependencies - must be defined after fetchAllIdealBoilers
+  // Handle search
   const handleSearch = useCallback(async () => {
     setError('');
     setLoading(true);
@@ -184,15 +193,6 @@ export default function ManualFinderStandalone() {
       return;
     }
 
-    // Special handling for Ideal boilers - we know there are 300+
-    if (selectedManufacturer === 'Ideal' && !debouncedQuery) {
-      if (import.meta.env.DEV) {
-      }
-      await fetchAllIdealBoilers();
-      return;
-    }
-
-    // Regular fetching strategy for other manufacturers or when searching
     // Set up pagination parameters
     let allResults = [];
     let hasMore = true;
@@ -243,7 +243,7 @@ export default function ManualFinderStandalone() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, selectedManufacturer, fetchAllIdealBoilers]);
+  }, [debouncedQuery, selectedManufacturer]);
 
   // Preview handler (opens in new tab)
   const handlePreview = useCallback(
@@ -553,7 +553,7 @@ export default function ManualFinderStandalone() {
   }, []);
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
+    <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-blue-600 dark:text-blue-300">
         Boiler Manual Finder
       </h2>
@@ -636,7 +636,7 @@ export default function ManualFinderStandalone() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search boiler model..."
+                placeholder="e.g. greenstar 30 combi, ecotec plus, logic..."
                 value={query}
                 onChange={handleSearchChange}
                 className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -670,10 +670,23 @@ export default function ManualFinderStandalone() {
 
         {!loading && !error && manuals.length === 0 && (debouncedQuery || selectedManufacturer) && (
           <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 p-3 sm:p-4 rounded-lg my-4 text-sm sm:text-base">
-            <p>
-              No manuals found for your search criteria. Try adjusting your search or selecting a
-              different manufacturer.
-            </p>
+            <p className="font-semibold mb-1">No manuals found</p>
+            <p className="text-xs opacity-80">Try searching by brand name (e.g. "greenstar", "ecotec", "logic") or select a manufacturer and search by model type (e.g. "combi", "system", "30").</p>
+          </div>
+        )}
+
+        {!loading && !error && manuals.length === 0 && !debouncedQuery && !selectedManufacturer && (
+          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 p-4 sm:p-6 rounded-lg my-4 text-center">
+            <p className="font-semibold text-base mb-2">Search for a boiler manual</p>
+            <p className="text-sm opacity-80 mb-3">Select a manufacturer or type a search term to get started.</p>
+            <div className="flex flex-wrap gap-2 justify-center">
+              {['greenstar combi', 'ecotec plus', 'ideal logic', 'baxi combi'].map(hint => (
+                <button key={hint} onClick={() => setQuery(hint)}
+                  className="px-3 py-1.5 text-xs font-medium bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/60 transition-colors">
+                  {hint}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -681,22 +694,39 @@ export default function ManualFinderStandalone() {
       {/* Results list */}
       {!loading && manuals.length > 0 && (
         <div className="w-full">
-          <h3 className="text-base sm:text-lg font-semibold mb-3 text-blue-600 dark:text-blue-300">
-            Found {manuals.length} manuals
-          </h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-base sm:text-lg font-semibold text-blue-600 dark:text-blue-300">
+              Found {manuals.length} manuals
+            </h3>
+            {favorites.size > 0 && (
+              <button
+                onClick={() => setShowFavoritesOnly(prev => !prev)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  showFavoritesOnly
+                    ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                <span>{showFavoritesOnly ? '★' : '☆'}</span>
+                {showFavoritesOnly ? `Favorites (${favorites.size})` : 'Show Favorites'}
+              </button>
+            )}
+          </div>
 
-          <div className="w-full" style={{ height: 'min(600px, 70vh)' }}>
+          <div className="w-full" style={{ height: 'min(600px, 65vh)' }}>
             <List
-              height={Math.min(600, window.innerHeight * 0.7)}
-              itemCount={manuals.length}
-              itemSize={200}
+              height={Math.min(600, window.innerHeight * 0.65)}
+              itemCount={showFavoritesOnly ? manuals.filter(m => favorites.has(m.id)).length : manuals.length}
+              itemSize={window.innerWidth < 360 ? 180 : 200}
               width="100%"
               itemData={{
-                manuals: manuals,
+                manuals: showFavoritesOnly ? manuals.filter(m => favorites.has(m.id)) : manuals,
                 downloading: downloading,
                 downloadingId: downloadingId,
                 handleDownload: handleDownload,
                 handlePreview: handlePreview,
+                favorites: favorites,
+                onToggleFavorite: toggleFavorite,
               }}
             >
               {ManualRow}

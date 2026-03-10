@@ -41,6 +41,28 @@ export const MAX_MANUFACTURER_FOLDERS = 100;
 export const MAX_FILES_PER_FOLDER = 1000;
 export const MAX_MANUAL_RESULTS = 3;
 
+// OpenAI request timeout (ms)
+export const OPENAI_REQUEST_TIMEOUT_MS = 30000;
+
+// Chat history sliding window (max messages sent to LLM)
+export const CHAT_HISTORY_MAX_MESSAGES = 20;
+
+// Manufacturer display names (canonical mapping)
+export const MANUFACTURER_DISPLAY_MAP = {
+  'worcester': 'Worcester Bosch',
+  'glow-worm': 'Glow-worm',
+  'viessmann': 'Viessmann',
+  'vaillant': 'Vaillant',
+  'ideal': 'Ideal',
+  'baxi': 'Baxi',
+  'potterton': 'Potterton',
+  'ariston': 'Ariston',
+  'ferroli': 'Ferroli',
+  'alpha': 'Alpha',
+  'ravenheat': 'Ravenheat',
+  'intergas': 'Intergas'
+};
+
 export default {
   CACHE_TIMEOUT_MS,
   SESSION_TIMEOUT_MS,
@@ -61,5 +83,8 @@ export default {
   GAS_EMERGENCY_NUMBER,
   MAX_MANUFACTURER_FOLDERS,
   MAX_FILES_PER_FOLDER,
-  MAX_MANUAL_RESULTS
+  MAX_MANUAL_RESULTS,
+  OPENAI_REQUEST_TIMEOUT_MS,
+  CHAT_HISTORY_MAX_MESSAGES,
+  MANUFACTURER_DISPLAY_MAP
 };

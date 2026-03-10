@@ -22,7 +22,7 @@ class EnvironmentValidator {
     // Core application variables
     this.validateRequired('SUPABASE_URL', 'string', 'https://');
     this.validateRequired('SUPABASE_ANON_KEY', 'string');
-    this.validateRequired('SUPABASE_SERVICE_ROLE_KEY', 'string');
+    this.validateRequired('SUPABASE_SERVICE_KEY', 'string');
 
     // AI service variables
     this.validateOptional('OPENAI_API_KEY', 'string');
@@ -180,7 +180,7 @@ class EnvironmentValidator {
    */
   getSanitizedEnvInfo() {
     const sensitiveKeys = [
-      'SUPABASE_SERVICE_ROLE_KEY', 'SUPABASE_ANON_KEY',
+      'SUPABASE_SERVICE_KEY', 'SUPABASE_ANON_KEY',
       'OPENAI_API_KEY', 'OPENAI_API_KEY_2', 'OPENAI_API_KEY_3', 'OPENAI_API_KEY_4', 'OPENAI_API_KEY_5',
       'DEEPSEEK_API_KEY', 'YOUTUBE_API_KEY', 'GOOGLE_SEARCH_API_KEY'
     ];

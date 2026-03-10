@@ -3,8 +3,8 @@
  * Configured for Supabase Edge Functions
  */
 
-// Supabase configuration
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+// Supabase configuration - requires environment variables
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 // Get API URL from environment or use Supabase Edge Functions
 const getApiUrl = () => {

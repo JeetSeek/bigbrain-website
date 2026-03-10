@@ -172,155 +172,163 @@ const GasPipeSizing = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 bg-white">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-yellow-500 to-orange-500 px-6 py-5 text-white">
-          <h1 className="text-2xl font-bold">Gas Pipe Sizing</h1>
-          <p className="text-yellow-100 text-sm mt-1">BS 6891 · Max 1 mbar drop</p>
+    <div className="p-3 sm:p-4 space-y-4 max-w-3xl mx-auto">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 p-4 sm:p-5">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3 blur-xl" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+            📏
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white">Gas Pipe Sizing</h1>
+            <p className="text-sm text-white/70 mt-0.5">BS 6891 · Max 1 mbar drop</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {/* Unit Selector */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Input Unit</label>
+          <div className="flex rounded-xl bg-gray-100 p-1">
+            {['kW', 'BTU/h', 'm³/h'].map((unit) => (
+              <button
+                key={unit}
+                className={`flex-1 py-2.5 text-[14px] font-semibold rounded-lg transition-all duration-200 ${
+                  inputUnit === unit.replace('/h', '')
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setInputUnit(unit.replace('/h', ''))}
+              >
+                {unit}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="p-5">
-          {/* Unit Selector */}
-          <div className="mb-5">
-            <label className="block text-xs font-medium text-gray-500 mb-2">INPUT UNIT</label>
-            <div className="flex rounded-lg border border-gray-200 overflow-hidden">
-              {['kW', 'BTU/h', 'm³/h'].map((unit) => (
-                <button
-                  key={unit}
-                  className={`flex-1 py-2.5 text-sm font-medium transition-all ${
-                    inputUnit === unit.replace('/h', '')
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setInputUnit(unit.replace('/h', ''))}
-                >
-                  {unit}
-                </button>
-              ))}
-            </div>
+        {/* Appliances */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-semibold text-gray-700">Appliances</label>
+            <button
+              onClick={addAppliance}
+              className="text-sm text-orange-600 font-semibold hover:text-orange-700"
+            >
+              + Add
+            </button>
           </div>
+          <div className="space-y-2">
+            {appliances.map((app, idx) => (
+              <div key={app.id} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={app.name}
+                  onChange={(e) => updateAppliance(app.id, 'name', e.target.value)}
+                  placeholder={`Appliance ${idx + 1}`}
+                  className="flex-1 px-4 py-3 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <input
+                  type="number"
+                  value={app.value}
+                  onChange={(e) => updateAppliance(app.id, 'value', e.target.value)}
+                  placeholder={inputUnit}
+                  className="w-24 px-3 py-3 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white text-right focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+                <span className="text-xs text-gray-400 w-10">{inputUnit}</span>
+                {appliances.length > 1 && (
+                  <button
+                    onClick={() => removeAppliance(app.id)}
+                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-red-50 text-red-500 border border-red-200 active:scale-95 transition-transform"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* Appliances */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-medium text-gray-500">APPLIANCES</label>
-              <button
-                onClick={addAppliance}
-                className="text-xs text-orange-600 font-medium hover:text-orange-700"
-              >
-                + Add
-              </button>
-            </div>
-            <div className="space-y-2">
-              {appliances.map((app, idx) => (
-                <div key={app.id} className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={app.name}
-                    onChange={(e) => updateAppliance(app.id, 'name', e.target.value)}
-                    placeholder={`Appliance ${idx + 1}`}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-orange-500"
-                  />
-                  <input
-                    type="number"
-                    value={app.value}
-                    onChange={(e) => updateAppliance(app.id, 'value', e.target.value)}
-                    placeholder={inputUnit}
-                    className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-right focus:ring-2 focus:ring-orange-500"
-                  />
-                  <span className="text-xs text-gray-400 w-10">{inputUnit}</span>
-                  {appliances.length > 1 && (
+        {/* Pipe Runs */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-semibold text-gray-700">Pipe Runs</label>
+            <button
+              onClick={addPipeRun}
+              className="text-sm text-orange-600 font-semibold hover:text-orange-700"
+            >
+              + Add Run
+            </button>
+          </div>
+          <div className="space-y-3">
+            {pipeRuns.map((run, idx) => (
+              <div key={run.id} className="bg-white rounded-xl border border-gray-100 p-3 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Run {idx + 1}</span>
+                  {pipeRuns.length > 1 && (
                     <button
-                      onClick={() => removeAppliance(app.id)}
-                      className="text-red-400 hover:text-red-600 text-lg px-1"
+                      onClick={() => removePipeRun(run.id)}
+                      className="text-xs text-red-500 font-medium hover:text-red-600"
                     >
-                      ×
+                      Remove
                     </button>
                   )}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Pipe Runs */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-medium text-gray-500">PIPE RUNS</label>
-              <button
-                onClick={addPipeRun}
-                className="text-xs text-orange-600 font-medium hover:text-orange-700"
-              >
-                + Add Run
-              </button>
-            </div>
-            <div className="space-y-3">
-              {pipeRuns.map((run, idx) => (
-                <div key={run.id} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600">Run {idx + 1}</span>
-                    {pipeRuns.length > 1 && (
-                      <button
-                        onClick={() => removePipeRun(run.id)}
-                        className="text-red-400 hover:text-red-600 text-sm"
-                      >
-                        Remove
-                      </button>
-                    )}
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Length (m)</label>
+                    <input
+                      type="number"
+                      value={run.length}
+                      onChange={(e) => updatePipeRun(run.id, 'length', e.target.value)}
+                      placeholder="0"
+                      className="w-full px-3 py-2.5 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 text-center bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-1">Length (m)</label>
-                      <input
-                        type="number"
-                        value={run.length}
-                        onChange={(e) => updatePipeRun(run.id, 'length', e.target.value)}
-                        placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-1">Elbows</label>
-                      <input
-                        type="number"
-                        value={run.elbows}
-                        onChange={(e) => updatePipeRun(run.id, 'elbows', e.target.value)}
-                        placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-400 mb-1">Tees</label>
-                      <input
-                        type="number"
-                        value={run.tees}
-                        onChange={(e) => updatePipeRun(run.id, 'tees', e.target.value)}
-                        placeholder="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 text-center focus:ring-2 focus:ring-orange-500"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Elbows</label>
+                    <input
+                      type="number"
+                      value={run.elbows}
+                      onChange={(e) => updatePipeRun(run.id, 'elbows', e.target.value)}
+                      placeholder="0"
+                      className="w-full px-3 py-2.5 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 text-center bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Tees</label>
+                    <input
+                      type="number"
+                      value={run.tees}
+                      onChange={(e) => updatePipeRun(run.id, 'tees', e.target.value)}
+                      placeholder="0"
+                      className="w-full px-3 py-2.5 min-h-[44px] border border-gray-200 rounded-xl text-[16px] text-gray-900 text-center bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
                   </div>
                 </div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400 mt-2">Elbow = 0.5m, Tee = 0.6m equiv.</p>
+              </div>
+            ))}
           </div>
+          <p className="text-xs text-gray-400 mt-2">Elbow = 0.5m, Tee = 0.6m equiv.</p>
+        </div>
 
-          {/* Buttons */}
-          <div className="flex gap-3 mb-5">
-            <button
-              onClick={calculate}
-              className="flex-1 py-3 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-colors"
-            >
-              Calculate
-            </button>
-            <button
-              onClick={resetAll}
-              className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-300 transition-colors"
-            >
-              Reset
-            </button>
-          </div>
+        {/* Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={calculate}
+            className="flex-1 py-3.5 min-h-[44px] bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 active:scale-[0.98] transition-all"
+          >
+            Calculate Pipe Size
+          </button>
+          <button
+            onClick={resetAll}
+            className="px-6 py-3.5 min-h-[44px] bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all"
+          >
+            Reset
+          </button>
+        </div>
 
           {/* Results */}
           {result && (
@@ -379,29 +387,28 @@ const GasPipeSizing = () => {
             </div>
           )}
 
-          {/* Quick Reference */}
-          <div className="mt-5 bg-yellow-50 rounded-xl p-4">
-            <h4 className="text-xs font-semibold text-yellow-700 mb-2">COMMON APPLIANCES</h4>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">30kW Combi</span>
-                <span className="font-mono text-yellow-700">2.75</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">35kW Combi</span>
-                <span className="font-mono text-yellow-700">3.21</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Hob (4 ring)</span>
-                <span className="font-mono text-yellow-700">0.80</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Gas Fire</span>
-                <span className="font-mono text-yellow-700">0.55</span>
-              </div>
+        {/* Quick Reference */}
+        <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+          <h4 className="text-xs font-bold text-orange-700 uppercase tracking-wider mb-2">Common Appliances</h4>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-600">30kW Combi</span>
+              <span className="font-mono text-orange-700">2.75</span>
             </div>
-            <div className="text-xs text-gray-400 mt-2 text-right">m³/h</div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">35kW Combi</span>
+              <span className="font-mono text-orange-700">3.21</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Hob (4 ring)</span>
+              <span className="font-mono text-orange-700">0.80</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Gas Fire</span>
+              <span className="font-mono text-orange-700">0.55</span>
+            </div>
           </div>
+          <div className="text-xs text-gray-400 mt-2 text-right">m³/h</div>
         </div>
       </div>
     </div>

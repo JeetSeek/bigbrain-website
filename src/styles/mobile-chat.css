@@ -1,0 +1,320 @@
+/**
+ * Mobile Chat Interface - Best Practices for iOS & Android
+ * 
+ * KEY TECHNIQUES:
+ * 1. dvh (dynamic viewport height) - adjusts with mobile browser chrome
+ * 2. CSS Grid with keyboard-inset-height env variable
+ * 3. position: sticky for input (works better than fixed on mobile)
+ * 4. Safe area insets for notch/home indicator
+ * 
+ * Browser Support:
+ * - dvh: Chrome 108+, Safari 15.4+, Firefox 101+
+ * - keyboard-inset-*: Chrome 94+ (with VirtualKeyboard API)
+ * - interactive-widget: Chrome 108+
+ */
+
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+  --mobile-header-height: 56px;
+  --mobile-tab-bar-height: 49px;
+  --mobile-input-min-height: 52px;
+  --mobile-safe-top: env(safe-area-inset-top, 0px);
+  --mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --mobile-safe-left: env(safe-area-inset-left, 0px);
+  --mobile-safe-right: env(safe-area-inset-right, 0px);
+  /* Keyboard inset - set by VirtualKeyboard API or fallback */
+  --keyboard-inset: env(keyboard-inset-height, 0px);
+}
+
+/* ============================================
+   Mobile App Shell - Full Height Using dvh
+   ============================================ */
+.mobile-app-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* Use dvh for dynamic viewport height (adjusts with keyboard) */
+  height: 100dvh;
+  /* Fallback for older browsers */
+  height: 100vh;
+  /* Override with dvh if supported */
+  height: 100dvh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* ============================================
+   Chat Container - CSS Grid Layout
+   The KEY to proper keyboard handling
+   ============================================ */
+.mobile-chat-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header"
+    "messages"
+    "input";
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+/* When VirtualKeyboard API is available, add keyboard area */
+@supports (height: env(keyboard-inset-height)) {
+  .mobile-chat-container {
+    grid-template-rows: auto 1fr auto env(keyboard-inset-height, 0px);
+    grid-template-areas:
+      "header"
+      "messages"
+      "input"
+      "keyboard";
+  }
+  
+  .mobile-chat-container::after {
+    content: "";
+    grid-area: keyboard;
+  }
+}
+
+/* ============================================
+   Chat Header
+   ============================================ */
+.mobile-chat-header {
+  grid-area: header;
+  flex-shrink: 0;
+  min-height: var(--mobile-header-height);
+  z-index: 10;
+}
+
+/* ============================================
+   Messages Area - Scrollable
+   ============================================ */
+.mobile-chat-messages {
+  grid-area: messages;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  padding: 12px 16px;
+  /* Ensure scroll area doesn't overlap input */
+  min-height: 0;
+}
+
+/* Hide scrollbar for cleaner mobile look */
+.mobile-chat-messages::-webkit-scrollbar {
+  display: none;
+}
+.mobile-chat-messages {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================
+   Input Area - Sticky Bottom
+   ============================================ */
+.mobile-chat-input {
+  grid-area: input;
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  background: rgba(28, 28, 30, 0.98);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  /* Add safe area padding for home indicator */
+  padding-bottom: calc(8px + var(--mobile-safe-bottom));
+}
+
+/* When keyboard is visible, remove safe area (keyboard covers it) */
+.mobile-chat-input.keyboard-open {
+  padding-bottom: 8px;
+}
+
+/* ============================================
+   Input Form Layout
+   ============================================ */
+.mobile-chat-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(118, 118, 128, 0.24);
+  border-radius: 22px;
+  padding: 6px 8px;
+  min-height: 44px;
+}
+
+.mobile-chat-form:focus-within {
+  background: rgba(118, 118, 128, 0.32);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3);
+}
+
+/* ============================================
+   Text Input - 16px prevents iOS zoom
+   ============================================ */
+.mobile-chat-text-input {
+  flex: 1;
+  min-height: 36px;
+  font-size: 16px; /* CRITICAL: 16px prevents iOS auto-zoom */
+  line-height: 1.4;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 18px;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.mobile-chat-text-input::placeholder {
+  color: rgba(235, 235, 245, 0.3);
+}
+
+/* ============================================
+   Buttons - 44px touch target
+   ============================================ */
+.mobile-chat-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 44px; /* Touch target */
+  min-height: 44px; /* Touch target */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.mobile-chat-btn:active {
+  transform: scale(0.9);
+}
+
+.mobile-chat-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Send button */
+.mobile-chat-btn-send {
+  background: linear-gradient(180deg, #007AFF 0%, #0056CC 100%);
+  color: white;
+}
+
+/* Mic button */
+.mobile-chat-btn-mic {
+  background: transparent;
+  color: #0A84FF;
+}
+
+.mobile-chat-btn-mic.listening {
+  background: #FF3B30;
+  color: white;
+  animation: mic-pulse 1.5s infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* ============================================
+   Message Bubbles
+   ============================================ */
+.mobile-message-user {
+  background: linear-gradient(180deg, #007AFF 0%, #0056CC 100%);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  padding: 10px 14px;
+  max-width: 80%;
+  word-wrap: break-word;
+  margin-left: auto;
+}
+
+.mobile-message-assistant {
+  background: #2C2C2E;
+  color: #fff;
+  border-radius: 18px 18px 18px 4px;
+  padding: 10px 14px;
+  max-width: 85%;
+  word-wrap: break-word;
+}
+
+/* ============================================
+   iOS PWA Standalone Mode
+   ============================================ */
+@media all and (display-mode: standalone) {
+  .mobile-app-shell {
+    /* In standalone PWA, use svh for more predictable behavior */
+    height: 100svh;
+    height: -webkit-fill-available;
+  }
+}
+
+/* ============================================
+   Landscape Mode
+   ============================================ */
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-chat-header {
+    min-height: 40px;
+  }
+  
+  .mobile-chat-messages {
+    padding: 8px 12px;
+  }
+  
+  .mobile-chat-input {
+    padding: 4px 8px;
+    padding-bottom: calc(4px + var(--mobile-safe-bottom));
+  }
+  
+  .mobile-chat-form {
+    min-height: 36px;
+    padding: 4px 6px;
+  }
+}
+
+/* ============================================
+   Small Screens (iPhone SE)
+   ============================================ */
+@media (max-width: 375px) {
+  .mobile-chat-form {
+    gap: 6px;
+    padding: 4px 6px;
+  }
+  
+  .mobile-chat-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ============================================
+   Reduced Motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-chat-messages {
+    scroll-behavior: auto;
+  }
+  
+  .mobile-chat-btn {
+    transition: none;
+  }
+  
+  .mobile-chat-btn-mic.listening {
+    animation: none;
+  }
+}

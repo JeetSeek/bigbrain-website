@@ -70,18 +70,16 @@ export default function PWAInstallPrompt() {
 
   return (
     <>
-      {/* Install Button */}
+      {/* Install Button - Compact icon style for header */}
       <button
         onClick={handleInstallClick}
-        className="flex items-center gap-2 px-4 py-2.5 min-h-[44px]
-                   bg-[#007AFF] hover:bg-[#0051D5] active:scale-[0.98]
-                   text-white rounded-[10px] transition-all duration-200 text-[15px] font-semibold
-                   shadow-[0_2px_8px_rgba(0,122,255,0.3)]"
-        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}
+        className="flex items-center justify-center w-9 h-9
+                   bg-transparent hover:bg-[#007AFF]/10 active:scale-[0.92]
+                   text-[#007AFF] rounded-full transition-all duration-150"
         aria-label="Install BoilerBrain App"
+        title="Install App"
       >
-        <FiDownload className="w-4 h-4" />
-        <span className="hidden sm:inline">Install App</span>
+        <FiDownload className="w-5 h-5" strokeWidth={2} />
       </button>
 
       {/* iOS Instructions Modal */}

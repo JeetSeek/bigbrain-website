@@ -306,59 +306,59 @@ Calculated with Boiler Brain Room BTU Calculator
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6">
-            <span className="text-2xl text-white">🏠</span>
+    <div className="p-3 sm:p-4 space-y-4 max-w-3xl mx-auto">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 p-4 sm:p-5">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3 blur-xl" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+            🌡️
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Room BTU Calculator</h1>
-          <p className="text-xl text-gray-600 mb-8">Professional heating requirement calculations for Gas Safe engineers</p>
-          
-          {/* Progress Indicator */}
-          <div className="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-semibold text-gray-700">Calculation Progress</span>
-              <span className="text-sm font-bold text-blue-600">{progress}%</span>
-            </div>
-            <div className="bg-gray-100 rounded-full h-3">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2">Complete all sections for accurate results</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold text-white">Room BTU Calculator</h1>
+            <p className="text-sm text-white/70 mt-0.5">Professional heating requirement calculations</p>
+          </div>
+          <div className="text-right flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-xl px-3 py-2">
+            <div className="text-lg font-bold text-white">{progress}%</div>
+            <div className="text-xs text-white/60">complete</div>
           </div>
         </div>
+        {/* Progress bar inside hero */}
+        <div className="relative mt-3 bg-white/20 rounded-full h-2">
+          <div 
+            className="bg-white h-2 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
       
-        {/* Unit Selection */}
-        <div className="max-w-sm mx-auto mb-12">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                className={`py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  room.unit === 'imperial' 
-                    ? 'bg-blue-600 text-white shadow-md transform scale-105' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                onClick={() => handleUnitChange('imperial')}
-              >
-                Imperial (ft, °F)
-              </button>
-              <button
-                className={`py-3 px-6 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  room.unit === 'metric' 
-                    ? 'bg-blue-600 text-white shadow-md transform scale-105' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-                onClick={() => handleUnitChange('metric')}
-              >
-                Metric (m, °C)
-              </button>
-            </div>
-          </div>
+      {/* Unit Selection */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">Measurement Unit</label>
+        <div className="flex rounded-xl bg-gray-100 p-1">
+          <button
+            className={`flex-1 py-2.5 text-[14px] font-semibold rounded-lg transition-all duration-200 ${
+              room.unit === 'imperial' 
+                ? 'bg-white text-gray-900 shadow-sm' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => handleUnitChange('imperial')}
+          >
+            Imperial (ft, °F)
+          </button>
+          <button
+            className={`flex-1 py-2.5 text-[14px] font-semibold rounded-lg transition-all duration-200 ${
+              room.unit === 'metric' 
+                ? 'bg-white text-gray-900 shadow-sm' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => handleUnitChange('metric')}
+          >
+            Metric (m, °C)
+          </button>
         </div>
+      </div>
 
         {/* Calculator Sections */}
         <div className="space-y-8">
@@ -439,49 +439,23 @@ Calculated with Boiler Brain Room BTU Calculator
             />
           </div>
 
-          {/* Calculate Button */}
-          <div className="mb-6">
-            <div className="flex space-x-4">
-              <button
-                className="px-6 py-3 rounded-md text-white font-medium bg-blue-600 hover:bg-blue-700 transition-colors"
-                onClick={handleCalculate}
-              >
-                Calculate BTU Requirements
-              </button>
-              <button
-                className="px-6 py-3 rounded-md bg-gray-200 hover:bg-gray-300 transition-colors"
-                onClick={handleClearForm}
-              >
-                Clear Form
-              </button>
-              {result && (
-                <button
-                  className="px-6 py-3 rounded-md bg-green-100 text-green-800 hover:bg-green-200 transition-colors"
-                  onClick={handleShareResult}
-                >
-                  Share Results
-                </button>
-              )}
-            </div>
-          </div>
-
           {/* Action Buttons */}
-          <div className="flex justify-center space-x-4 mb-8">
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
             <button
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl active:scale-[0.98] transition-all duration-200 text-sm sm:text-base"
               onClick={handleCalculate}
             >
-              Calculate BTU Requirements
+              Calculate BTU
             </button>
             <button
-              className="px-8 py-4 bg-white text-gray-700 font-semibold rounded-2xl shadow-sm border border-gray-200 hover:shadow-md hover:bg-gray-50 transition-all duration-200"
+              className="px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-white text-gray-700 font-semibold rounded-2xl shadow-sm border border-gray-200 hover:shadow-md hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 text-sm sm:text-base"
               onClick={handleClearForm}
             >
               Clear Form
             </button>
             {result && (
               <button
-                className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                className="px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl active:scale-[0.98] transition-all duration-200 text-sm sm:text-base"
                 onClick={handleShareResult}
               >
                 Share Results
@@ -508,7 +482,7 @@ Calculated with Boiler Brain Room BTU Calculator
         {/* History section */}
         {calculationHistory.length > 0 && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-8 py-6 border-b border-gray-100">
+            <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-gray-100">
               <h3 className="text-xl font-semibold text-gray-900 flex items-center">
                 <div className="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg mr-3">
                   <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -522,16 +496,16 @@ Calculated with Boiler Brain Room BTU Calculator
               <table className="min-w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="px-8 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th scope="col" className="px-3 sm:px-8 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Date
                     </th>
-                    <th scope="col" className="px-8 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th scope="col" className="px-3 sm:px-8 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Room
                     </th>
-                    <th scope="col" className="px-8 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th scope="col" className="px-3 sm:px-8 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       BTU/hr
                     </th>
-                    <th scope="col" className="px-8 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th scope="col" className="px-3 sm:px-8 py-3 sm:py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       kW
                     </th>
                   </tr>
@@ -539,16 +513,16 @@ Calculated with Boiler Brain Room BTU Calculator
                 <tbody className="bg-white divide-y divide-gray-100">
                   {calculationHistory.map(entry => (
                     <tr key={entry.id} className="hover:bg-gray-50 transition-colors duration-150">
-                      <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 sm:px-8 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {new Date(entry.date).toLocaleDateString()}
                       </td>
-                      <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                      <td className="px-3 sm:px-8 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                         {entry.roomName}
                       </td>
-                      <td className="px-8 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">
+                      <td className="px-3 sm:px-8 py-3 sm:py-4 whitespace-nowrap text-sm font-semibold text-blue-600">
                         {entry.btu.toLocaleString()}
                       </td>
-                      <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 sm:px-8 py-3 sm:py-4 whitespace-nowrap text-sm text-gray-900">
                         {entry.kilowatts}
                       </td>
                     </tr>
@@ -558,7 +532,6 @@ Calculated with Boiler Brain Room BTU Calculator
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };

@@ -1,20 +1,22 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useChatSession } from '../hooks/useChatSession';
-import { HiMicrophone, HiChevronDown } from 'react-icons/hi';
+import { HiMicrophone, HiChevronDown, HiVolumeUp, HiVolumeOff } from 'react-icons/hi';
 import { IoIosSend } from 'react-icons/io';
-import { BiError } from 'react-icons/bi';
-import { MdSignalWifiOff, MdAccessTimeFilled, MdWarning } from 'react-icons/md';
-import ErrorBoundary from './ErrorBoundary';
 import ChatErrorBoundary from './chat/ChatErrorBoundary';
 import useVoskSpeech from '../hooks/useVoskSpeech';
+import useTextToSpeech from '../hooks/useTextToSpeech';
 import EmptyStateMessage from './chat/EmptyStateMessage';
 import MessageBubble from './chat/MessageBubble';
 import TypingIndicator from './chat/TypingIndicator';
-import { http } from '../utils/http';
-import DOMPurify from 'dompurify';
-import '../styles/ios-chat.css';
+import '../styles/mobile-chat-v2.css';
 
 const DEBUG = import.meta.env.MODE === 'development';
+
+// Constants
+const KEYBOARD_THRESHOLD = 150; // Minimum height difference to consider keyboard open
+const TAB_BAR_HEIGHT = 49; // iOS tab bar height in pixels
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+const FOCUS_DELAY_MS = 100; // Delay for DOM ready before focus
 
 // Removed duplicate MessageBubble and TypingIndicator - now imported from separate files
 
@@ -22,24 +24,24 @@ const DEBUG = import.meta.env.MODE === 'development';
 const QuickStartPrompts = React.memo(({ onSelectPrompt, isVisible }) => {
   const prompts = [
     {
-      title: "New Fault Call",
-      text: "I've got a Worcester Bosch combi boiler with fault code F22 - no heating or hot water",
-      icon: "🔧"
-    },
-    {
-      title: "No Heating", 
-      text: "My Vaillant ecoTEC has no heating but hot water works fine",
-      icon: "🏠"
-    },
-    {
-      title: "Fault Code Help",
-      text: "I need help with fault code F28 on my Ideal Logic combi",
+      title: "Fault Code",
+      text: "I've got a Vaillant ecoTEC Plus 832 combi showing fault code F.28",
       icon: "⚠️"
     },
     {
-      title: "No Hot Water",
-      text: "Baxi 830 combi - no hot water but heating works",
+      title: "No Hot Water", 
+      text: "Worcester Greenstar 25i system boiler, heating works fine but no hot water, no fault codes",
       icon: "🚿"
+    },
+    {
+      title: "Pressure Issue",
+      text: "Baxi 600 Combi 28, pressure keeps dropping below 1 bar with no visible leaks",
+      icon: "📉"
+    },
+    {
+      title: "Ignition Lockout",
+      text: "Ideal Logic Plus 30 combi with fault code L2 keeps coming up after reset",
+      icon: "�"
     }
   ];
 
@@ -95,6 +97,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
   const [connectionStatus, setConnectionStatus] = useState('connected'); // connected, disconnected, reconnecting
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [sessionWarning, setSessionWarning] = useState(false);
   const inputRef = useRef(null);
   const chatEndRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -104,10 +107,26 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     transcript,
     isListening,
     toggleListening,
+    stopListening,
     resetTranscript,
     supported: speechSupported
   } = useVoskSpeech();
-  const [transcriptUsed, setTranscriptUsed] = useState(false);
+
+  // Text-to-speech for AI responses
+  const {
+    supported: ttsSupported,
+    speaking,
+    voiceEnabled,
+    unlocked: ttsUnlocked,
+    speak,
+    speakNow,
+    speakPending,
+    stop: stopSpeaking,
+    toggleVoice
+  } = useTextToSpeech();
+  
+  // Track last spoken message to avoid repeating
+  const lastSpokenIndexRef = useRef(-1);
 
   // Auto-focus input field on mount and after sending messages
   useEffect(() => {
@@ -115,33 +134,62 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       // Small delay to ensure DOM is ready
       const timer = setTimeout(() => {
         inputRef.current?.focus();
-      }, 100);
+      }, FOCUS_DELAY_MS);
       return () => clearTimeout(timer);
     }
   }, [embedMode, open, waiting]); // Re-focus after waiting changes (message sent)
 
-  // Handle iOS keyboard - Apple best practice using visualViewport API
-  // This sets a CSS variable that the input uses to position itself above the keyboard
+  // Mobile keyboard handling - adjusts chat container position
   useEffect(() => {
-    if (!window.visualViewport) return;
+    // Try to opt-in to VirtualKeyboard API (Chrome 94+)
+    if ('virtualKeyboard' in navigator) {
+      try {
+        navigator.virtualKeyboard.overlaysContent = true;
+      } catch (e) {
+        console.log('VirtualKeyboard API not fully supported');
+      }
+    }
 
     const viewport = window.visualViewport;
-    // Store the initial viewport height (without keyboard)
-    let initialHeight = window.innerHeight;
-
+    const chatContainer = document.querySelector('.chat-fullscreen-container');
+    
+    // Get safe area bottom by measuring
+    const getSafeAreaBottom = () => {
+      const testEl = document.createElement('div');
+      testEl.style.cssText = 'position:fixed;bottom:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;';
+      document.body.appendChild(testEl);
+      const safeArea = testEl.offsetHeight;
+      document.body.removeChild(testEl);
+      return safeArea;
+    };
+    
+    const safeAreaBottom = getSafeAreaBottom();
+    const tabBarHeight = TAB_BAR_HEIGHT + safeAreaBottom;
+    
+    // Set initial bottom position
+    if (chatContainer) {
+      chatContainer.style.bottom = `${tabBarHeight}px`;
+    }
+    
+    if (!viewport) return;
+    
     const handleViewportChange = () => {
-      // Calculate keyboard height from the difference
-      // visualViewport.height shrinks when keyboard opens
-      const keyboardHeight = window.innerHeight - viewport.height;
-      const isKeyboardOpen = keyboardHeight > 100;
-      
-      // Set CSS variable for keyboard height
-      document.documentElement.style.setProperty(
-        '--keyboard-height', 
-        isKeyboardOpen ? `${keyboardHeight}px` : '0px'
-      );
+      const windowHeight = window.innerHeight;
+      const viewportHeight = viewport.height;
+      const keyboardHeight = windowHeight - viewportHeight;
+      const isKeyboardOpen = keyboardHeight > KEYBOARD_THRESHOLD;
       
       setKeyboardVisible(isKeyboardOpen);
+      
+      if (chatContainer) {
+        if (isKeyboardOpen) {
+          // When keyboard is open, extend to bottom (cover tab bar)
+          chatContainer.style.bottom = '0px';
+        } else {
+          // When keyboard is closed, sit exactly on top of tab bar
+          chatContainer.style.bottom = `${tabBarHeight}px`;
+        }
+      }
       
       // Scroll to bottom when keyboard opens
       if (isKeyboardOpen && chatEndRef.current) {
@@ -151,26 +199,18 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       }
     };
 
-    // Update initial height on orientation change
-    const handleOrientationChange = () => {
-      setTimeout(() => {
-        initialHeight = window.innerHeight;
-        // Reset keyboard height on orientation change
-        document.documentElement.style.setProperty('--keyboard-height', '0px');
-      }, 300);
-    };
-
+    // Store reference for proper cleanup
+    const handleOrientationChange = () => setTimeout(handleViewportChange, FOCUS_DELAY_MS);
+    
     viewport.addEventListener('resize', handleViewportChange);
     window.addEventListener('orientationchange', handleOrientationChange);
-
+    
     // Initial check
     handleViewportChange();
 
     return () => {
       viewport.removeEventListener('resize', handleViewportChange);
       window.removeEventListener('orientationchange', handleOrientationChange);
-      // Reset keyboard height on unmount
-      document.documentElement.style.setProperty('--keyboard-height', '0px');
     };
   }, []);
 
@@ -181,6 +221,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     
     const messageText = input.trim();
     setInput('');
+    resetTranscript(); // Clear speech transcript so it doesn't reload
     setWaiting(true);
     setIsTyping(true);
     setShowQuickStart(false);
@@ -254,7 +295,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
           form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         }
       }
-    }, 100);
+    }, FOCUS_DELAY_MS);
   }, []);
 
   // Handle new chat reset
@@ -286,7 +327,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       if (inputRef.current) {
         inputRef.current.focus();
       }
-    }, 100);
+    }, FOCUS_DELAY_MS);
   }, [clearSession]);
 
   // Show/hide quick start prompts based on chat history
@@ -300,7 +341,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       // Small delay to ensure DOM is ready
       setTimeout(() => {
         inputRef.current.focus();
-      }, 100);
+      }, FOCUS_DELAY_MS);
     }
   }, [open]);
 
@@ -308,17 +349,31 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     if (embedMode && inputRef.current) {
       setTimeout(() => {
         inputRef.current.focus();
-      }, 100);
+      }, FOCUS_DELAY_MS);
     }
   }, [embedMode]);
 
-  // Initialize speech recognition
+  // Initialize speech recognition - ignore transcripts while TTS is speaking
   useEffect(() => {
-    if (transcript && transcript.trim()) {
+    if (transcript && transcript.trim() && !speaking) {
       setInput(transcript);
       setLastActivity(Date.now());
     }
-  }, [transcript]);
+  }, [transcript, speaking]);
+
+  // Escape key handler for floating dock mode
+  useEffect(() => {
+    if (embedMode) return; // Only for floating dock
+    
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && open) {
+        setOpen(false);
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [embedMode, open]);
   
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -326,6 +381,62 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [history]);
+
+  // Stop microphone and clear transcript when TTS starts speaking to prevent feedback loop
+  useEffect(() => {
+    if (speaking) {
+      if (isListening) {
+        console.log('[ChatDock] Stopping mic - TTS is speaking');
+        stopListening();
+      }
+      // Clear any transcript that might have been picked up
+      resetTranscript();
+    }
+  }, [speaking, isListening, stopListening, resetTranscript]);
+
+  // Auto-speak new AI messages when voice is enabled
+  useEffect(() => {
+    if (!ttsSupported || !history || history.length === 0) return;
+    
+    const lastIndex = history.length - 1;
+    const lastMessage = history[lastIndex];
+    
+    // Only speak if it's a new assistant message we haven't spoken yet
+    if (lastMessage && 
+        (lastMessage.sender === 'assistant' || lastMessage.sender === 'ai') && 
+        lastIndex > lastSpokenIndexRef.current &&
+        !lastMessage.isError) {
+      
+      let textToSpeak = '';
+      if (typeof lastMessage.text === 'string') {
+        textToSpeak = lastMessage.text;
+      } else if (lastMessage.text?.text) {
+        textToSpeak = lastMessage.text.text;
+      }
+      
+      if (textToSpeak) {
+        lastSpokenIndexRef.current = lastIndex;
+        
+        if (voiceEnabled) {
+          // Stop listening before speaking to prevent feedback
+          if (isListening) {
+            stopListening();
+          }
+          console.log('[ChatDock] Auto-speaking AI response');
+          speakNow(textToSpeak);
+        } else {
+          // Voice is off - queue for later
+          speak(textToSpeak);
+        }
+      }
+    }
+  }, [history, ttsSupported, voiceEnabled, speak, speakNow, isListening, stopListening]);
+
+  // Handle speaking AI message on tap
+  const handleSpeakMessage = useCallback((messageText) => {
+    if (!ttsSupported || !voiceEnabled) return;
+    speakNow(messageText);
+  }, [ttsSupported, voiceEnabled, speakNow]);
 
   // Handle session expiration
   useEffect(() => {
@@ -351,31 +462,30 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
     };
   }, []); 
   
-  // Auto-clear session after inactivity
+  // Auto-clear session after inactivity with 5-minute warning
+  const warningTimeoutRef = useRef(null);
   useEffect(() => {
-    const resetActivityTimeout = () => {
-      if (activityTimeoutRef.current) {
-        clearTimeout(activityTimeoutRef.current);
-        activityTimeoutRef.current = null;
-      }
-      
-      // Clear session after 30 minutes of inactivity
-      activityTimeoutRef.current = setTimeout(() => {
-        if (clearSession) {
-          clearSession();
-        }
-        setShowQuickStart(true);
-      }, 30 * 60 * 1000); // 30 minutes
+    const clearTimers = () => {
+      if (activityTimeoutRef.current) { clearTimeout(activityTimeoutRef.current); activityTimeoutRef.current = null; }
+      if (warningTimeoutRef.current) { clearTimeout(warningTimeoutRef.current); warningTimeoutRef.current = null; }
     };
-    
-    resetActivityTimeout();
-    
-    return () => {
-      if (activityTimeoutRef.current) {
-        clearTimeout(activityTimeoutRef.current);
-        activityTimeoutRef.current = null;
-      }
-    };
+
+    clearTimers();
+    setSessionWarning(false);
+
+    // Show warning at 25 minutes
+    warningTimeoutRef.current = setTimeout(() => {
+      setSessionWarning(true);
+    }, SESSION_TIMEOUT_MS - 5 * 60 * 1000);
+
+    // Clear session at 30 minutes
+    activityTimeoutRef.current = setTimeout(() => {
+      if (clearSession) { clearSession(); }
+      setShowQuickStart(true);
+      setSessionWarning(false);
+    }, SESSION_TIMEOUT_MS);
+
+    return clearTimers;
   }, [lastActivity, clearSession]);
 
   if (embedMode) {
@@ -383,9 +493,12 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
       <ChatErrorBoundary>
         <div 
           ref={chatContainerRef}
-          className={`ios-chat-container bg-white rounded-lg shadow-lg border border-gray-200 ${keyboardVisible ? 'keyboard-open' : ''} ${className}`}
+          className={`mobile-chat-container ${className}`}
         >
-          <header className="ios-chat-header bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 rounded-t-lg flex items-center justify-between shadow-lg">
+          <header 
+            className="mobile-chat-header bg-gradient-to-b from-blue-600 to-blue-700 text-white p-3 sm:p-4 flex items-center justify-between"
+            style={{ paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))' }}
+          >
             <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
               <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-7 h-7 sm:w-8 sm:h-8 drop-shadow-md flex-shrink-0" />
               <div className="flex flex-col min-w-0">
@@ -407,28 +520,121 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => {
-                if (history.length > 1) {
-                  if (window.confirm('Start a new chat? This will clear the current conversation.')) {
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              {/* Voice toggle button */}
+              {ttsSupported && (
+                <button
+                  onClick={() => {
+                    console.log('[Voice Button] Clicked, speaking:', speaking, 'voiceEnabled:', voiceEnabled);
+                    if (speaking) {
+                      stopSpeaking();
+                    } else {
+                      // Try to speak pending text, or test message if none
+                      const hasPending = speakPending();
+                      if (!hasPending) {
+                        // No pending text - speak test message to verify TTS works
+                        speakNow("Voice is working. Send a message to hear the response.");
+                      }
+                      if (!voiceEnabled) toggleVoice();
+                    }
+                  }}
+                  className={`flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-lg transition-all ${
+                    speaking 
+                      ? 'bg-green-500 hover:bg-green-600 animate-pulse' 
+                      : voiceEnabled
+                        ? 'bg-white/30 hover:bg-white/40'
+                        : 'bg-white/10 hover:bg-white/20'
+                  }`}
+                  title={speaking ? 'Tap to stop' : 'Tap to hear response'}
+                  aria-label={speaking ? 'Stop speaking' : 'Play voice response'}
+                >
+                  {speaking ? <HiVolumeUp size={18} className="animate-pulse" /> : voiceEnabled ? <HiVolumeUp size={18} /> : <HiVolumeOff size={18} />}
+                </button>
+              )}
+              
+              {/* Export chat button */}
+              {history.length > 1 && (
+                <button
+                  onClick={() => {
+                    const lines = history
+                      .filter(m => m.text)
+                      .map(m => {
+                        const sender = m.sender === 'user' ? 'You' : 'BoilerBrain';
+                        const text = typeof m.text === 'string' ? m.text : m.text?.text || JSON.stringify(m.text);
+                        return `[${sender}]\n${text}`;
+                      })
+                      .join('\n\n---\n\n');
+                    const header = `BoilerBrain Diagnostic — ${new Date().toLocaleDateString('en-GB')}\n${'='.repeat(40)}\n\n`;
+                    const output = header + lines;
+                    if (navigator.clipboard) {
+                      navigator.clipboard.writeText(output).then(() => {
+                        alert('Chat copied to clipboard');
+                      });
+                    } else {
+                      const blob = new Blob([output], { type: 'text/plain' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `boilerbrain-chat-${Date.now()}.txt`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }
+                  }}
+                  className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-xs sm:text-sm font-medium"
+                  title="Export chat"
+                  aria-label="Export chat"
+                >
+                  <span className="text-sm sm:text-base">📋</span>
+                  <span className="hidden xs:inline sm:inline">Export</span>
+                </button>
+              )}
+              
+              {/* New chat button */}
+              <button
+                onClick={() => {
+                  if (speaking) stopSpeaking();
+                  if (history.length > 1) {
+                    if (window.confirm('Start a new chat? This will clear the current conversation.')) {
+                      clearSession();
+                      setShowQuickStart(true);
+                      lastSpokenIndexRef.current = -1;
+                    }
+                  } else {
                     clearSession();
                     setShowQuickStart(true);
+                    lastSpokenIndexRef.current = -1;
                   }
-                } else {
-                  clearSession();
-                  setShowQuickStart(true);
-                }
-              }}
-              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-xs sm:text-sm font-medium flex-shrink-0"
-              title="Start new chat"
-              aria-label="Start new chat"
-            >
-              <span className="text-sm sm:text-base">🔄</span>
-              <span className="hidden xs:inline sm:inline">New</span>
-            </button>
+                }}
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all text-white text-xs sm:text-sm font-medium"
+                title="Start new chat"
+                aria-label="Start new chat"
+              >
+                <span className="text-sm sm:text-base">🔄</span>
+                <span className="hidden xs:inline sm:inline">New</span>
+              </button>
+            </div>
           </header>
           
-          <div className="ios-chat-messages" role="log" aria-label="Chat messages" style={{backgroundColor: 'var(--ios-bg-grouped-primary)'}}>
+          {/* Session timeout warning banner */}
+          {sessionWarning && (
+            <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-center justify-between text-sm">
+              <span className="text-amber-800">Session expires in 5 minutes due to inactivity.</span>
+              <button
+                onClick={() => { setLastActivity(Date.now()); setSessionWarning(false); }}
+                className="ml-3 px-3 py-1 bg-amber-600 text-white rounded-md text-xs font-medium hover:bg-amber-700 transition-colors"
+              >
+                Stay Active
+              </button>
+            </div>
+          )}
+
+          <div 
+            className="mobile-chat-messages" 
+            role="log" 
+            aria-label="Chat messages"
+            aria-live="polite"
+            aria-atomic="false"
+          >
             {history.length === 0 || (history.length === 1 && (history[0].sender === 'assistant' || history[0].sender === 'ai')) ? (
               <EmptyStateMessage />
             ) : (
@@ -441,7 +647,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                   const labelText = typeof labelTextRaw === 'string' ? labelTextRaw : (labelTextRaw && typeof labelTextRaw === 'object' && typeof labelTextRaw.text === 'string' ? labelTextRaw.text : '');
                   
                   return (
-                    <div key={`${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
+                    <div key={message.id || `${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
                       <MessageBubble 
                         message={message} 
                         isUser={isUser}
@@ -464,53 +670,60 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
             )}
           </div>
 
-          <footer className={`ios-chat-input-area ${keyboardVisible ? 'keyboard-visible' : ''}`}>
+          <footer className={`mobile-chat-input ${keyboardVisible ? 'keyboard-open' : ''}`}>
             <form
               onSubmit={handleSendMessage}
               aria-label="Chat message form"
+              className="mobile-chat-form"
             >
-              <div className="ios-chat-input-wrapper">
-                <button 
-                  type="button" 
-                  onClick={toggleListening} 
-                  className={`ios-chat-mic-btn ${isListening ? 'listening' : ''} ${!speechSupported ? 'opacity-50' : ''}`}
-                  disabled={!speechSupported}
-                  title={isListening ? 'Stop listening' : 'Voice input'}
-                  aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
-                  aria-pressed={isListening}
-                >
-                  <HiMicrophone size={18} />
-                </button>
-                
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onFocus={() => {
-                    // Ensure scroll to bottom on focus for iOS
-                    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
-                  }}
-                  placeholder="Describe the issue..."
-                  className="ios-chat-input-field flex-1"
-                  disabled={waiting}
-                  aria-label="Message input"
-                  enterKeyHint="send"
-                  autoComplete="off"
-                  autoCorrect="on"
-                  spellCheck="true"
-                />
-                
-                <button 
-                  type="submit" 
-                  className="ios-chat-send-btn" 
-                  disabled={!input.trim() || waiting}
-                  title="Send message"
-                  aria-label="Send message"
-                >
-                  <IoIosSend size={18} />
-                </button>
-              </div>
+              <button 
+                type="button" 
+                onClick={() => {
+                  toggleListening();
+                  // Auto-enable voice output when using mic for voice chat
+                  if (!isListening && !voiceEnabled) {
+                    toggleVoice();
+                  }
+                }} 
+                className={`mobile-chat-btn mobile-chat-btn-mic ${isListening ? 'listening' : ''} ${!speechSupported ? 'opacity-50' : ''}`}
+                disabled={!speechSupported}
+                title={isListening ? 'Stop listening' : 'Voice input'}
+                aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+                aria-pressed={isListening}
+              >
+                <HiMicrophone size={18} />
+              </button>
+              
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onFocus={() => {
+                  // Scroll to bottom on focus
+                  setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 150);
+                }}
+                placeholder="Describe the issue..."
+                className="mobile-chat-text-input"
+                disabled={waiting}
+                aria-label="Message input"
+                enterKeyHint="send"
+                autoComplete="off"
+                autoCorrect="on"
+                autoCapitalize="sentences"
+                inputMode="text"
+                spellCheck="true"
+              />
+              
+              <button 
+                type="submit" 
+                className="mobile-chat-btn mobile-chat-btn-send" 
+                disabled={!input.trim() || waiting}
+                title="Send message"
+                aria-label="Send message"
+              >
+                <IoIosSend size={18} />
+              </button>
             </form>
           </footer>
         </div>
@@ -546,16 +759,44 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
+                {/* Voice toggle button */}
+                {ttsSupported && (
+                  <button
+                    onClick={() => {
+                      console.log('[Voice Button] Clicked, speaking:', speaking, 'voiceEnabled:', voiceEnabled);
+                      if (speaking) {
+                        stopSpeaking();
+                      } else {
+                        speakPending();
+                        if (!voiceEnabled) toggleVoice();
+                      }
+                    }}
+                    className={`flex items-center justify-center w-8 h-8 rounded-md transition-all ${
+                      speaking 
+                        ? 'bg-green-500 hover:bg-green-600 animate-pulse' 
+                        : voiceEnabled
+                          ? 'bg-white/30 hover:bg-white/40'
+                          : 'bg-white/10 hover:bg-white/20'
+                    }`}
+                    title={speaking ? 'Tap to stop' : 'Tap to hear response'}
+                    aria-label={speaking ? 'Stop speaking' : 'Play voice response'}
+                  >
+                    {speaking ? <HiVolumeUp size={16} className="animate-pulse" /> : voiceEnabled ? <HiVolumeUp size={16} /> : <HiVolumeOff size={16} />}
+                  </button>
+                )}
                 <button
                   onClick={() => {
+                    if (speaking) stopSpeaking();
                     if (history.length > 1) {
                       if (window.confirm('Start a new chat? This will clear the current conversation.')) {
                         clearSession();
                         setShowQuickStart(true);
+                        lastSpokenIndexRef.current = -1;
                       }
                     } else {
                       clearSession();
                       setShowQuickStart(true);
+                      lastSpokenIndexRef.current = -1;
                     }
                   }}
                   className="flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded-md transition-all text-white text-xs font-medium"
@@ -575,7 +816,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
               </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0" role="log" aria-label="Chat messages">
+            <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0" role="log" aria-label="Chat messages" aria-live="polite" aria-atomic="false">
               {history.length === 0 || (history.length === 1 && (history[0].sender === 'assistant' || history[0].sender === 'ai')) ? (
                 <EmptyStateMessage />
               ) : (
@@ -588,7 +829,7 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                     const labelText = typeof labelTextRaw === 'string' ? labelTextRaw : (labelTextRaw && typeof labelTextRaw === 'object' && typeof labelTextRaw.text === 'string' ? labelTextRaw.text : '');
                     
                     return (
-                      <div key={`${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
+                      <div key={message.id || `${sessionId}-${index}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'} message-enter-enhanced`}>
                         <MessageBubble 
                           message={message} 
                           isUser={isUser}
@@ -620,7 +861,13 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                 <div className="chat-input-wrapper-enhanced flex-1">
                   <button 
                     type="button" 
-                    onClick={toggleListening} 
+                    onClick={() => {
+                      toggleListening();
+                      // Auto-enable voice output when using mic
+                      if (!isListening && !voiceEnabled) {
+                        toggleVoice();
+                      }
+                    }} 
                     className={`btn-icon-enhanced ${
                       isListening 
                         ? 'bg-red-500 text-white shadow-lg' 
@@ -644,6 +891,12 @@ const ChatDock = ({ userName, embedMode = false, className = '' }) => {
                     className="chat-input-field-enhanced"
                     disabled={waiting}
                     aria-label="Message input"
+                    enterKeyHint="send"
+                    autoComplete="off"
+                    autoCorrect="on"
+                    autoCapitalize="sentences"
+                    inputMode="text"
+                    spellCheck="true"
                     autoFocus
                   />
                   

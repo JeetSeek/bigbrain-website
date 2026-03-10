@@ -215,6 +215,13 @@ const MessageBubble = React.memo(({ message, isUser, isFirst = false, isLast = f
       );
     });
     
+    // Convert markdown bold (**text**) and italic (*text*) to HTML
+    processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    processedText = processedText.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+    
+    // Convert numbered lists (lines starting with digits) to styled items
+    processedText = processedText.replace(/^(\d+)\.\s/gm, '<span class="text-blue-600 font-semibold">$1.</span> ');
+    
     // Convert line breaks to <br> tags for proper formatting
     processedText = processedText.replace(/\n/g, '<br>');
     

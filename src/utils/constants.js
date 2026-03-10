@@ -31,20 +31,21 @@ export const STORAGE_KEYS = {
   USER_PREFERENCES: 'bb_user_prefs',
 };
 
-// Demo data configuration
+// Demo data configuration — credentials loaded from env vars, never bundled in production
 export const DEMO = {
   USER: {
     DEFAULT_NAME: 'Demo User',
     DEFAULT_EMAIL: 'demo@boilerbrain.com',
     DEFAULT_TIER: 'Pro',
-    TEST_EMAIL: 'boilerbrain.test@gmail.com',
-    TEST_PASSWORD: 'Test@123',
+    TEST_EMAIL: import.meta.env.VITE_TEST_EMAIL || '',
+    TEST_PASSWORD: import.meta.env.VITE_TEST_PASSWORD || '',
+    TEST_NAME: 'Test User',
   },
   CHAT: {
     SIMULATED_DELAY: 800, // milliseconds
     GREETING_DELAY: 600, // milliseconds
   },
-  VALID_INVITE_CODES: ['TEST123', 'ENGINEER001', 'DEMOACCESS'],
+  VALID_INVITE_CODES: (import.meta.env.VITE_INVITE_CODES || '').split(',').filter(Boolean),
 };
 
 // Routes will be defined further down in the file
@@ -123,6 +124,7 @@ export const ERROR = {
 
 // Tab identifiers for navigation
 export const TAB_IDS = {
+  HOME: 'home', // Home / feature overview page
   AI_CHAT: 'aiChat',
   CHAT: 'chat', // Added dedicated chat tab ID
   SETTINGS: 'settings',
@@ -140,8 +142,58 @@ export const TAB_IDS = {
   GAS_PIPE: 'gasPipeSizing', // UK Gas Pipe Sizing (BS 6891)
   GAS_DIVERSITY: 'gasMeterDiversity', // Gas Meter Diversity Calculator
   CP12_FORM: 'cp12Form', // CP12 Landlord Gas Safety Record
-  WARNING_NOTICE: 'warningNotice', // Gas Warning/Defect Notice
+  WARNING_NOTICE: 'warningNotice', // Gas Unsafe Situation Report — required by Reg 26(9)
+  FAULT_CODES: 'faultCodeLookup', // Fault Code Lookup
+  VENTILATION: 'ventilationCalculator', // Ventilation Calculator (BS 5440)
+  PURGE_CALC: 'purgeCalculator', // Purge & Tightness Test Calculator
+  HELPLINES: 'manufacturerHelplines', // Manufacturer Tech Helplines
+  PARTS_FINDER: 'partsFinder', // Boiler Parts Finder
+  FLUE_GAS: 'flueGasAnalyser', // Flue Gas Analyser Integration
+  GAS_SERVICE: 'gasServiceRecord', // Gas Service Record
+  GAS_BREAKDOWN: 'gasBreakdownRecord', // Gas Breakdown Record
+  INSTALLATION: 'installationChecklist', // Installation & Commissioning Checklist
+  RADIATOR_SIZING: 'radiatorSizing', // Radiator BTU/Output Calculator
+  PRESSURE_CONVERTER: 'pressureConverter', // Pressure Unit Converter
+  SYSTEM_VOLUME: 'systemVolume', // Central Heating System Volume Calculator
+  BENCHMARK: 'benchmarkChecklist', // Boiler Benchmark Commissioning Checklist
 };
+
+// TAB_ID ↔ URL path mapping for deep linking
+export const TAB_PATHS = {
+  [TAB_IDS.HOME]: '/',
+  [TAB_IDS.CHAT]: '/chat',
+  [TAB_IDS.MANUAL_FINDER]: '/manuals',
+  [TAB_IDS.TOOLS]: '/tools',
+  [TAB_IDS.CP12_FORM]: '/cp12',
+  [TAB_IDS.GAS_RATE]: '/tools/gas-rate',
+  [TAB_IDS.ROOM_BTU]: '/tools/btu',
+  [TAB_IDS.GAS_PIPE]: '/tools/pipe-sizing',
+  [TAB_IDS.GAS_DIVERSITY]: '/tools/meter-diversity',
+  [TAB_IDS.VENTILATION]: '/tools/ventilation',
+  [TAB_IDS.PURGE_CALC]: '/tools/purge',
+  [TAB_IDS.FAULT_CODES]: '/fault-codes',
+  [TAB_IDS.HELPLINES]: '/helplines',
+  [TAB_IDS.PARTS_FINDER]: '/parts',
+  [TAB_IDS.FLUE_GAS]: '/tools/flue-gas',
+  [TAB_IDS.GAS_SERVICE]: '/forms/service-record',
+  [TAB_IDS.GAS_BREAKDOWN]: '/forms/breakdown-record',
+  [TAB_IDS.INSTALLATION]: '/forms/installation',
+  [TAB_IDS.WARNING_NOTICE]: '/forms/warning-notice',
+  [TAB_IDS.RADIATOR_SIZING]: '/tools/radiator-sizing',
+  [TAB_IDS.PRESSURE_CONVERTER]: '/tools/pressure',
+  [TAB_IDS.SYSTEM_VOLUME]: '/tools/system-volume',
+  [TAB_IDS.BENCHMARK]: '/forms/benchmark',
+  [TAB_IDS.ADMIN]: '/admin',
+  [TAB_IDS.KNOWLEDGE_MGMT]: '/admin/knowledge',
+  [TAB_IDS.SETTINGS]: '/settings',
+  [TAB_IDS.SUPPORT]: '/support',
+  [TAB_IDS.FEEDBACK]: '/feedback',
+};
+
+// Reverse lookup: URL path → TAB_ID
+export const PATH_TO_TAB = Object.fromEntries(
+  Object.entries(TAB_PATHS).map(([tabId, path]) => [path, tabId])
+);
 
 // Sorting options
 export const SORT_OPTIONS = {

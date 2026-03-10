@@ -19,6 +19,29 @@ export function userAuth(req, res, next) {
 }
 
 /**
+ * Optional authentication middleware
+ * Attaches user info to req.user when a valid token is present,
+ * but allows the request to proceed without authentication.
+ * Use this on endpoints that should work for both authenticated
+ * and unauthenticated users (e.g. chat).
+ */
+export async function optionalAuth(req, res, next) {
+  try {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      req.user = null;
+      return next();
+    }
+    const token = authHeader.split(' ')[1];
+    const { data, error } = await supabase.auth.getUser(token);
+    req.user = (!error && data?.user) ? data.user : null;
+  } catch {
+    req.user = null;
+  }
+  next();
+}
+
+/**
  * Core authentication validation logic
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object

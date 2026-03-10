@@ -152,6 +152,7 @@ Name: ${formData.contractorName}
 Address: ${formData.contractorAddress}
 Phone: ${formData.contractorPhone}
 Gas Safe No: ${formData.contractorGasSafeNo}
+Engineer Card No: ${formData.engineerCardNo || 'Not entered'}
 
 DATE: ${formData.inspectionDate}
 
@@ -378,15 +379,20 @@ Verify registration at www.gassaferegister.co.uk
       {showPreview && <Preview />}
       
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className={`bg-gradient-to-r ${headerBg} px-6 py-5 text-white`}>
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">⚠️ Warning Notice</h1>
-              <p className="text-white/80 text-sm mt-1">Gas Unsafe Situation Report</p>
+        {/* Hero Header */}
+        <div className={`relative overflow-hidden bg-gradient-to-br ${headerBg} px-4 sm:px-5 py-4 sm:py-5 text-white`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3 blur-xl" />
+          <div className="relative flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl flex-shrink-0">
+              ⚠️
             </div>
-            <div className="bg-white text-yellow-600 px-3 py-1 rounded font-bold text-sm">
-              Gas Safe
+            <div className="flex-1">
+              <h1 className="text-lg font-bold text-white">Warning Notice</h1>
+              <p className="text-sm text-white/70 mt-0.5">Gas Unsafe Situation Report</p>
+            </div>
+            <div className="flex-shrink-0 bg-white/15 backdrop-blur-sm rounded-xl px-3 py-1.5">
+              <span className="text-xs font-bold text-white">Gas Safe</span>
             </div>
           </div>
         </div>
@@ -456,9 +462,16 @@ Verify registration at www.gassaferegister.co.uk
               />
               <input
                 type="text"
-                placeholder="Gas Safe Licence No"
+                placeholder="Gas Safe Licence No (Business)"
                 value={formData.contractorGasSafeNo}
                 onChange={(e) => updateField('contractorGasSafeNo', e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
+              />
+              <input
+                type="text"
+                placeholder="Engineer Card No (Individual)"
+                value={formData.engineerCardNo || ''}
+                onChange={(e) => updateField('engineerCardNo', e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900"
               />
               <input

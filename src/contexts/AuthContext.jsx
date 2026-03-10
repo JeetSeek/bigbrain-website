@@ -32,16 +32,66 @@ export const useAuth = () => {
  * @returns {React.ReactElement} Provider component with auth context
  */
 export function AuthProvider({ children }) {
-  // TESTING MODE: Skip authentication entirely
-  const [user, setUser] = useState({ id: 'test-user', email: 'test@test.com' });
-  const [session, setSession] = useState({ user: { id: 'test-user', email: 'test@test.com' } });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const isAuthBypassed = import.meta.env.VITE_AUTH_BYPASS === 'true';
 
-  // TESTING MODE: Skip all auth checks
-  /* useEffect(() => {
-    // Auth checking disabled for testing
-  }, []); */
+  const [user, setUser] = useState(isAuthBypassed ? { id: 'dev-user', email: 'dev@boilerbrain.local' } : null);
+  const [session, setSession] = useState(isAuthBypassed ? { user: { id: 'dev-user', email: 'dev@boilerbrain.local' } } : null);
+  const [loading, setLoading] = useState(!isAuthBypassed);
+  const [error, setError] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(isAuthBypassed);
+
+  useEffect(() => {
+    if (isAuthBypassed) return;
+
+    let mounted = true;
+
+    const checkAdminRole = async (authUser) => {
+      if (!authUser) { setIsAdmin(false); return; }
+      try {
+        // Check admin emails from env (comma-separated)
+        const adminEmails = (import.meta.env.VITE_ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+        if (adminEmails.includes(authUser.email?.toLowerCase())) {
+          setIsAdmin(true);
+          return;
+        }
+        // Fallback: check users table role column
+        const { data: profile } = await supabase.from('users').select('role').eq('id', authUser.id).single();
+        setIsAdmin(profile?.role === 'admin');
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+
+    const initAuth = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (mounted) {
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
+          await checkAdminRole(currentSession?.user ?? null);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Auth init error:', err);
+        if (mounted) setLoading(false);
+      }
+    };
+
+    initAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (mounted) {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+        await checkAdminRole(newSession?.user ?? null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
+  }, [isAuthBypassed]);
 
   /**
    * Register a new user with email and password
@@ -347,6 +397,7 @@ export function AuthProvider({ children }) {
     session,
     loading,
     error,
+    isAdmin,
     signUp,
     signIn,
     signOut,

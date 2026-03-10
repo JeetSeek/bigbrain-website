@@ -7,15 +7,24 @@
 import { createRequire } from 'module';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), 'server/.env') });
+
 const require = createRequire(import.meta.url);
 const pdfjs = require('pdfjs-dist/legacy/build/pdf.js');
 
+if (!process.env.GEMINI_API_KEY) {
+  console.error('❌ GEMINI_API_KEY not found. Add it to .env or server/.env');
+  process.exit(1);
+}
+
 const CONFIG = {
-  GEMINI_API_KEY: 'AIzaSyAo52Eu2llZAYzYj27MLMOxFWnapZQ1KDg',
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,
   SUPABASE_URL: 'https://hfyfidpbtoqnqhdywdzw.supabase.co',
   SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME',
   RATE_LIMIT_DELAY: 5000,  // 5 seconds between API calls to avoid abuse detection

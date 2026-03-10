@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { http } from '../utils/http';
 
-// Function to generate a proper UUID for session IDs
+// Function to generate a cryptographically secure UUID for session IDs
 const generateUUID = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers using crypto.getRandomValues
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 };
 
 // Helper function to create a fresh chat history with a greeting
@@ -16,8 +18,8 @@ const createInitialHistory = (userName) => [
     id: generateUUID(),
     sender: 'assistant',
     text: userName
-      ? `Hey ${userName}! I'm your BoilerBrain assistant. To help you effectively, I need to know the manufacturer (Worcester, Vaillant, Baxi, Ideal, etc.), the model if you know it (like Greenstar 30i or Logic Combi 24), and the system type (Combi, System, or Regular boiler). What boiler are you working on?`
-      : "Hey there! I'm your BoilerBrain assistant. To help you effectively, I need to know the manufacturer (Worcester, Vaillant, Baxi, Ideal, etc.), the model if you know it (like Greenstar 30i or Logic Combi 24), and the system type (Combi, System, or Regular boiler). What boiler are you working on?",
+      ? `Right ${userName}, what are we looking at? Give me the make, model, and type (combi, system, or regular) — plus the fault code or what it's doing. For example: "Worcester Greenstar 30i combi, showing F.28".`
+      : "Right, what are we looking at? Give me the make, model, and type (combi, system, or regular) — plus the fault code or what it's doing. For example: \"Vaillant ecoTEC Plus 832 combi, showing F.28\".",
     timestamp: new Date().toISOString(),
   }
 ];

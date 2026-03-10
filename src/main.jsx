@@ -5,8 +5,10 @@ import './index.css';
 import './utils/apiClient.js';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { ResetPassword } from './pages/ResetPassword';
 import { AdminDashboard } from './components/AdminDashboard';
 // AdminDirect removed to prevent router conflicts
 import { STORAGE_KEYS, ROUTES } from './utils/constants';
@@ -14,8 +16,13 @@ import { clearLegacyAuthData } from './services/authUtils';
 import PinWall from './components/PinWall';
 import './index.css';
 
+import { init as initErrorTracking } from './utils/errorTracking';
+
 // Clear any legacy authentication data on app initialization
 clearLegacyAuthData();
+
+// Initialize error tracking (swap for Sentry when ready)
+initErrorTracking();
 
 /**
  * Loading spinner component
@@ -62,6 +69,7 @@ const AppRoutes = () => (
       element={<AdminDashboard />}
     />
     <Route path={ROUTES.REGISTER} element={<Register />} />
+    <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
     <Route path={ROUTES.LOGIN} element={<Login />} />
   </Routes>
 );
@@ -114,14 +122,16 @@ export const AppWithAuth = () => (
   <PinWall>
     <ErrorBoundarySimple>
       <AuthProvider>
-        <BrowserRouter
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true
-          }}
-        >
-          <AppRoutes />
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
+            <AppRoutes />
+          </BrowserRouter>
+        </ToastProvider>
       </AuthProvider>
     </ErrorBoundarySimple>
   </PinWall>
