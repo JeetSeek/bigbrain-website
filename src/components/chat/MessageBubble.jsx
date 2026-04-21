@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import DOMPurify from 'dompurify';
 import http from '../../utils/http';
@@ -217,7 +217,7 @@ const MessageBubble = React.memo(({ message, isUser, isFirst = false, isLast = f
     
     // Convert markdown bold (**text**) and italic (*text*) to HTML
     processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    processedText = processedText.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+    processedText = processedText.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
     
     // Convert numbered lists (lines starting with digits) to styled items
     processedText = processedText.replace(/^(\d+)\.\s/gm, '<span class="text-blue-600 font-semibold">$1.</span> ');
@@ -243,6 +243,34 @@ const MessageBubble = React.memo(({ message, isUser, isFirst = false, isLast = f
     return <span dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(processedText) }} />;
   };
 
+  const renderedContent = useMemo(() => renderMessageContent(), [message, isUser]);
+
+  const sourceCards = !isUser && Array.isArray(message?.sources) && message.sources.length > 0
+    ? (
+      <div className="mt-2 ml-2 flex flex-wrap gap-1.5">
+        {message.sources.map((s) => {
+          const href = s.manual_id ? `/manuals?manual=${encodeURIComponent(s.manual_id)}` : '/manuals';
+          const label = s.manual_name || s.manufacturer || 'Manual';
+          const page = typeof s.page_number === 'number' ? `p. ${s.page_number}` : null;
+          return (
+            <a
+              key={s.chunk_id || `${s.manual_id}-${s.page_number}`}
+              href={href}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-gray-200 bg-white hover:bg-gray-50 text-[12px] text-gray-700 no-underline transition-colors"
+              title={`${label}${page ? ` — ${page}` : ''}${typeof s.similarity === 'number' ? ` (match ${Math.round(s.similarity * 100)}%)` : ''}`}
+            >
+              <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+              </svg>
+              <span className="font-medium truncate max-w-[180px]">{label}</span>
+              {page && <span className="text-gray-500">{page}</span>}
+            </a>
+          );
+        })}
+      </div>
+    )
+    : null;
+
   return (
     <div className="flex flex-col">
       <div 
@@ -254,16 +282,18 @@ const MessageBubble = React.memo(({ message, isUser, isFirst = false, isLast = f
         }}
       >
         <div
-          className="text-[15px] leading-tight break-words"
+          className="text-[15px] leading-[1.6] break-words"
           style={{
             fontFamily:
               '-apple-system, BlinkMacSystemFont, "SF Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           }}
         >
-          {renderMessageContent()}
+          {renderedContent}
         </div>
       </div>
-      
+
+      {sourceCards}
+
       {/* Feedback buttons - only for AI messages */}
       {!isUser && isLast && (
         <div className="flex items-center gap-2 mt-2 ml-2">

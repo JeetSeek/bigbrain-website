@@ -18,8 +18,8 @@ const createInitialHistory = (userName) => [
     id: generateUUID(),
     sender: 'assistant',
     text: userName
-      ? `Right ${userName}, what are we looking at? Give me the make, model, and type (combi, system, or regular) — plus the fault code or what it's doing. For example: "Worcester Greenstar 30i combi, showing F.28".`
-      : "Right, what are we looking at? Give me the make, model, and type (combi, system, or regular) — plus the fault code or what it's doing. For example: \"Vaillant ecoTEC Plus 832 combi, showing F.28\".",
+      ? `Right ${userName}, what have you got? Tell me the make, model, system type and what's showing — fault code, symptoms, anything you've already checked.`
+      : "Right, what have you got? Tell me the make, model, system type and what's showing — fault code, symptoms, anything you've already tried.",
     timestamp: new Date().toISOString(),
   }
 ];
@@ -30,9 +30,8 @@ const SESSION_TIMESTAMP_KEY = 'bb_session_timestamp';
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
 export const useChatSession = (userName) => {
-  const syncInProgress = useRef(false);
-  const lastSyncTime = useRef(0);
-  const sessionCreatedAt = useRef(Date.now());
+  const historyRef = useRef([]);
+  const backendSessionReadyRef = useRef(false);
   
   // Check if existing session is expired
   const isSessionExpired = useCallback(() => {
@@ -81,6 +80,10 @@ export const useChatSession = (userName) => {
 
   // State for the chat history - initialize with empty array first to avoid React queue issues
   const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
   
   // Initialize history after component mount to avoid React hook queue issues
   useEffect(() => {
@@ -96,6 +99,9 @@ export const useChatSession = (userName) => {
             // Try to sync with backend first
             try {
               const backendSession = await http.post('/api/sessions/get', { sessionId: storedSessionId });
+              if (backendSession?.exists) {
+                backendSessionReadyRef.current = true;
+              }
               if (backendSession?.history && Array.isArray(backendSession.history) && backendSession.history.length > 0) {
                 setHistory(backendSession.history);
                 // Update localStorage with backend data
@@ -113,6 +119,7 @@ export const useChatSession = (userName) => {
             if (storedHistory) {
               const parsedHistory = JSON.parse(storedHistory);
               if (Array.isArray(parsedHistory) && parsedHistory.length > 0) {
+                backendSessionReadyRef.current = false;
                 setHistory(parsedHistory);
                 return;
               }
@@ -124,6 +131,7 @@ export const useChatSession = (userName) => {
       }
       
       // Fallback to fresh history if restoration fails or session expired
+      backendSessionReadyRef.current = false;
       const initialHistory = createInitialHistory(userName);
       setHistory(initialHistory);
     };
@@ -140,19 +148,7 @@ export const useChatSession = (userName) => {
     };
     
     setHistory(prev => {
-      const newHistory = [...prev, messageWithId];
-      
-      // Persist updated history to localStorage
-      try {
-        const currentSessionId = localStorage.getItem(SESSION_ID_KEY);
-        if (currentSessionId) {
-          localStorage.setItem(`bb_chat_history_${currentSessionId}`, JSON.stringify(newHistory));
-        }
-      } catch (error) {
-        console.warn('[useChatSession] Failed to persist history:', error);
-      }
-      
-      return newHistory;
+      return [...prev, messageWithId];
     });
     
     // Update session timestamp
@@ -182,6 +178,7 @@ export const useChatSession = (userName) => {
     const oldSessionId = localStorage.getItem(SESSION_ID_KEY);
     const newSessionId = generateUUID();
     setSessionId(newSessionId);
+    backendSessionReadyRef.current = false;
     
     const freshHistory = createInitialHistory(userName);
     setHistory(freshHistory);
@@ -217,75 +214,43 @@ export const useChatSession = (userName) => {
   const sendMessage = useCallback(async (messageText) => {
     if (!messageText?.trim()) return;
 
-
-    const userMessage = addMessage({
+    const trimmedMessage = messageText.trim();
+    addMessage({
       sender: 'user',
-      text: messageText.trim()
+      text: trimmedMessage
     });
 
     try {
-      const wantsDetail = /(diagnos|procedure|step|walkthrough|how to|detailed|full)/i.test(messageText);
-      if (wantsDetail && !import.meta.env.PROD) {
-        // SSE streaming only works in development with Express backend
-        // In production, we use standard POST to Supabase Edge Functions
-        const placeholder = addMessage({ sender: 'assistant', text: '' });
-        const sseBase = 'http://localhost:3204';
-        const es = new EventSource(`${sseBase}/api/agent/chat/stream?message=${encodeURIComponent(messageText.trim())}&sessionId=${encodeURIComponent(sessionId)}&detail=true`);
-        let acc = '';
-        const onMsg = (evt) => {
-          try {
-            const data = JSON.parse(evt.data || '{}');
-            if (data?.delta) {
-              acc += String(data.delta);
-              setHistory(prev => prev.map(m => m.id === placeholder.id ? { ...m, text: acc } : m));
-            }
-            if (data?.done) {
-              if (data?.structured) {
-                setHistory(prev => prev.map(m => m.id === placeholder.id ? { ...m, text: { text: acc, structured: data.structured } } : m));
-              }
-              es.close();
-            }
-            if (data?.error) {
-              es.close();
-            }
-          } catch {}
-        };
-        es.onmessage = onMsg;
-        es.onerror = (err) => { 
-          console.error('[useChatSession] SSE error, falling back to standard POST:', err);
-          try { es.close(); } catch {} 
-          // Fallback to standard POST request
-          http.post('/api/agent/chat', {
-            message: messageText.trim(),
-            sessionId: sessionId,
-            history: history,
-            detail: false
-          }).then(response => {
-            if (response?.reply || response?.response) {
-              const replyText = response.reply || response.response;
-              const structured = response?.structured || null;
-              setHistory(prev => prev.map(m => m.id === placeholder.id ? { ...m, text: structured ? { text: replyText, structured } : replyText } : m));
-            }
-          }).catch(fallbackErr => {
-            console.error('[useChatSession] Fallback also failed:', fallbackErr);
-            setHistory(prev => prev.map(m => m.id === placeholder.id ? { ...m, text: 'Connection error. Please try again.' } : m));
-          });
-        };
-        return {};
+      const currentHistory = historyRef.current;
+      const requestBody = {
+        message: trimmedMessage,
+        sessionId
+      };
+
+      if (currentHistory.length > 0) {
+        requestBody.history = currentHistory;
       }
 
-      const response = await http.post('/api/agent/chat', {
-        message: messageText.trim(),
-        sessionId: sessionId,
-        history: history,
-        detail: false
-      });
-
+      let response;
+      try {
+        response = await http.post('/api/chat', requestBody);
+      } catch (classicError) {
+        response = await http.post('/api/agent/chat', {
+          ...requestBody,
+          detail: false
+        });
+      }
 
       if (response?.reply || response?.response) {
         const replyText = response.reply || response.response;
         const structured = response?.structured || null;
-        addMessage({ sender: 'assistant', text: structured ? { text: replyText, structured } : replyText });
+        const sources = Array.isArray(response?.sources) ? response.sources : null;
+        backendSessionReadyRef.current = true;
+        addMessage({
+          sender: 'assistant',
+          text: structured ? { text: replyText, structured } : replyText,
+          sources,
+        });
       } else {
         throw new Error('No response received from server');
       }
@@ -308,7 +273,7 @@ export const useChatSession = (userName) => {
       
       throw error;
     }
-  }, [sessionId, addMessage, setHistory, history]);
+  }, [sessionId, addMessage]);
 
   return { 
     sessionId, 
