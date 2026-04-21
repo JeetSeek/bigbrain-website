@@ -3,40 +3,45 @@
 
 const DEFAULT_TIMEOUT = 30000; // 30s
 
-// Deployment modes
-const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE || (import.meta.env.PROD ? 'supabase' : 'local');
+// Supabase project fallbacks — anon key is public by design (security via RLS)
+const FALLBACK_SUPABASE_URL = 'https://hfyfidpbtoqnqhdywdzw.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeWZpZHBidG9xbnFoZHl3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0OTQ4OTksImV4cCI6MjA2MTA3MDg5OX0.eZrUGTGOOnHrZp2BoIbnaqSPvcmNKYfpoLXmGsa3PME';
 
-// Supabase configuration - requires environment variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Supabase configuration - env vars preferred, fallbacks ensure dev works out of the box
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || FALLBACK_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || FALLBACK_SUPABASE_ANON_KEY;
+
+// Default to Supabase mode unless a local Express URL is explicitly configured.
+// This matches live behaviour without requiring env file setup.
+const DEPLOYMENT_MODE = import.meta.env.VITE_DEPLOYMENT_MODE ||
+  (import.meta.env.VITE_DEV_API_URL ? 'local' : 'supabase');
 
 const getBaseUrl = () => {
-  // Supabase Edge Functions mode (production)
-  if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
-    return `${SUPABASE_URL}/functions/v1`;
+  // Local Express backend — only when VITE_DEV_API_URL is explicitly set
+  if (DEPLOYMENT_MODE === 'local') {
+    return import.meta.env.VITE_DEV_API_URL || 'http://localhost:3204';
   }
-  
-  // Local Express backend mode (development)
-  return import.meta.env.VITE_DEV_API_URL || 'http://localhost:3204';
+  // Supabase Edge Functions (default for both dev and prod)
+  return `${SUPABASE_URL}/functions/v1`;
 };
 
 const getAuthHeaders = () => {
-  // Add Supabase auth headers for Edge Functions
-  if (DEPLOYMENT_MODE === 'supabase' || import.meta.env.PROD) {
-    return {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-    };
+  if (DEPLOYMENT_MODE === 'local') {
+    return {};
   }
-  return {};
+  // Add Supabase auth headers for Edge Functions
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+  };
 };
 
 // Map API paths to Edge Function names
 const mapPathToFunction = (path) => {
-  if (DEPLOYMENT_MODE !== 'supabase' && !import.meta.env.PROD) {
-    return path; // Keep original path for local dev
+  if (DEPLOYMENT_MODE === 'local') {
+    return path; // Keep original path for local Express dev
   }
-  
+
   // Map /api/xxx to Edge Function name
   const pathMappings = {
     '/api/chat': '/chat',
@@ -44,14 +49,15 @@ const mapPathToFunction = (path) => {
     '/api/manuals': '/manuals',
     '/api/manufacturers': '/manufacturers',
     '/api/sessions': '/sessions',
+    '/api/check-manual-link': '/check-manual-link',
   };
-  
+
   for (const [apiPath, funcName] of Object.entries(pathMappings)) {
     if (path.startsWith(apiPath)) {
       return funcName + path.slice(apiPath.length);
     }
   }
-  
+
   return path;
 };
 

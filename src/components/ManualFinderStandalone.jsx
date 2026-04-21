@@ -245,107 +245,114 @@ export default function ManualFinderStandalone() {
     }
   }, [debouncedQuery, selectedManufacturer]);
 
-  // Preview handler (opens in new tab)
-  const handlePreview = useCallback(
-    async manualId => {
-      // Reuse logic from download but just open
+  // ─── Manual open/download flow (P1, walkthrough 2026-04-21) ────────────────
+  // Previous implementation did a cross-origin fetch-and-discard that silently
+  // failed on CORS. Replaced with window.open, gated on a HEAD probe via the
+  // check-manual-link edge function so we don't shove users at dead URLs. The
+  // edge function also logs failures to bb_manual_link_issues for triage.
+  //
+  // Flow:
+  //   1. Resolve the manual URL (direct manufacturer URL preferred; falls back
+  //      to Supabase storage if we ever self-host — see TODO below).
+  //   2. HEAD-check via edge function (1.5s timeout, handled server-side).
+  //   3. On ok: window.open in a new tab. If the popup is blocked, tell the
+  //      user — do not silently fail.
+  //   4. On not-ok: toast "no longer valid" + the edge function has already
+  //      written a bb_manual_link_issues row.
+  //
+  // TODO(storage-migration): move to self-hosted PDFs in Supabase Storage so
+  //   we own the URL and link-rot stops mattering. See
+  //   docs/user-walkthrough-2026-04-21.md for rationale.
+  const openManualUrl = useCallback(
+    async (manualId, intent /* 'preview' | 'download' */) => {
       const manual = manuals.find(m => m.id === manualId);
       if (!manual) return;
-      try {
-        let url = '';
-        if (manual.url) {
-          if (/^https?:\/\//i.test(manual.url)) {
-            url = manual.url;
-          } else {
-            // Use backend API to get download URL
-            const response = await fetch(`/api/manuals/${manual.id}/download`);
-            if (!response.ok) throw new Error('Failed to get download URL');
-            const result = await response.json();
-            url = result.downloadUrl;
-          }
-          if (url) {
-            window.open(url, '_blank', 'noopener');
-          }
-        }
-      } catch (err) {
-        console.error('Preview error:', err);
-        setToast({ message: 'Failed to preview manual.', type: 'error' });
+
+      if (intent === 'download') {
+        if (downloading) return;
+        setDownloading(true);
+        setDownloadingId(manualId);
       }
-    },
-    [manuals]
-  );
 
-  // Download handler
-  const handleDownload = useCallback(
-    async manualId => {
-      if (downloading) return; // Prevent multiple simultaneous downloads
-
-      setDownloading(true);
-      setDownloadingId(manualId);
+      const verb = intent === 'preview' ? 'Opening' : 'Downloading';
+      setToast({
+        message: `${verb} ${manual.manufacturer || 'manual'}…`,
+        type: 'info',
+      });
 
       try {
-        const manual = manuals.find(m => m.id === manualId);
-        if (!manual) throw new Error('Manual not found');
-
-        let fileUrl = '';
-        if (manual.url) {
-          if (/^https?:\/\//i.test(manual.url)) {
-            // If Supabase public URL, append ?download to force attachment
-            fileUrl = manual.url.includes('supabase.co')
-              ? `${manual.url}${manual.url.includes('?') ? '&' : '?'}download=`
-              : manual.url;
+        // Resolve URL.
+        let url = '';
+        if (manual.url && /^https?:\/\//i.test(manual.url)) {
+          // Supabase public URL → append ?download for download intent to force attachment.
+          if (intent === 'download' && manual.url.includes('supabase.co')) {
+            url = `${manual.url}${manual.url.includes('?') ? '&' : '?'}download=`;
           } else {
-            // Use backend API to get download URL
-            const response = await fetch(`/api/manuals/${manual.id}/download`);
-            if (!response.ok) throw new Error('Failed to get download URL');
-            const result = await response.json();
-            fileUrl = result.downloadUrl;
+            url = manual.url;
           }
         }
-        if (!fileUrl) throw new Error('Unable to resolve manual URL');
+        if (!url) {
+          setToast({ message: 'No manual URL on record for this entry.', type: 'error' });
+          return;
+        }
 
-        // Trigger browser download (works cross-origin)
-        const filename = `${manual.manufacturer}-${manual.name || manual.model}.pdf`;
-        const isSameOrigin = fileUrl.startsWith(window.location.origin);
+        // HEAD-check via edge function. Client-side timeout is a backstop; the
+        // function itself enforces 1.5s. Keep client timeout generous (3s) so
+        // we don't flag healthy-but-slow CDNs as dead.
+        let probe = { ok: true, status: 200 };
+        try {
+          probe = await http.post('/api/check-manual-link', {
+            url,
+            manual_id: manual.id,
+          }, { timeout: 3000 });
+        } catch (e) {
+          // Probe failed (edge fn down, network) — assume URL is OK and let the
+          // browser deal. Don't block the user on our link-health tool being
+          // flaky.
+          console.warn('[manuals] check-manual-link probe failed, continuing:', e);
+        }
 
-        if (isSameOrigin) {
-          // Same-origin: browser respects download attribute
-          const anchor = document.createElement('a');
-          anchor.href = fileUrl;
-          anchor.download = filename;
-          anchor.style.display = 'none';
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-        } else {
-          // Cross-origin: fetch blob then download
-          const response = await fetch(fileUrl, { mode: 'cors' });
-          if (!response.ok) throw new Error('Failed to fetch manual');
-          const blob = await response.blob();
-          const blobUrl = window.URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = blobUrl;
-          anchor.download = filename;
-          anchor.style.display = 'none';
-          document.body.appendChild(anchor);
-          anchor.click();
-          document.body.removeChild(anchor);
-          window.URL.revokeObjectURL(blobUrl);
+        if (!probe?.ok) {
+          setToast({
+            message: 'This manufacturer link is no longer valid — we\u2019ve flagged it for review.',
+            type: 'error',
+          });
+          return;
+        }
+
+        const win = window.open(url, '_blank', 'noopener,noreferrer');
+        if (!win) {
+          setToast({
+            message: 'Popup blocked \u2014 allow popups for this site to open manuals.',
+            type: 'error',
+          });
+          return;
         }
 
         setToast({
-          message: `Download started for ${manual.manufacturer} ${manual.name}.`,
+          message: `${intent === 'preview' ? 'Opened' : 'Opening'} ${manual.manufacturer} ${manual.name || manual.model || ''}`.trim(),
           type: 'success',
         });
       } catch (err) {
-        console.error('Download error:', err);
-        setToast({ message: 'Failed to download manual.', type: 'error' });
+        console.error(`[manuals] ${intent} error:`, err);
+        setToast({ message: `Failed to ${intent} manual.`, type: 'error' });
       } finally {
-        setDownloading(false);
-        setDownloadingId(null);
+        if (intent === 'download') {
+          setDownloading(false);
+          setDownloadingId(null);
+        }
       }
     },
-    [downloading, manuals]
+    [manuals, downloading]
+  );
+
+  const handlePreview = useCallback(
+    manualId => openManualUrl(manualId, 'preview'),
+    [openManualUrl]
+  );
+  const handleDownload = useCallback(
+    manualId => openManualUrl(manualId, 'download'),
+    [openManualUrl]
   );
   /**
    * ManualFinderStandalone component: part 3 of the fix
@@ -552,18 +559,64 @@ export default function ManualFinderStandalone() {
     setToast(null);
   }, []);
 
+  const TOP_BRANDS = ['worcester', 'ideal', 'vaillant', 'baxi', 'potterton', 'glow-worm', 'viessmann', 'alpha-boilers'];
+
   return (
     <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
-      <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-blue-600 dark:text-blue-300">
-        Boiler Manual Finder
-      </h2>
+      {/* Hero */}
+      <div style={{
+        borderRadius: 20,
+        background: 'linear-gradient(135deg, #007AFF 0%, #0051D5 100%)',
+        padding: '18px 18px 14px',
+        marginBottom: 16,
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: 80, height: 80, background: 'rgba(255,255,255,0.10)', borderRadius: '50%', transform: 'translate(30%, -30%)', filter: 'blur(16px)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, position: 'relative' }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: 18 }}>📚</span>
+          </div>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', marginBottom: 2 }}>Boiler Manuals</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.4px', lineHeight: 1 }}>Manual Finder</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8, paddingTop: 10, marginTop: 4, position: 'relative' }}>
+          {[
+            { label: '5,670+', sub: 'Manuals' },
+            { label: '60+', sub: 'Brands' },
+            { label: 'PDF', sub: 'All formats' },
+          ].map((s, i) => (
+            <div key={i} style={{ flex: 1, textAlign: 'center', background: 'rgba(255,255,255,0.12)', borderRadius: 10, padding: '6px 4px' }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{s.label}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', marginTop: 1 }}>{s.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick brand chips */}
+      {!selectedManufacturer && (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#8E8E93', marginBottom: 6 }}>Quick select</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {TOP_BRANDS.map(brand => (
+              <button key={brand} onClick={() => handleManufacturerSelect(brand)}
+                style={{ padding: '6px 12px', borderRadius: 20, border: '1px solid rgba(0,0,0,0.1)', background: '#fff', fontSize: 12, fontWeight: 600, color: '#1C1C1E', cursor: 'pointer', textTransform: 'capitalize' }}>
+                {brand.replace(/-/g, ' ').replace('alpha boilers', 'Alpha').replace('glow worm', 'Glow-worm')}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4" style={{position: 'relative', zIndex: 1}}>
           {/* Manufacturer dropdown */}
           <div className="relative w-full sm:w-1/2" ref={manufacturerListRef} style={{zIndex: 10000}}>
             <button
-              className="w-full flex justify-between items-center px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white font-medium"
+              className="w-full flex justify-between items-center px-3 sm:px-4 py-2.5 text-sm sm:text-base border border-gray-200 rounded-2xl bg-white text-gray-800 font-medium shadow-sm"
               onClick={() => setShowManufacturers(!showManufacturers)}
             >
               <span className="truncate pr-2">{selectedManufacturer || 'All Manufacturers'}</span>
@@ -582,7 +635,7 @@ export default function ManualFinderStandalone() {
 
             {showManufacturers && manufacturers.length > 0 && (
               <div 
-                className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-xl max-h-80 overflow-y-auto"
+                className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl max-h-80 overflow-y-auto"
                 style={{
                   zIndex: 999999,
                   maxHeight: '320px',
@@ -599,9 +652,9 @@ export default function ManualFinderStandalone() {
                 {/* Switch to direct rendering for better reliability */}
                 {manufacturers.length <= 200 ? (
                   <div className="py-1">
-                    {manufacturers.map((manufacturer, index) => (
+                    {manufacturers.map((manufacturer) => (
                       <button
-                        key={index}
+                        key={manufacturer}
                         className={`block w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150
                           ${selectedManufacturer === manufacturer ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-gray-100'} 
                           font-medium capitalize`}
@@ -639,7 +692,7 @@ export default function ManualFinderStandalone() {
                 placeholder="e.g. greenstar 30 combi, ecotec plus, logic..."
                 value={query}
                 onChange={handleSearchChange}
-                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2.5 text-sm sm:text-base border border-gray-200 rounded-2xl bg-white text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
               />
               {query && (
                 <button
@@ -663,20 +716,20 @@ export default function ManualFinderStandalone() {
         )}
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 p-3 sm:p-4 rounded-lg my-4 text-sm sm:text-base">
+          <div className="bg-red-50 border border-red-200 text-red-800 p-3 sm:p-4 rounded-2xl my-4 text-sm sm:text-base">
             <p>{error}</p>
           </div>
         )}
 
         {!loading && !error && manuals.length === 0 && (debouncedQuery || selectedManufacturer) && (
-          <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200 p-3 sm:p-4 rounded-lg my-4 text-sm sm:text-base">
+          <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 sm:p-4 rounded-2xl my-4 text-sm sm:text-base">
             <p className="font-semibold mb-1">No manuals found</p>
             <p className="text-xs opacity-80">Try searching by brand name (e.g. "greenstar", "ecotec", "logic") or select a manufacturer and search by model type (e.g. "combi", "system", "30").</p>
           </div>
         )}
 
         {!loading && !error && manuals.length === 0 && !debouncedQuery && !selectedManufacturer && (
-          <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 p-4 sm:p-6 rounded-lg my-4 text-center">
+          <div className="bg-white border border-gray-100 text-gray-600 p-4 sm:p-6 rounded-2xl my-4 text-center shadow-sm">
             <p className="font-semibold text-base mb-2">Search for a boiler manual</p>
             <p className="text-sm opacity-80 mb-3">Select a manufacturer or type a search term to get started.</p>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -701,7 +754,7 @@ export default function ManualFinderStandalone() {
             {favorites.size > 0 && (
               <button
                 onClick={() => setShowFavoritesOnly(prev => !prev)}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   showFavoritesOnly
                     ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
