@@ -74,6 +74,16 @@ const FlueGasAnalyser = () => {
     };
   }, []);
 
+  // Save readings to localStorage — must be defined before BLE handlers that reference it
+  const saveReadings = useCallback((newReadings) => {
+    setReadings(newReadings);
+    try {
+      localStorage.setItem('bb_fga_readings', JSON.stringify(newReadings));
+    } catch (e) {
+      console.warn('Could not save FGA readings to localStorage:', e);
+    }
+  }, []);
+
   // BLE: Scan for analyser
   const handleBleScan = useCallback(async (scanAll = false) => {
     setBleError(null);
@@ -201,16 +211,6 @@ const FlueGasAnalyser = () => {
     efficiencyNet: '', efficiencyGross: '',
     excessAir: '', coAirFree: '',
   });
-
-  // Save readings to localStorage
-  const saveReadings = useCallback((newReadings) => {
-    setReadings(newReadings);
-    try {
-      localStorage.setItem('bb_fga_readings', JSON.stringify(newReadings));
-    } catch (e) {
-      console.warn('Could not save FGA readings to localStorage:', e);
-    }
-  }, []);
 
   // Handle CSV file import
   const handleFileImport = useCallback(async (file) => {
@@ -830,7 +830,13 @@ const FlueGasAnalyser = () => {
                     : 'bg-red-50 border-red-100'
                 }`}>
                   <span className={`w-2.5 h-2.5 rounded-full ${getStatusDot('coCo2Ratio', currentReading.values.coCo2Ratio)}`} />
-                  <span className="text-xs font-semibold">
+                  <span className={`text-xs font-semibold ${
+                    getSafetyStatus('coCo2Ratio', currentReading.values.coCo2Ratio) === 'safe'
+                      ? 'text-emerald-900'
+                      : getSafetyStatus('coCo2Ratio', currentReading.values.coCo2Ratio) === 'warning'
+                      ? 'text-amber-900'
+                      : 'text-red-900'
+                  }`}>
                     CO/CO₂ Ratio: {currentReading.values.coCo2Ratio}
                     {getSafetyStatus('coCo2Ratio', currentReading.values.coCo2Ratio) === 'safe' && ' — Within safe limits'}
                     {getSafetyStatus('coCo2Ratio', currentReading.values.coCo2Ratio) === 'warning' && ' — Investigation needed'}

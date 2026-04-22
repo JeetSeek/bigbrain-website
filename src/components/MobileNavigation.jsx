@@ -209,17 +209,22 @@ export const MobileHeader = ({ title, leftAction, rightAction }) => {
         {leftAction}
       </div>
       
-      {/* Title */}
-      <h1 
-        className="font-semibold text-center flex-1 truncate px-2"
-        style={{ 
-          color: 'var(--ios-label-primary)',
-          fontSize: '17px',
-          letterSpacing: '-0.4px',
-        }}
-      >
-        {title}
-      </h1>
+      {/* Title — caller can pass an empty/falsy title to suppress the centred
+          heading (e.g. on Home where leftAction already shows the brand). */}
+      {title ? (
+        <h1 
+          className="font-semibold text-center flex-1 truncate px-2"
+          style={{ 
+            color: 'var(--ios-label-primary)',
+            fontSize: '17px',
+            letterSpacing: '-0.4px',
+          }}
+        >
+          {title}
+        </h1>
+      ) : (
+        <div className="flex-1" />
+      )}
       
       {/* Right Action */}
       <div className="flex-shrink-0 pr-3 flex items-center min-w-0">
