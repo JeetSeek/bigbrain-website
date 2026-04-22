@@ -1,5 +1,5 @@
 {
-  "name": "bigbrain_website",
+  "name": "1gassapp",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -12,28 +12,22 @@
     "railway:start": "node server/index.js"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
     "@google/generative-ai": "^0.24.1",
-    "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/supabase-js": "^2.51.0",
-    "chalk": "^5.4.1",
-    "cors": "^2.8.5",
     "dompurify": "^3.2.6",
     "dotenv": "^16.6.1",
-    "express": "^4.19.2",
     "html2canvas": "^1.4.1",
-    "js-yaml": "^4.1.0",
     "jspdf": "^3.0.4",
     "node-fetch": "^2.7.0",
-    "ora": "^8.2.0",
-    "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^3.11.174",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.26.2",
     "react-window": "^1.8.11",
-    "uuid": "^11.1.0",
-    "vosk-browser": "^0.0.8"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

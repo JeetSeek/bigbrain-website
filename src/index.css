@@ -5,14 +5,15 @@
  */
 
 /* 
- * Typography: SF Pro Display/Text with Inter as fallback.
- * Previously pulled Inter via Google Fonts which gated first paint on a
- * third-party CDN hit (P3 walkthrough 2026-04-21). We now rely on the
- * iOS-native stack (SF Pro) for Safari/iOS and any locally-installed Inter
- * for other platforms; finally falling back through system-ui.
- * TODO(fonts): self-host Inter via @fontsource/inter once the package is
- * added so non-Apple devices get the exact brand weights without a CDN.
+ * Typography: SF Pro Display/Text with self-hosted Inter as fallback.
+ * Inter is bundled via @fontsource/inter (weights match the old Google
+ * Fonts @import: 400/500/600/700). No third-party CDN hit on first paint.
+ * Apple devices still resolve to SF Pro via the system-font stack below.
  */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
 
 /* 
  * Tailwind CSS directives
