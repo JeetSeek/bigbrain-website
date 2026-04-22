@@ -1,0 +1,148 @@
+id,manufacturer,name,current_url,best_match_path,overlap_ratio,confidence,ties,candidate_count
+065c1803-d207-4f17-8050-214c400c81cb,baxi,Baxi 800 Heat Installation Guide,https://www.mrcentralheating.co.uk/pub/media/catalog/product/Baxi-800-Heat-Install-Guide.pdf,dhs_manuals_all/baxi/BAXI_400_HEAT_412_NG_installation.pdf,0.4,medium,3,291
+e777b47d-d08c-4af7-b94f-ab1a2a1e994a,baxi,Baxi 600 Combi Installation,https://www.wolseley.co.uk/wcsstore/ExtendedSitesCatalogAssetStore/images/products/AssetPush/DTP_AssetPushHighRes/std.lang.all/ti/on/Baxi_600_Combi_Installation.pdf,dhs_manuals_all/baxi/BAXI_COMBI_80_MAXFLUE_NG_installation.pdf,0.4,medium,1,291
+0197f41f-8f2f-47b4-97a9-c27cf13695c9,firebird,Firebird System 50-70,https://www.freeboilermanuals.com/assets/pdf/firebird/System-50-70.pdf,,0,none,0,0
+05d2303f-c3f0-4487-9fbe-46b5c302e947,firebird,Firebird Envirogreen System Boiler 2024,https://firebird.uk.com/wp-content/uploads/2024/02/Envirogreen_System_Manual-February2024-Secured.pdf,,0,none,0,0
+08f74071-357b-440a-9da6-4b785731ed4b,firebird,Firebird Silver Condensing Boiler 2024,https://firebird.uk.com/wp-content/uploads/2024/02/Silver_Boiler_Manual-February2024-Secured.pdf,,0,none,0,0
+1c18dc17-5cba-4cc0-8797-78d2a406a75c,firebird,Firebird Enviromax Condensing Boiler,https://firebird.uk.com/images/Enviromax_Manual_MLOB012_comp.pdf,,0,none,0,0
+1c8d269c-b911-4b7c-8e88-48c43c8d20aa,firebird,Firebird Envirogreen System 2021,https://firebird.uk.com/wp-content/uploads/2021/10/Envirogreen-System-Manual-MLOBEBSR003-October-21-Secured.pdf,,0,none,0,0
+1cc1d0f0-3a0f-4257-9b39-994e07ac51c1,firebird,Firebird S-Range,https://www.freeboilermanuals.com/assets/pdf/firebird/S-Range.pdf,,0,none,0,0
+221061f4-ba07-453f-ab6e-1859b9ccc591,firebird,Firebird Envirogreen Condensing 2021,https://firebird.uk.com/wp-content/uploads/2021/10/Envirogreen-Manual-MLOBEB012-Ocober-21-Secured.pdf,,0,none,0,0
+3677576e-f3d6-4718-9b70-27c43dfd6ad8,firebird,Firebird Super Q90,https://www.freeboilermanuals.com/assets/pdf/firebird/Super-Q90.pdf,,0,none,0,0
+3682eb7c-ef56-4da9-8e70-9d9ad4b52ab2,firebird,Firebird Standard Efficiency Combi,https://firebird.uk.com/images/Standard-Efficiency-Combi-Technical-Manual.pdf,,0,none,0,0
+3771a26b-5743-4c08-ae8e-5856a6980ca6,firebird,Firebird Enviromax Combi Pre-2018,https://firebird.uk.com/images/Downloads/Enviromax%20Manual%20-%20MLOB009.pdf,,0,none,0,0
+4110f3fc-f74d-4bc2-9846-194a08789d72,firebird,Firebird Envirogreen Combi 2019,https://firebird.uk.com/images/2019/Envirogreen_Combi_Manual_MLOBEBC_R004.pdf,,0,none,0,0
+545639e6-97c9-427f-aba2-2ccbd03e44cb,firebird,Firebird Silver Slimline Systempac 2024,https://firebird.uk.com/wp-content/uploads/2024/02/Silver_Slimline_Systempac_Manual-February24-Secured.pdf,,0,none,0,0
+654e2be5-e093-4a94-9fee-6af926d1bcd4,firebird,Firebird Enviromax System Boiler,https://firebird.uk.com/images/New_Enviromax_System_Manual.pdf,,0,none,0,0
+7c7fba04-921d-4872-9c6d-e0b603553ff8,firebird,Firebird Envirogreen Combi Xceed 2025,https://firebird.uk.com/wp-content/uploads/2025/01/Envirogreen-Combi-Xceed-Manual-MLOBEBCR011-January-25-Secured.pdf,,0,none,0,0
+7e655e01-fee3-4d14-a32b-0dc12916f390,firebird,Firebird Envirogreen Slimline Heatpac Addendum,https://firebird.uk.com/wp-content/uploads/2022/05/Envirogreen-Manual-Addendum-ADOBEB000-April-22-Secured.pdf,,0,none,0,0
+877c922e-e71e-40f6-84db-0415212f64bb,firebird,Firebird System 90-120,https://www.freeboilermanuals.com/assets/pdf/firebird/System-90-120.pdf,,0,none,0,0
+8b59243e-5ced-4113-9eed-0ef9287e9876,firebird,Firebird Elco FB3 Burner 78-100kW,https://firebird.uk.com/wp-content/uploads/2024/10/Elco-FB3-Burner-Manual-78-100kW-September-2024.pdf,,0,none,0,0
+93d34821-ff5d-4a1d-868b-8c4e43b5e6c2,firebird,Firebird Silver Slimline Systempac 2020,https://firebird.uk.com/images/2020/Slimline_Silver_Systempac_Manual_S.pdf,,0,none,0,0
+966dc794-b9c8-458e-b14f-9a1213248885,firebird,Firebird Enviromax Technical Manual,https://www.freeboilermanuals.com/assets/pdf/firebird/Enviromax%20Technical%20Manual%20-%20MLOB012.pdf,,0,none,0,0
+9ba0e469-a5c7-420a-8265-f98483ffdfc1,firebird,Firebird Enviromax Combi 2017,https://firebird.uk.com/images/EnviromaxCombiManual-October2017-MLOBCR000-Secured.pdf,,0,none,0,0
+b3bd6071-175b-49d1-88e4-e18087502b74,firebird,Firebird Olympic Combi,https://www.freeboilermanuals.com/assets/pdf/firebird/Olympic-Combi-Boiler.pdf,,0,none,0,0
+c3ed817e-9055-4c26-824e-0239f9aec500,firebird,Firebird Silver Condensing 2021,https://firebird.uk.com/wp-content/uploads/2021/10/Silver-Manual-MLOBEBS011-October-21-Secured.pdf,,0,none,0,0
+cf3b3b24-f34c-4a83-900f-bfe33861b723,firebird,Firebird Elco FB2 Burner 12-35kW,https://firebird.uk.com/wp-content/uploads/2024/10/Elco-FB2-Burner-Manual-12-35kW-September-2024.pdf,,0,none,0,0
+cf52b5d7-302e-4557-ad74-e865bcded6fc,firebird,Firebird Supreme Back Boiler,https://firebird.uk.com/images/BackBoiler_Instructions.pdf,,0,none,0,0
+d3aec406-cd12-4f5b-bbcc-2b8832e57068,firebird,Firebird System 70-90,https://www.freeboilermanuals.com/assets/pdf/firebird/System-70-90.pdf,,0,none,0,0
+e40cc398-3bbd-452f-9f52-68c824cea830,firebird,Firebird Silver Condensing (old),https://firebird.uk.com/images/New_Silver_Manual.pdf,,0,none,0,0
+e91da5bb-c19d-4907-96df-e9f5c6979c97,firebird,Firebird Popular and Heatpac Standard Eff,https://firebird.uk.com/images/stories/standard%20efficiency%20range%20manual.pdf,,0,none,0,0
+f725d686-fdcb-450d-b686-d5e24963cbb8,firebird,Firebird Elco FB2 Burner 36-44kW-58kW,https://firebird.uk.com/wp-content/uploads/2024/10/Elco-FB2-Burner-Manual-36-44kW-and-58kW-September-2024.pdf,,0,none,0,0
+f75e19c2-1f9c-4506-8f1e-0c6de53d88c7,firebird,Firebird Envirogreen Condensing Boiler 2024,https://firebird.uk.com/wp-content/uploads/2024/02/Envirogreen_Manual-February2024-MLOBEB017-Secured.pdf,,0,none,0,0
+2988e313-fa42-4bdd-9acd-48888f911a33,intergas-boiler-parts,Intergas Xtreme Installation Service User,https://theintergasshop.co.uk/intergas-boiler-manuals/Xtreme-Installation-manual.pdf,,0,none,0,16
+7e4b22c6-2a2f-4c01-b3e1-ff1d987e2938,intergas-boiler-parts,Intergas Rapid 25-32 Installation,https://theintergasshop.co.uk/intergas-boiler-manuals/Rapid-Installation-manual.pdf,dhs_manuals_all/intergas-boiler-parts/RAPID_25_COMBI_NG_installation.pdf,0.4,medium,2,16
+a6cf6d63-47ee-4899-9d89-070b64949da3,intergas-boiler-parts,Intergas Compact HRE 24-18 Installation,https://www.intergasheating.co.uk/app/uploads/2018/04/Combi-Compact-HRE-Installation-manual-88287806.pdf,dhs_manuals_all/intergas-boiler-parts/24_18_HRE_COMBI_NG_installation.pdf,0.5,medium,1,16
+ef1f9d1e-ea29-4d98-8ce7-baf27848d705,intergas-boiler-parts,Intergas Xclusive Installation Service User,https://theintergasshop.co.uk/intergas-boiler-manuals/Xclusive-Installation-manual.pdf,,0,none,0,16
+132e4fb4-0685-486f-8267-8c663e04aecb,navien,Navien LCB 700 Combi 21-28-36 LC-LCX,https://www.freeboilermanuals.com/assets/pdf/Navien/LCB700.pdf,,0,none,0,0
+1349f009-5496-4e4f-b638-1d9f40f66b00,navien,Navien NCB 24-28-34-40L SWE Installation,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB-CE_Installation.pdf,,0,none,0,0
+2d1a0fcc-2a2d-4590-991e-c5bed8cc3a38,navien,Navien NCB 700 Combi 25-42K 35-54K,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB_700_combi_on.pdf,,0,none,0,0
+618fdbbf-bcb6-4892-ac38-75d56935fdde,navien,Navien NCB 20-23-28-33 LHWE System ErP,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB-ErP_System_Installation_Operation_Manual_Eng.pdf,,0,none,0,0
+6aab9819-8c15-4451-861c-cbeca3fce531,navien,Navien NFC-H Combi Boilers,https://www.freeboilermanuals.com/assets/pdf/Navien/nfc_h.pdf,,0,none,0,0
+6d9a4d3d-78f7-4def-b2ee-e6e4f0a1d5f9,navien,Navien NCB 24-28-34-40 LDWE Combi ErP,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB-ErP_Combi_Installation_Operation_Manual_Eng.pdf,,0,none,0,0
+6eaa67fc-f2ff-435d-8adf-a108e05e43ab,navien,Navien LCB 700 Regular 21-28-36 RS-RSX,https://www.freeboilermanuals.com/assets/pdf/Navien/LCB700.pdf,,0,none,0,0
+947d35c0-e848-4bd5-b89b-827fd791610b,navien,Navien NPE 24-31 AWE-SWE Water Heater,https://www.freeboilermanuals.com/assets/pdf/Navien/NPE-Installation-Manual.pdf,,0,none,0,0
+a28d1487-76ad-447d-899f-3c24fd500399,navien,Navien LCB 700 System 21-28-36 LS-LSX,https://www.freeboilermanuals.com/assets/pdf/Navien/LCB700.pdf,,0,none,0,0
+a92b3a7e-f204-4c54-abf4-87a35513ac97,navien,Navien NCB-H Combi Boilers,https://www.freeboilermanuals.com/assets/pdf/Navien/ncb_h.pdf,,0,none,0,0
+aa0ca6a1-54a0-4148-b20c-c932255ce328,navien,Navien NCB 24-28-34-40L SWE Service,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB-CE_Service_manual_V1.0_151019.pdf,,0,none,0,0
+ada6021b-7094-4831-b8d2-b6cc69297386,navien,Navien NCB 700 42C-54C Installation,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB700_Combi_I.pdf,,0,none,0,0
+c12706c1-3451-4b1f-b82c-25880f16d312,navien,Navien NCB 300 28K-37K-41K Installation,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB300_Combi_Installation.pdf,,0,none,0,0
+d31fddd0-7c68-440e-a565-8209b4077606,navien,Navien NCB 300 Service Manual,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB300_Combi_Service.pdf,,0,none,0,0
+e0fb00cd-d846-49f5-8c63-00d7e6b1f00a,navien,Navien NCM-1130HH,https://www.freeboilermanuals.com/assets/pdf/Navien/NCM-1130HH_INSTALLATION-MANUAL_ENG_v2.2.pdf,,0,none,0,0
+ec3e1a2d-b873-432e-aff6-6352e0eadb85,navien,Navien NCB 500 37K-41K Combi Installation,https://www.freeboilermanuals.com/assets/pdf/Navien/NCB500-Combi-CE-GB-Installation-Operation-Manual-EN-220225-4.pdf,,0,none,0,0
+6413d3b9-05dc-40c5-8459-8a7bc147f566,potterton,Potterton Assure Combi 25-30-36 Installation,https://www.freeboilermanuals.com/assets/pdf/potterton/Assure_Combi_Installation.pdf,dhs_manuals_all/potterton/APOLLO_25_COMBI_NG_installation.pdf,0.286,none,2,314
+8d9237bc-86d8-42f5-b51d-6338fe787a9b,potterton,Potterton Assure Combi User Guide,https://www.gentoogroup.com/media/olek5jq5/potterton_assure_combi_user_guide.pdf,dhs_manuals_all/potterton/COMBI_80_installation.pdf,0.25,none,2,314
+be1855d1-a559-468c-b9bb-329a77fe9572,potterton,Potterton Assure Heat Installation,https://www.freeboilermanuals.com/assets/pdf/potterton/Assure_Heat_manual_compressed.pdf,dhs_manuals_all/potterton/DERWENT_PRESTIGE_HEAT_NG_installation.pdf,0.2,none,5,314
+36d8e93c-0b60-4adc-90b2-f43f14556d63,vaillant,Vaillant ecoFIT pure 412-435 Open Vent Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecofit-pure-1/open-vent-2/ecofit-pure-open-vent-installation-and-servicing-instructions-2913464.pdf,dhs_manuals_all/vaillant/EFIT_PURE_630_VU3066-3_SYS_NG_installation.pdf,0.091,none,6,173
+3991469e-21d7-4033-8796-61e9d15d1d8f,vaillant,Vaillant ecoTEC sustain 24-28-34 Combi Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecotec-sustain-3/ecotec-sustain-combi-installation-and-maintenance-instructions-2055538.pdf,dhs_manuals_all/vaillant/ETEC_34_VUW_3467-2_COMBI_NG_installation.pdf,0.2,none,3,173
+39ef8b7d-24c9-4957-b7d2-69c3d3c74e83,vaillant,Vaillant ecoTEC sustain Flue Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecotec-sustain-3/ecotec-sustain-flue-installation-instructions-2055540.pdf,dhs_manuals_all/vaillant/ECOTEC_VU_VU_4664-5_SYSTEM_NG_installation.pdf,0.143,none,2,173
+40161b82-07aa-4112-8044-391bfb378be4,vaillant,Vaillant ecoTEC pro 24-28 Combi Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecotec-pro-1/ecotec-pro-24-28-combi-installation-and-maintenance-instructions-2055535.pdf,dhs_manuals_all/vaillant/TURBOMAX_PRO_24_E_VUW_COMBI_NG_installation.pdf,0.375,none,2,173
+6475d9b3-8367-412c-90b3-74616949a72a,vaillant,Vaillant ecoTEC pro 30 Combi Operating,https://professional.vaillant.co.uk/downloads/product-manuals/ecotec-pro-1/ecotec-pro-30-combi-operating-instructions-1943269.pdf,dhs_manuals_all/vaillant/HOME_30_COMBI_NG_installation.pdf,0.333,none,1,173
+69c26333-81a0-4bff-8f52-abec02a98c03,vaillant,Vaillant ecoFIT pure 825-835 Combi Operating,https://professional.vaillant.co.uk/downloads/product-manuals/ecofit-pure-1/combi-5/ecofit-pure-combi-operating-instructions-1943273.pdf,dhs_manuals_all/vaillant/EFIT_PURE_825_VUW2566-_CBI_NG_installation.pdf,0.222,none,2,173
+8817239a-28a6-40c1-a3af-13c487d22a6e,vaillant,Vaillant ecoFIT pure 825-835 Combi Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecofit-pure-1/combi-5/ecofit-pure-combi-installation-and-maintenance-instructions-1943272.pdf,dhs_manuals_all/vaillant/EFIT_PURE_825_VUW2566-_CBI_NG_installation.pdf,0.222,none,2,173
+8b006687-156c-47ce-884d-d296bad8ea75,vaillant,Vaillant ecoFIT sustain ecoTEC pro Flue Manual,https://professional.vaillant.co.uk/downloads/aproducts/flue/8048000026412-01-ecofit-pure-open-vent-flue-2936609.pdf,dhs_manuals_all/vaillant/ECOTEC_VU_VU_4664-5_SYSTEM_NG_installation.pdf,0.111,none,2,173
+a3f4dcc1-c79d-4430-9651-1a41c588684e,vaillant,Vaillant ecoFIT pure 612-630 System Installation,https://professional.vaillant.co.uk/downloads/product-manuals/ecofit-pure-1/system/ecofit-pure-system-installation-and-maintenance-instructions-1943275.pdf,dhs_manuals_all/vaillant/ETEC_630_VU3065-5_SYSTEM_LPG_installation.pdf,0.25,none,1,173
+b2feb7a9-cd50-4718-aae6-8b78c2fda7a1,vaillant,Vaillant ecoTEC sustain 24-28-34 Combi Operating,https://professional.vaillant.co.uk/downloads/product-manuals/ecotec-sustain-3/ecotec-sustain-combi-operating-instructions-2055539.pdf,dhs_manuals_all/vaillant/ETEC_34_VUW_3467-2_COMBI_NG_installation.pdf,0.2,none,3,173
+f425d324-e8f8-4653-a143-a3df26b8d375,vaillant,Vaillant ecoTEC pro 24-28 Combi Operating,https://professional.vaillant.co.uk/downloads/aproducts/ecotec-pro/combi-2/24-28/ecotec-pro-24-28-operating-instructions-1414774.pdf,dhs_manuals_all/vaillant/TURBOMAX_PRO_24_E_VUW_COMBI_NG_installation.pdf,0.375,none,2,173
+02b5c8a9-49e2-498d-a8d3-4c5ee4f9b26a,vokera,Vokera Aquanova,https://www.freeboilermanuals.com/assets/pdf/vokera/aquanova-installation-and-servicing-manual.pdf,,0,none,0,0
+035c9fcf-b12b-4bfd-9be3-6cbe9a678b1d,vokera,Vokera Compact 28 SE,https://www.freeboilermanuals.com/assets/pdf/vokera/compact-28SE.pdf,,0,none,0,0
+0486cd94-c03f-47e8-a01b-d8bd4d7e8368,vokera,Vokera Pinnacle,https://www.freeboilermanuals.com/assets/pdf/vokera/pinnacle_installation_and_servicing_instructions.pdf,,0,none,0,0
+059c9028-e07e-4c91-ba73-631d019eea89,vokera,Vokera Easi-Flo LE,https://www.freeboilermanuals.com/assets/pdf/vokera/Vokera-Easi-Flo.pdf,,0,none,0,0
+0a6222fb-36f2-4da5-8954-1b983b3ca78a,vokera,Vokera 20-80RS Flowmatic,https://www.freeboilermanuals.com/assets/pdf/vokera/20_80_rs_flowmatic_installation_and_servicing_instructions.pdf,,0,none,0,0
+0ec71e76-92df-4f31-901c-1a3a1ff086e6,vokera,Vokera Linea HE,https://www.freeboilermanuals.com/assets/pdf/vokera/linea-he-combi-boilers-installation.pdf,,0,none,0,0
+12a23df5-627c-4c12-887e-7dd17764d785,vokera,Vokera Mynute 28SE,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_28se_installation_and_servicing_instructions.pdf,,0,none,0,0
+152ddd68-1dcc-486b-855f-efc5d8766b48,vokera,Vokera Syntesi,https://www.freeboilermanuals.com/assets/pdf/vokera/syntesi_installation_and_servicing_instructions.pdf,,0,none,0,0
+17a4e6bc-5d2d-458f-8950-e798c550345e,vokera,Vokera Maxin 24E-28E,https://www.freeboilermanuals.com/assets/pdf/vokera/maxin_24e_28e_installation_and_servicing_-instructions.pdf,,0,none,0,0
+19640271-04fc-4690-8410-9ba2d64c640d,vokera,Vokera Easi-Heat Plus 25C-29C-32C,https://www.freeboilermanuals.com/assets/pdf/vokera/Easi_Heat_Plus.pdf,,0,none,0,0
+270a4431-6f42-44e0-82a1-7a6f1fbfb809,vokera,Vokera Vibe MAX 26C-30C,https://www.freeboilermanuals.com/assets/pdf/vokera/Vibe-maxC.pdf,,0,none,0,0
+290fbcc8-affa-4e5b-9509-b6ae97f1b944,vokera,Vokera Compact Standard Eff,https://www.freeboilermanuals.com/assets/pdf/vokera/compact-se-installation-and-servicing-manual.pdf,,0,none,0,0
+298b90b7-571c-409e-b5c0-7e39e3a1715d,vokera,Vokera Linea 24-28,https://www.freeboilermanuals.com/assets/pdf/vokera/linea_24_and_28_installation_and_servicing_instructions.pdf,,0,none,0,0
+2e6d7fff-383f-4085-b0d2-73c5ae6fe09e,vokera,Vokera Verve,https://www.freeboilermanuals.com/assets/pdf/vokera/verve.pdf,,0,none,0,0
+3311a436-d580-451d-a15b-81b875585731,vokera,Vokera Mynute 10SE-14SE-20SE,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_10se_14se_20se_installation_and_servicing_instructions.pdf,,0,none,0,0
+334924d6-07e6-40a1-bfcc-536e74d650ae,vokera,Vokera Unica i 36,https://www.freeboilermanuals.com/assets/pdf/vokera/unica_i_36.pdf,,0,none,0,0
+35e6fb0d-b5bf-40de-88b6-a6e0fc346380,vokera,Vokera Mynute i 20-30,https://www.freeboilermanuals.com/assets/pdf/vokera/Mynute-i.pdf,,0,none,0,0
+36778f08-f89f-4f90-b6de-29aea0facdcd,vokera,Vokera Aquaflow Twin Coil,https://www.freeboilermanuals.com/assets/pdf/vokera/aquaflow-and-aquaflow-twin-installation-and-servicing-manual.pdf,,0,none,0,0
+3c804aac-9631-4fb5-93cc-cefbd0d588d4,vokera,Vokera Excell 80SP,https://www.freeboilermanuals.com/assets/pdf/vokera/excell_80sp_installation_and_servicing_instructions.pdf,,0,none,0,0
+4148305d-30f0-4915-8c7a-5a044d8e8034,vokera,Vokera Eclipse ESC,https://www.freeboilermanuals.com/assets/pdf/vokera/eclipse_esc_installation_and_servicing_instructions.pdf,,0,none,0,0
+430bc6c3-9d70-4808-b65f-e6df5fe2735b,vokera,Vokera Compact HE,https://www.freeboilermanuals.com/assets/pdf/vokera/compact-he24.pdf,,0,none,0,0
+46349e8a-baa8-4797-a877-aaca8dbf7e39,vokera,Vokera Linea,https://www.freeboilermanuals.com/assets/pdf/vokera/linea_installation_and_servicing_instructions.pdf,,0,none,0,0
+482e2ba1-bb38-42c2-af17-1ba04654e12f,vokera,Vokera Mynute 28E-35E,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_28e_35e_installation_and_servicing_instructions.pdf,,0,none,0,0
+4fc2fe07-e51c-42ac-bfdf-432ce71b6fea,vokera,Vokera Mynute 14-48SP,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_14_48sp_installation_and_servicing_instructions.pdf,,0,none,0,0
+503c98e2-d400-4fdb-a2c9-34a24664f81c,vokera,Vokera Unica HE,https://www.freeboilermanuals.com/assets/pdf/vokera/unica-he-installation-and-servicing-manual.pdf,,0,none,0,0
+521f407a-d62b-481f-80be-c481cc3f36b3,vokera,Vokera Linea Max HE,https://www.freeboilermanuals.com/assets/pdf/vokera/linea-max-he-installation-and-servicing-manual.pdf,,0,none,0,0
+58f6e33b-ec7a-4664-a968-5d60e3004a27,vokera,Vokera Verve i 50,https://www.freeboilermanuals.com/assets/pdf/vokera/2012222-L3.pdf,,0,none,0,0
+5994f68e-5e8f-45e7-ab37-e8cfd30d8722,vokera,Vokera Elidra 24-96AGM,https://www.freeboilermanuals.com/assets/pdf/vokera/elidra_24_96_agm_installation_and_servicing_instructions.pdf,,0,none,0,0
+61a7c82c-048e-44ae-bf0b-bc9e5a48049b,vokera,Vokera Unica i 28-32,https://www.freeboilermanuals.com/assets/pdf/vokera/Unica_i28_and_i32_install_and_user_manual.pdf,,0,none,0,0
+653f2d71-96d9-40be-a986-3426c3233a40,vokera,Vokera Easi-Heat Plus 18V,https://www.freeboilermanuals.com/assets/pdf/vokera/easi_heat_29.pdf,,0,none,0,0
+66034ed6-31dd-4615-bec2-ea68d577edec,vokera,Vokera Option,https://www.freeboilermanuals.com/assets/pdf/vokera/option-installation-and-servicing-instructions.pdf,,0,none,0,0
+66246ecd-31ec-40b5-9ffc-ad61de249d01,vokera,Vokera Vision Plus 25C-30C,https://www.freeboilermanuals.com/assets/pdf/vokera/vplus25.pdf,,0,none,0,0
+6f782043-19ea-4d8f-9dce-fe894674e8cf,vokera,Vokera Syntesi E 25-29,https://www.freeboilermanuals.com/assets/pdf/vokera/syntesi_25e_29e_installation_and_servicing-_manual.pdf,,0,none,0,0
+6ff049e5-5286-48f4-958f-dc735f95bfec,vokera,Vokera Mynute 28-96SE,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_28_96_se_installation_and_servicing_instructions.pdf,,0,none,0,0
+729e99b6-6ebd-4a64-b62a-359520a58b5c,vokera,Vokera Evolve 18S-24S-30S-35S,https://www.freeboilermanuals.com/assets/pdf/vokera/evolve_s.pdf,,0,none,0,0
+801c2fe1-b7b4-4ba2-9aeb-61dbb3332e01,vokera,Vokera 20-80RSS Flowmatic,https://www.freeboilermanuals.com/assets/pdf/vokera/20_80_rss_flowmatic_installation_and_servicing_instructions.pdf,,0,none,0,0
+807f91d1-7c4e-4055-a9c1-76926c788aee,vokera,Vokera Synergy E,https://www.freeboilermanuals.com/assets/pdf/vokera/synergy_e_installation_and_servicing_instructions.pdf,,0,none,0,0
+810a665f-d93c-4711-b9dc-8c1400e5b299,vokera,Vokera Vision System 25S,https://www.freeboilermanuals.com/assets/pdf/vokera/vision_s.pdf,,0,none,0,0
+83477c9d-161f-4001-a318-61aff9dd96df,vokera,Vokera Maxim 25-29,https://www.freeboilermanuals.com/assets/pdf/vokera/maxim_29.pdf,,0,none,0,0
+8386901d-b56e-4f8d-b7d3-97cf5ef6269a,vokera,Vokera Unica MAX 20S-30S,https://www.freeboilermanuals.com/assets/pdf/vokera/MAX20S.pdf,,0,none,0,0
+85c279b9-8b71-4f89-a298-efedbb8d4e5b,vokera,Vokera 12-48 RS Mynute,https://www.freeboilermanuals.com/assets/pdf/vokera/12_48_rs_mynute_installation_and_servicing_instructions.pdf,,0,none,0,0
+88a051e3-c333-4fb2-8007-eaa2595f4021,vokera,Vokera Unica MAX 35C-40C,https://www.freeboilermanuals.com/assets/pdf/vokera/MAX35C.pdf,,0,none,0,0
+892fbb80-0573-4fd3-bc08-16f2a5e5c3ed,vokera,Vokera Vision Combi 25-30 non ErP,https://www.freeboilermanuals.com/assets/pdf/vokera/Vision-Combi-25-30C.pdf,,0,none,0,0
+8ab935b4-9ba8-42a5-af89-ba479a0c7a93,vokera,Vokera Hydra,https://www.freeboilermanuals.com/assets/pdf/vokera/hydra_installation_and_servicing_instructions.pdf,,0,none,0,0
+8ff62358-815a-448e-b2bf-94a131edea04,vokera,Vokera Compact 24-28,https://www.freeboilermanuals.com/assets/pdf/vokera/vokcom28_22535_t.PDF,,0,none,0,0
+93cf5a1e-1ba9-4705-a0b9-8fc487d7a9ec,vokera,Vokera Evolve 24C-28C-32C-36C-42C,https://www.freeboilermanuals.com/assets/pdf/vokera/EVOLVE.pdf,,0,none,0,0
+981e5a50-f420-44e7-af52-78f42aa191d4,vokera,Vokera Easi-Heat i 25C-29C,https://www.freeboilermanuals.com/assets/pdf/vokera/Easi-heat-i.pdf,,0,none,0,0
+994d4827-9ce2-4f29-a1c1-c0784468fb70,vokera,Vokera 20-80CF Flowmatic,https://www.freeboilermanuals.com/assets/pdf/vokera/20_80_cf_and_24_96_cf_flowmatic_installation_and_servicing_instructions.pdf,,0,none,0,0
+9b3847d7-7793-4ec4-8d40-8b1fa4cde185,vokera,Vokera Vibe 20A-25A,https://www.freeboilermanuals.com/assets/pdf/vokera/VIBE-20A-25A-Installation-and-Servicing-Manual.pdf,,0,none,0,0
+ae2a1415-298f-43eb-954b-201ab5b956b5,vokera,Vokera 24-96RSE Flowmatic,https://www.freeboilermanuals.com/assets/pdf/vokera/24_96_rse_flowmatic_installation_and_servicing_instructions.pdf,,0,none,0,0
+b2979465-7667-40a2-9739-1a28f395eb45,vokera,Vokera Vision Plus 35C-40C,https://www.freeboilermanuals.com/assets/pdf/vokera/Vplus35c.pdf,,0,none,0,0
+b73e211e-c460-4406-90fb-df27fb7335db,vokera,Vokera Compact A 25-29,https://www.freeboilermanuals.com/assets/pdf/vokera/Compact-A-User-and-Installation-manual.pdf,,0,none,0,0
+b8be99e6-d33a-4451-bcc1-6b78928e7a7f,vokera,Vokera Compact 25A-29A-32A,https://www.freeboilermanuals.com/assets/pdf/vokera/compact_32.pdf,,0,none,0,0
+b8e7e583-bf56-4874-a4a2-3bc06f2cf6b7,vokera,Vokera Excel 25-29,https://www.freeboilermanuals.com/assets/pdf/vokera/excel_1.pdf,,0,none,0,0
+b8fb1baf-0446-4d38-b52b-c2fe33234eaa,vokera,Vokera Linea Plus AG,https://www.freeboilermanuals.com/assets/pdf/vokera/linea_plus_ag_installation_and_servicing_instructions.pdf,,0,none,0,0
+b94e2f39-5920-4ed2-b4e2-4d1f685557ec,vokera,Vokera Unica BHE,https://www.freeboilermanuals.com/assets/pdf/vokera/Unicabheinstall.pdf,,0,none,0,0
+bbc1f8ad-cba4-4f9e-850d-7e2706ba37b5,vokera,Vokera Aquaflow Single Coil,https://www.freeboilermanuals.com/assets/pdf/vokera/aquaflow-installation-and-servicing-manual.pdf,,0,none,0,0
+bcb69643-0c12-431b-bf0a-9f6d9c634702,vokera,Vokera Vision Plus 20S-25S-30S,https://www.freeboilermanuals.com/assets/pdf/vokera/Vplus20S.pdf,,0,none,0,0
+c0678c14-cf98-4fbf-81e0-9d440be9d408,vokera,Vokera Easi-Heat Plus 24S-30S,https://www.freeboilermanuals.com/assets/pdf/vokera/Easi_heat_s.pdf,,0,none,0,0
+c10b937b-306f-4bd1-8ced-2e646533ad0f,vokera,Vokera Eclipse ESS,https://www.freeboilermanuals.com/assets/pdf/vokera/eclipse_ess_installation_and_servicing_instructions.pdf,,0,none,0,0
+c4c6b180-bd94-4507-90fd-8639d3cdfdef,vokera,Vokera Mynute VHE 12-15,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute-vhe-12-15-installation-and-servicing-manual.pdf,,0,none,0,0
+c511d6cf-3684-4ce3-a8dd-cab76b39bcaf,vokera,Vokera Mynute VHE 20,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute-20-vhe-installation-and-servicing-manual.pdf,,0,none,0,0
+cc8418e2-8039-4de7-a7e1-438f3c46ac4b,vokera,Vokera 12-48 RSE Mynute,https://www.freeboilermanuals.com/assets/pdf/vokera/12_48_rse_mynute_installations_-and_servicing_instructions.pdf,,0,none,0,0
+cc9595b6-13a5-424c-a968-91f0bba550ee,vokera,Vokera Excell 80E-96E,https://www.freeboilermanuals.com/assets/pdf/vokera/excell_80e_and_96e_installation_and_servicing_instructions.pdf,,0,none,0,0
+d811099a-7e4c-4d1a-b29a-5ee31b31cd0c,vokera,Vokera Linea ONE 38 HE,https://www.freeboilermanuals.com/assets/pdf/vokera/Linea-One-installation-manual.pdf,,0,none,0,0
+db494fcf-2ff9-4814-9ea8-24722a0beb60,vokera,Vokera Vision System 20-25 SGC,https://www.freeboilermanuals.com/assets/pdf/vokera/vision-system.pdf,,0,none,0,0
+dd52c487-cc4f-49fa-80a4-feedde908ee2,vokera,Vokera Compact A v11,https://www.freeboilermanuals.com/assets/pdf/vokera/Compact-A-User-and-Install-Manual-v11.pdf,,0,none,0,0
+ddc18c55-ae3a-4956-a5be-8be8d9e5d354,vokera,Vokera Linea Max,https://www.freeboilermanuals.com/assets/pdf/vokera/linea_max_installation_and_servicing_instructions.pdf,,0,none,0,0
+e28848bf-f74c-4fac-8d12-6047adb85e9a,vokera,Vokera Condexapro 50M-100M-100S,https://www.freeboilermanuals.com/assets/pdf/vokera/condexapro-installation-and-servicing-manual.pdf,,0,none,0,0
+e63f41f5-425e-4330-9f05-0a17860da7cb,vokera,Vokera Mynute 14-48SE-20-70SE,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute_14_48se_20_70se.pdf,,0,none,0,0
+efade2ae-ba1a-4f9c-b4d5-2718e1566855,vokera,Vokera Compact 24 SE,https://www.freeboilermanuals.com/assets/pdf/vokera/compact-24SE.pdf,,0,none,0,0
+f1b0f4c3-fee6-4603-b43d-10343f697f8b,vokera,Vokera Mynute HE,https://www.freeboilermanuals.com/assets/pdf/vokera/mynute-he-installation-and-servicing-manual.pdf,,0,none,0,0
+f48690f7-c290-4df9-b0f6-20231b722e47,vokera,Vokera Vision Combi 25-30C,https://www.freeboilermanuals.com/assets/pdf/vokera/vision-combi.pdf,,0,none,0,0
+fe039366-73ec-47e7-baaa-e8f45ff16f92,vokera,Vokera Synergy,https://www.freeboilermanuals.com/assets/pdf/vokera/synergy_installation_and_servicing_instructions.pdf,,0,none,0,0
+16b2af59-487d-4ba8-9e22-560007c569a7,worcester,Greenstar 8000 Life Combi Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121935/47445,dhs_manuals_all/worcester/GREENSTAR_8000_LIFE_35S_SYS_NG_installation.pdf,0.5,medium,1,582
+4926c8cd-b94f-4dba-8779-c44d9d9da75c,worcester,Greenstar 8000 Life System Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121936/47446,dhs_manuals_all/worcester/GREENSTAR_8000_LIFE_35S_SYS_NG_installation.pdf,0.5,medium,1,582
+7b22d9ae-a4ab-49dc-9be6-790677c60846,worcester,Greenstar 8000 Style Combi Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121937/47447,dhs_manuals_all/worcester/GREENSTAR_532I_COMBI_LPG_installation.pdf,0.4,medium,6,582
+956cf8e7-ecb9-43b0-8020-b03cc0a46f22,worcester,Greenstar 8000 Style System Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121940/47451,dhs_manuals_all/worcester/GREENSTAR_12I_V2_SYSTEM_LPG_installation.pdf,0.4,medium,24,582
+d6c42185-1903-4f5c-ba6e-5cd269a68a13,worcester,Greenstar 4000 Combi Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121938/47448,dhs_manuals_all/worcester/GREENSTAR_532I_COMBI_LPG_installation.pdf,0.5,medium,6,582
+e869fec7-840c-4f43-8b24-01c2acf5fdd8,worcester,Greenstar 4000 System Installation,https://www.worcester-bosch.co.uk/support/literature/download/release/8716121939/47449,dhs_manuals_all/worcester/GREENSTAR_12I_V2_SYSTEM_LPG_installation.pdf,0.5,medium,24,582
+3adeff57-4a94-4ac4-bc7d-9d91fa088246,zanussi,Zanussi Ultra System 15-18-24-30,https://www.freeboilermanuals.com/assets/pdf/Zanussi/zanussi-system.compressed.pdf,,0,none,0,0
+91b031d0-06d7-4b2a-a082-ef4f67b9339f,zanussi,Zanussi Ultra Combi 30-35,https://www.freeboilermanuals.com/assets/pdf/Zanussi/zanussi-combi.1.pdf,,0,none,0,0
