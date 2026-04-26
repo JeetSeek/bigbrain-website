@@ -347,6 +347,142 @@ ${body}
   }
 }
 
+// ─── Direct fault-code lookup against bb_fault_codes ─────────────────────────
+// Vector search over chunked manuals is the wrong tool for the question
+// "what does fault code 224 mean?" — fault codes are tabular data, and the
+// 224-explanation chunk often gets outranked by generic model-overview chunks
+// that score higher on semantic similarity to the model name. So we run a
+// direct table query in parallel and surface any code matches as additional
+// "sources" with scope='fault_codes' and similarity=1.0, ranking them above
+// the vector chunks in the merged grounding context.
+//
+// Returns ChunkSource[] (same shape as getRelevantChunks output) so the main
+// handler can merge the two lists without bespoke handling. Empty array on
+// any error or no match.
+
+async function getBbFaultCodeMatches(
+  supabase: any,
+  faultCode: string,
+  manufacturer: string | null
+): Promise<ChunkSource[]> {
+  try {
+    const variants = buildFaultCodeVariants(faultCode);
+
+    const { data: rows, error } = await supabase
+      .from('bb_fault_codes')
+      .select('id, manual_id, code, subcode, description, probable_cause, recovery_actions')
+      .in('code', variants)
+      .limit(20);
+
+    if (error) {
+      console.error('[bb_fault_codes] query error:', error.message || error);
+      return [];
+    }
+    if (!rows || rows.length === 0) {
+      console.log(`[bb_fault_codes] No rows for code variants ${variants.join(',')}`);
+      return [];
+    }
+
+    // Resolve manual metadata so we can scope by manufacturer and label sources.
+    const manualIds = [...new Set(rows.map((r: any) => r.manual_id).filter(Boolean))];
+    let manualById = new Map<string, any>();
+    if (manualIds.length > 0) {
+      const { data: manuals } = await supabase
+        .from('bb_manuals')
+        .select('id, manufacturer, title, filename')
+        .in('id', manualIds);
+      manualById = new Map((manuals || []).map((m: any) => [m.id, m]));
+    }
+
+    // Filter by manufacturer if one was extracted from the user message.
+    // Matches the bb_hybrid_search ILIKE behaviour so 'worcester' picks up
+    // both 'worcester bosch' and 'worcester bosch group' rows.
+    const mfrLower = manufacturer ? manufacturer.toLowerCase() : null;
+    const scoped = rows.filter((r: any) => {
+      if (!mfrLower) return true;
+      const m = manualById.get(r.manual_id);
+      return m && (m.manufacturer || '').toLowerCase().includes(mfrLower);
+    });
+    if (scoped.length === 0) {
+      console.log(`[bb_fault_codes] ${rows.length} matches but none for manufacturer=${manufacturer}`);
+      return [];
+    }
+
+    // Dedup by description so a single physical fault doesn't take three pills.
+    const seen = new Set<string>();
+    const deduped: any[] = [];
+    for (const r of scoped) {
+      const key = (r.description || '').trim().toLowerCase().replace(/[\s.]+/g, ' ');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      deduped.push(r);
+      if (deduped.length >= 3) break;   // 3 fault-code pills max — leaves room for vector chunks
+    }
+
+    console.log(`[bb_fault_codes] ${deduped.length} unique matches for ${faultCode} (mfr=${manufacturer ?? 'any'})`);
+
+    return deduped.map((r: any): ChunkSource => {
+      const m = manualById.get(r.manual_id) || {};
+      const title    = (m.title as string | null) || null;
+      const filename = (m.filename as string | null) || null;
+      const label    = title || filename || (m.manufacturer as string | null) || 'Manual';
+      const recovery = Array.isArray(r.recovery_actions) ? r.recovery_actions.filter(Boolean).join(' ') : '';
+      const snippet  = `Code ${r.code}: ${r.description || ''}${r.probable_cause ? ` — ${r.probable_cause}` : ''}${recovery ? ` Recovery: ${recovery}` : ''}`
+        .slice(0, 240).replace(/\s+/g, ' ').trim();
+      return {
+        chunk_id:    r.id,
+        manual_id:   r.manual_id,
+        filename,
+        title,
+        manufacturer: (m.manufacturer as string | null) || null,
+        scope:       'fault_codes',
+        chunk_index: null,
+        similarity:  1.0,                  // exact code match — top of the pile
+        snippet,
+        manual_name: label,
+        page_number: null,
+      };
+    });
+  } catch (e) {
+    console.error('[bb_fault_codes] unexpected error:', e);
+    return [];
+  }
+}
+
+// Merge fault-code matches (highest priority) with vector chunks, dedup by
+// chunk_id, cap at RETRIEVAL_K, and rebuild the labelled context block so
+// pill index N === [N] in the LLM reply.
+function buildMergedContext(
+  faultMatches: ChunkSource[],
+  vectorContext: { context: string; sources: ChunkSource[] }
+): { context: string; sources: ChunkSource[] } {
+  if (faultMatches.length === 0) return vectorContext;
+
+  const seen = new Set(faultMatches.map(s => s.chunk_id));
+  const merged = [
+    ...faultMatches,
+    ...vectorContext.sources.filter(s => !seen.has(s.chunk_id)),
+  ].slice(0, RETRIEVAL_K);
+
+  const body = merged.map((src, i) => {
+    const head = `[${i + 1}] ${src.manual_name}${src.scope ? ` · ${src.scope}` : ''}`;
+    return `${head}\n${src.snippet}`;
+  }).join('\n---\n');
+
+  const context = `MANUAL CONTEXT — CITATION RULES (MANDATORY):
+• Each source below is tagged [1], [2], … [${merged.length}]. Use those exact bracket markers inline when stating any manufacturer-specific fact.
+• Sources with scope='fault_codes' come from a structured fault-code table — treat their description/cause/recovery as authoritative for that code.
+• Sources with other scopes are excerpts from manual chunks — quote exactly when quoting; paraphrase only when faithful.
+• If the sources don't cover the point, say "the manual doesn't specify" and ask the engineer for clarification — never invent a value.
+• General Gas Safe best-practice may be added AFTER the grounded part, prefixed with "— general practice:" and without a [n] marker.
+
+SOURCES:
+${body}
+`;
+
+  return { context, sources: merged };
+}
+
 // ─── System prompt — expert Gas Safe engineer with systematic methodology ────
 
 function buildSystemPrompt(faultInfo: any, ragContext = ''): string {
@@ -555,13 +691,16 @@ Deno.serve(async (req) => {
     const hasFaultCode = extracted.faultCode !== null;
     const temperature = hasSafetyCriticalContext ? 0.2 : hasFaultCode ? 0.4 : 0.55;
 
-    // RAG: retrieve relevant manual chunks
-    const { context: ragContext, sources } = await getRelevantChunks(
-      supabase,
-      message,
-      extracted.manufacturer,
-      Deno.env.get('OPENAI_API_KEY')!
-    );
+    // Grounding: vector chunks (always) + bb_fault_codes direct lookup (when
+    // a fault code was extracted). Run in parallel and merge so a structured
+    // fault-code row beats a generic model-overview chunk to the [1] slot.
+    const [vectorResult, faultCodeMatches] = await Promise.all([
+      getRelevantChunks(supabase, message, extracted.manufacturer, Deno.env.get('OPENAI_API_KEY')!),
+      extracted.faultCode
+        ? getBbFaultCodeMatches(supabase, extracted.faultCode, extracted.manufacturer)
+        : Promise.resolve([] as ChunkSource[]),
+    ]);
+    const { context: ragContext, sources } = buildMergedContext(faultCodeMatches, vectorResult);
 
     // Short-circuit: no fault-code DB match AND no retrieval hits → do NOT call
     // the LLM. Returning an empty-corpus response here kills the hallucination
