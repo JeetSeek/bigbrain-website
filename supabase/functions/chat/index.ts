@@ -347,6 +347,50 @@ ${body}
   }
 }
 
+// ─── Model-keyword extraction ───────────────────────────────────────────────
+// bb_fault_codes is ambiguous when the same `code` value (e.g. "2") describes
+// different faults across different manuals from the same manufacturer
+// (Ideal "L2" can be Ignition Lockout, Flame Loss, BCC Fault, etc., depending
+// on which manual you're reading). Without a model anchor, picking the first
+// few rows surfaces a wrong description and the prompt's "fault_codes is
+// authoritative" rule then leads the LLM into a wrong diagnosis.
+//
+// So we extract distinctive model tokens that appear after the matched
+// manufacturer name in the user message ("Ideal Logic Combi 30" → ["Logic"]).
+// If we can't find any model token, the caller skips the bb_fault_codes
+// lookup entirely — vector RAG handles model disambiguation through embedding
+// similarity, which is the safer default for under-specified queries.
+
+const MODEL_GENERIC_TOKENS = new Set([
+  'boiler', 'combi', 'combination', 'system', 'regular', 'conventional',
+  'heat', 'only', 'open', 'vent', 'sealed',
+  'fault', 'error', 'code', 'codes', 'lockout', 'showing', 'displaying',
+  'displays', 'reads', 'flashing', 'reading',
+  'what', 'does', 'mean', 'means', 'meaning',
+  'on', 'an', 'the', 'my', 'your', 'with', 'for', 'and', 'but', 'this', 'that',
+  'working', 'installation', 'servicing', 'service', 'install',
+  'gas', 'natural', 'lpg',
+]);
+
+function extractModelKeywords(message: string, manufacturer: string | null): string[] {
+  if (!manufacturer) return [];
+  const lower = message.toLowerCase();
+  const idx = lower.indexOf(manufacturer.toLowerCase());
+  if (idx === -1) return [];
+  const tail = message.slice(idx + manufacturer.length);
+  const tokens = tail.split(/[^\w]+/).filter(Boolean);
+  const out: string[] = [];
+  for (const t of tokens.slice(0, 8)) {
+    if (out.length >= 2) break;
+    const tl = t.toLowerCase();
+    if (MODEL_GENERIC_TOKENS.has(tl)) continue;
+    if (/^\d+$/.test(t)) continue;            // pure-numeric (kW rating, model number) is too noisy alone
+    if (tl.length < 3) continue;              // 'a', 'is', 'on' fall through here too
+    out.push(t);
+  }
+  return out;
+}
+
 // ─── Direct fault-code lookup against bb_fault_codes ─────────────────────────
 // Vector search over chunked manuals is the wrong tool for the question
 // "what does fault code 224 mean?" — fault codes are tabular data, and the
@@ -363,15 +407,54 @@ ${body}
 async function getBbFaultCodeMatches(
   supabase: any,
   faultCode: string,
-  manufacturer: string | null
+  manufacturer: string | null,
+  modelKeywords: string[]
 ): Promise<ChunkSource[]> {
   try {
-    const variants = buildFaultCodeVariants(faultCode);
+    // No manufacturer or no model anchor → skip. Vector RAG handles
+    // under-specified queries via embedding similarity, which is safer than
+    // pulling a possibly-conflicting set of fault-code rows from across all
+    // of a manufacturer's catalogue.
+    if (!manufacturer) {
+      console.log('[bb_fault_codes] no manufacturer extracted, skipping (vector-only)');
+      return [];
+    }
+    if (modelKeywords.length === 0) {
+      console.log('[bb_fault_codes] no model keywords extracted, skipping (vector-only)');
+      return [];
+    }
 
+    // Pre-filter bb_manuals to those that match BOTH the manufacturer AND
+    // every model keyword (ANDed in JS — PostgREST doesn't compose AND-of-OR
+    // across two columns cleanly). We keep this list small (manufacturers
+    // typically have <500 manuals each in bb_manuals).
+    const { data: allManuals, error: manualsErr } = await supabase
+      .from('bb_manuals')
+      .select('id, manufacturer, title, filename')
+      .ilike('manufacturer', `%${manufacturer}%`);
+    if (manualsErr) {
+      console.error('[bb_fault_codes] bb_manuals query error:', manualsErr.message || manualsErr);
+      return [];
+    }
+    const kwLower = modelKeywords.map(k => k.toLowerCase());
+    const matchedManuals = (allManuals || []).filter((m: any) => {
+      const haystack = `${m.title || ''} ${m.filename || ''}`.toLowerCase();
+      return kwLower.every(kw => haystack.includes(kw));
+    });
+    if (matchedManuals.length === 0) {
+      console.log(`[bb_fault_codes] no manuals match mfr=${manufacturer} + keywords=${modelKeywords.join(',')}, skipping`);
+      return [];
+    }
+    const manualById: Map<string, any> = new Map(matchedManuals.map((m: any) => [m.id, m]));
+    const matchedManualIds = matchedManuals.map((m: any) => m.id);
+
+    // Now query bb_fault_codes scoped to those manuals + code variants.
+    const variants = buildFaultCodeVariants(faultCode);
     const { data: rows, error } = await supabase
       .from('bb_fault_codes')
       .select('id, manual_id, code, subcode, description, probable_cause, recovery_actions')
       .in('code', variants)
+      .in('manual_id', matchedManualIds)
       .limit(20);
 
     if (error) {
@@ -379,45 +462,28 @@ async function getBbFaultCodeMatches(
       return [];
     }
     if (!rows || rows.length === 0) {
-      console.log(`[bb_fault_codes] No rows for code variants ${variants.join(',')}`);
+      console.log(`[bb_fault_codes] No rows for code=${variants.join('|')} across ${matchedManuals.length} model-matched manuals`);
       return [];
     }
+    const scoped = rows;
 
-    // Resolve manual metadata so we can scope by manufacturer and label sources.
-    const manualIds = [...new Set(rows.map((r: any) => r.manual_id).filter(Boolean))];
-    let manualById = new Map<string, any>();
-    if (manualIds.length > 0) {
-      const { data: manuals } = await supabase
-        .from('bb_manuals')
-        .select('id, manufacturer, title, filename')
-        .in('id', manualIds);
-      manualById = new Map((manuals || []).map((m: any) => [m.id, m]));
-    }
-
-    // Filter by manufacturer if one was extracted from the user message.
-    // Matches the bb_hybrid_search ILIKE behaviour so 'worcester' picks up
-    // both 'worcester bosch' and 'worcester bosch group' rows.
-    const mfrLower = manufacturer ? manufacturer.toLowerCase() : null;
-    const scoped = rows.filter((r: any) => {
-      if (!mfrLower) return true;
-      const m = manualById.get(r.manual_id);
-      return m && (m.manufacturer || '').toLowerCase().includes(mfrLower);
-    });
-    if (scoped.length === 0) {
-      console.log(`[bb_fault_codes] ${rows.length} matches but none for manufacturer=${manufacturer}`);
-      return [];
-    }
-
-    // Dedup by description so a single physical fault doesn't take three pills.
-    const seen = new Set<string>();
-    const deduped: any[] = [];
+    // Frequency-aware dedup: group rows by normalized description and rank
+    // by how many manuals carry that description. With ambiguous codes
+    // (e.g. Ideal "L2" appears as Ignition Lockout in 70 manuals and Flame
+    // Loss in 1), this ensures the dominant interpretation wins regardless
+    // of PostgREST result order. Take top 3 distinct descriptions.
+    const groups = new Map<string, { rep: any; count: number }>();
     for (const r of scoped) {
       const key = (r.description || '').trim().toLowerCase().replace(/[\s.]+/g, ' ');
-      if (seen.has(key)) continue;
-      seen.add(key);
-      deduped.push(r);
-      if (deduped.length >= 3) break;   // 3 fault-code pills max — leaves room for vector chunks
+      if (!key) continue;
+      const g = groups.get(key);
+      if (g) g.count++;
+      else groups.set(key, { rep: r, count: 1 });
     }
+    const deduped = [...groups.values()]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3)
+      .map(g => g.rep);
 
     console.log(`[bb_fault_codes] ${deduped.length} unique matches for ${faultCode} (mfr=${manufacturer ?? 'any'})`);
 
@@ -694,10 +760,19 @@ Deno.serve(async (req) => {
     // Grounding: vector chunks (always) + bb_fault_codes direct lookup (when
     // a fault code was extracted). Run in parallel and merge so a structured
     // fault-code row beats a generic model-overview chunk to the [1] slot.
+    // Extract distinctive model tokens from the user message so the
+    // fault-code lookup can scope to the right manual (avoids "L2 = Flame
+    // Loss" leaking from i-mini onto a Logic Combi query). Empty array means
+    // we'll skip the fault-code lookup entirely — vector RAG only.
+    const modelKeywords = extractModelKeywords(message, extracted.manufacturer);
+    if (extracted.faultCode) {
+      console.log(`[chat] faultCode=${extracted.faultCode} mfr=${extracted.manufacturer ?? 'any'} modelKeywords=${modelKeywords.join(',') || '(none)'}`);
+    }
+
     const [vectorResult, faultCodeMatches] = await Promise.all([
       getRelevantChunks(supabase, message, extracted.manufacturer, Deno.env.get('OPENAI_API_KEY')!),
       extracted.faultCode
-        ? getBbFaultCodeMatches(supabase, extracted.faultCode, extracted.manufacturer)
+        ? getBbFaultCodeMatches(supabase, extracted.faultCode, extracted.manufacturer, modelKeywords)
         : Promise.resolve([] as ChunkSource[]),
     ]);
     const { context: ragContext, sources } = buildMergedContext(faultCodeMatches, vectorResult);
