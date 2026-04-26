@@ -10,23 +10,36 @@ const corsHeaders = {
 };
 
 // ─── Retrieval configuration ──────────────────────────────────────────────────
-// TODO(bb-migration): swap RETRIEVAL_TABLE/RPC to bb_content_chunks when
-//   (a) SELECT count(*) FROM bb_content_chunks > 100k
-//   (b) bb_content_chunks.page_number is populated on >=95% of rows
-// See docs/user-walkthrough-2026-04-21.md for why we deferred.
-const RETRIEVAL_TABLE = 'manual_content_chunks';
-const RETRIEVAL_RPC = 'match_manual_chunks';
-const RETRIEVAL_K = 6;
-const RETRIEVAL_THRESHOLD = 0.75;
+// 2026-04-26: cut over from match_manual_chunks (manual_content_chunks, ~76k
+// rows, AND-mode tsquery design flaw) to bb_hybrid_search (bb_content_chunks,
+// 25,345 rows, 100% embedded with text-embedding-3-small, cosine + ILIKE
+// keyword boost, manufacturer filter that respects manufacturer_folder).
+// See chat-bb-retrieval-2026-04-26 PR for the migration rationale.
+const RETRIEVAL_TABLE = 'bb_content_chunks';
+const RETRIEVAL_RPC = 'bb_hybrid_search';
+const RETRIEVAL_K = 8;
+const RETRIEVAL_THRESHOLD = 0.5;        // cosine; bb_hybrid_search applies this server-side
+const RETRIEVAL_KEYWORD_BOOST = 0.15;   // weight added to combined_score on ILIKE keyword hits
 const RETRIEVAL_EMBEDDING_MODEL = 'text-embedding-3-small';
 
+// Dual-shape source: new bb_ keys per chat-bb-retrieval-2026-04-26 brief AND
+// legacy keys (manual_name, page_number) so the existing MessageBubble pill
+// renderer (added in 73ae54b) keeps working without UI changes. The legacy
+// aliases can be removed once MessageBubble is updated to read `title` and
+// `scope` directly.
 type ChunkSource = {
   chunk_id: string;
   manual_id: string;
-  manual_name: string;
+  filename: string | null;
+  title: string | null;
   manufacturer: string | null;
-  page_number: number | null;
+  scope: string | null;
+  chunk_index: number | null;
   similarity: number;
+  snippet: string;
+  // Legacy aliases for back-compat with MessageBubble.jsx (post-73ae54b):
+  manual_name: string;
+  page_number: number | null;
 };
 
 // ─── Manufacturer detection ───────────────────────────────────────────────────
@@ -217,10 +230,16 @@ async function getFaultCodeInfo(supabase: any, faultCode: string, manufacturer: 
 
 // ─── RAG: embed query and retrieve relevant manual chunks ───────────────────
 // Returns { context, sources }. context is injected into the system prompt with
-// strict grounding rules; sources are returned to the client so ChatDock can
-// render source cards (manual name + page number, linked to the Manuals tab).
-// If no chunk passes RETRIEVAL_THRESHOLD, sources is empty and caller should
-// short-circuit the LLM call to avoid ungrounded answers.
+// strict grounding rules and labelled [1]…[N] citation markers so the LLM can
+// cite inline. sources are returned to the client so MessageBubble can render
+// source pills below assistant replies. If no chunk passes RETRIEVAL_THRESHOLD
+// the caller short-circuits the LLM call to avoid ungrounded answers.
+//
+// Uses bb_hybrid_search(p_query_embedding, p_text_query, p_k, p_manufacturer,
+// p_min_similarity, p_keyword_boost) → cosine vector match + ILIKE keyword
+// boost, scoped to manufacturer / manufacturer_folder. The RPC applies
+// p_min_similarity server-side, so we don't have to re-filter in JS like the
+// old match_manual_chunks pipeline.
 
 async function getRelevantChunks(
   supabase: any,
@@ -230,35 +249,43 @@ async function getRelevantChunks(
 ): Promise<{ context: string; sources: ChunkSource[] }> {
   const empty = { context: '', sources: [] as ChunkSource[] };
   try {
-    // Embed the user message. Must use the same model that populated RETRIEVAL_TABLE
-    // (text-embedding-3-small). Mismatched models produce useless similarity scores
-    // and everything short-circuits to "not in the corpus".
+    // Embed the user message. Must be the same model that populated
+    // bb_content_chunks.embedding (text-embedding-3-small, 1536-dim).
+    // Mismatched models produce useless similarity scores.
     const embRes = await fetch('https://api.openai.com/v1/embeddings', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: RETRIEVAL_EMBEDDING_MODEL, input: message }),
     });
-    if (!embRes.ok) return empty;
+    if (!embRes.ok) {
+      console.error('[bb_retrieval] embedding request failed:', embRes.status);
+      return empty;
+    }
     const embData = await embRes.json();
     const embedding = embData.data[0].embedding;
 
-    // Hybrid search RPC (GIN text pre-filter + pgvector re-rank, scoped to manufacturer)
     const { data, error } = await supabase.rpc(RETRIEVAL_RPC, {
-      query_embedding: embedding,
-      match_count: RETRIEVAL_K * 2, // over-fetch so dedup still leaves us with K
-      filter_manufacturer: manufacturer,
-      min_similarity: RETRIEVAL_THRESHOLD, // RPC ignores this; we filter below
-      query_text: message,
+      p_query_embedding: embedding,
+      p_text_query:      message,
+      p_k:               RETRIEVAL_K * 2,    // over-fetch so dedup still leaves K
+      p_manufacturer:    manufacturer,
+      p_min_similarity:  RETRIEVAL_THRESHOLD,
+      p_keyword_boost:   RETRIEVAL_KEYWORD_BOOST,
     });
-    if (error || !data || data.length === 0) return empty;
+    if (error) {
+      console.error('[bb_retrieval] RPC error:', error.message || error);
+      return empty;
+    }
+    if (!data || data.length === 0) {
+      console.log(`[bb_retrieval] No chunks returned (manufacturer=${manufacturer ?? 'any'})`);
+      return empty;
+    }
 
-    // Filter on threshold (the RPC accepts min_similarity but does not actually
-    // apply it — verified in pg_proc definition 2026-04-21). Must filter in JS.
+    // Dedup on first 120 chars — manuals repeat boilerplate ("Safety Notes")
+    // across docs and we don't want six of them eating the [1]…[N] budget.
     const seen = new Set<string>();
     const passing = (data as any[])
-      .filter((c: any) => typeof c.similarity === 'number' && c.similarity >= RETRIEVAL_THRESHOLD)
       .filter((c: any) => {
-        // Dedup on first 120 chars — manuals often repeat boilerplate
         const key = (c.chunk_text || '').slice(0, 120);
         if (seen.has(key)) return false;
         seen.add(key);
@@ -268,42 +295,46 @@ async function getRelevantChunks(
 
     if (passing.length === 0) return empty;
 
-    // Batch-fetch manual names. Chunks only carry manual_id, not name.
-    const manualIds = [...new Set(passing.map((c: any) => c.manual_id).filter(Boolean))];
-    let nameById = new Map<string, string>();
-    if (manualIds.length > 0) {
-      const { data: manuals } = await supabase
-        .from('boiler_manuals')
-        .select('id, name')
-        .in('id', manualIds);
-      nameById = new Map((manuals || []).map((m: any) => [m.id, m.name as string]));
-    }
+    const topSim = Math.max(...passing.map((c: any) => Number(c.semantic_similarity) || 0));
+    console.log(`[bb_retrieval] ${passing.length} chunks (manufacturer=${manufacturer ?? 'any'}, top_similarity=${topSim.toFixed(3)})`);
 
-    const sources: ChunkSource[] = passing.map((c: any) => ({
-      chunk_id: c.id,
-      manual_id: c.manual_id,
-      manual_name: nameById.get(c.manual_id) || c.manufacturer || 'Unknown manual',
-      manufacturer: c.manufacturer || null,
-      page_number: typeof c.page_number === 'number' ? c.page_number : null,
-      similarity: c.similarity,
-    }));
+    const sources: ChunkSource[] = passing.map((c: any) => {
+      const title    = (c.title as string | null) || null;
+      const filename = (c.filename as string | null) || null;
+      const label    = title || filename || c.manufacturer || 'Manual';
+      const snippet  = (c.chunk_text || '').slice(0, 240).replace(/\s+/g, ' ').trim();
+      return {
+        chunk_id:    c.chunk_id,
+        manual_id:   c.manual_id,
+        filename,
+        title,
+        manufacturer: c.manufacturer || null,
+        scope:       (c.scope as string | null) || null,
+        chunk_index: typeof c.chunk_index === 'number' ? c.chunk_index : null,
+        similarity:  Number(c.semantic_similarity) || 0,
+        snippet,
+        // Legacy aliases for the existing MessageBubble pill renderer:
+        manual_name: label,
+        page_number: null,    // bb_content_chunks doesn't carry page numbers
+      };
+    });
 
-    // Build grounded context block. Short chunk_id tag lets the LLM cite
-    // without bloating token budget; full chunk_id returned to client for
-    // deep-linking to the Manuals tab.
+    // Build labelled context block. The [1]…[N] markers let the LLM cite
+    // inline ("...as per [2]") and keep the pill strip and the inline cites
+    // in lockstep — pill index N === [N] in the reply.
     const body = passing
       .map((c: any, i: number) => {
         const src = sources[i];
-        const cite = `[${src.manual_name}${src.page_number ? `, p.${src.page_number}` : ''}]`;
-        return `${cite}\n${(c.chunk_text || '').slice(0, 600).trim()}`;
+        const head = `[${i + 1}] ${src.manual_name}${src.scope ? ` · ${src.scope}` : ''}`;
+        return `${head}\n${(c.chunk_text || '').slice(0, 600).trim()}`;
       })
       .join('\n---\n');
 
-    const context = `MANUAL CONTEXT — SOURCE GROUNDING RULES (MANDATORY):
-• Every factual claim about the specific manufacturer/model MUST come from one of the chunks below.
-• If the chunks do not cover the specific point, say "the manual doesn't specify" and ask for clarification — never invent a value, fault code, or procedure and attribute it to the manual.
-• When quoting, quote exactly. Paraphrasing is allowed only if it stays faithful to chunk content.
-• General Gas Safe engineering best-practice may be added AFTER the manual-grounded part, prefixed with "— general practice:".
+    const context = `MANUAL CONTEXT — CITATION RULES (MANDATORY):
+• Each chunk below is tagged [1], [2], … [${passing.length}]. Use those exact bracket markers inline when stating any manufacturer-specific fact (e.g. "...the gas valve coil should read ~30Ω [2]").
+• Every factual claim about the specific manufacturer/model MUST come from one of these chunks. If the chunks don't cover the point, say "the manual doesn't specify" and ask the engineer for clarification — never invent a value, fault code, or procedure and attribute it to the manual.
+• Quote exactly when quoting; paraphrase only when faithful to the chunk.
+• General Gas Safe engineering best-practice may be added AFTER the manual-grounded part, prefixed with "— general practice:" and without a [n] marker.
 
 CHUNKS:
 ${body}
@@ -311,7 +342,7 @@ ${body}
 
     return { context, sources };
   } catch (e) {
-    console.error('[getRelevantChunks] error:', e);
+    console.error('[bb_retrieval] unexpected error:', e);
     return empty;
   }
 }
