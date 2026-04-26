@@ -436,10 +436,16 @@ async function getBbFaultCodeMatches(
       console.error('[bb_fault_codes] bb_manuals query error:', manualsErr.message || manualsErr);
       return [];
     }
-    const kwLower = modelKeywords.map(k => k.toLowerCase());
+    // Use only the FIRST keyword as the required filter. It's almost always
+    // the model family (Greenstar, Logic, ecoTEC) and is the strongest
+    // disambiguating signal. Second keywords are often variant/model-number
+    // tokens ('30CDi', 'Combi') that frequently fail to substring-match
+    // storage filenames where separators differ ('30_CDI' vs '30CDi'). An
+    // AND across all keywords drops to zero hits in those cases.
+    const requiredKw = modelKeywords[0].toLowerCase();
     const matchedManuals = (allManuals || []).filter((m: any) => {
       const haystack = `${m.title || ''} ${m.filename || ''}`.toLowerCase();
-      return kwLower.every(kw => haystack.includes(kw));
+      return haystack.includes(requiredKw);
     });
     if (matchedManuals.length === 0) {
       console.log(`[bb_fault_codes] no manuals match mfr=${manufacturer} + keywords=${modelKeywords.join(',')}, skipping`);
