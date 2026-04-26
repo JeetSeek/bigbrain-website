@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -35,19 +36,13 @@ const app = express();
 // We need to detect Railway's actual assigned port from RAILWAY_STATIC_URL or use a different strategy
 let PORT;
 if (process.env.RAILWAY_STATIC_URL) {
-  // We're on Railway
-  // Railway provides PORT in the environment, but if we manually set it to 3204, that's wrong
-  // Railway's actual port is what the platform assigns (usually in the 3000-9000 range)
-  // The issue: we can't detect Railway's "real" port if we've overridden it
-  // Solution: Use a port that Railway will accept - typically they expose on standard ports
-  // and map internally. We should listen on the PORT they provide, even if it's 3204.
   PORT = parseInt(process.env.PORT) || 3000;
-  console.log(`[Railway] Environment detected. Listening on PORT: ${PORT}`);
-  console.log(`[Railway] RAILWAY_STATIC_URL: ${process.env.RAILWAY_STATIC_URL}`);
+  logger.info(`[Railway] Environment detected. Listening on PORT: ${PORT}`);
+  logger.info(`[Railway] RAILWAY_STATIC_URL: ${process.env.RAILWAY_STATIC_URL}`);
 } else {
   // Local development
   PORT = process.env.PORT || CONSTANTS.DEFAULT_PORT;
-  console.log(`[Local] Development mode. PORT: ${PORT}`);
+  logger.info(`[Local] Development mode. PORT: ${PORT}`);
 }
 
 // Rate limiting imported from shared middleware (apiLimiter, chatLimiter in route files)
@@ -69,14 +64,21 @@ const defaultOrigins = [
   'http://127.0.0.1:3000',
   'https://boiler-brain.netlify.app',
   'https://boiler-brain-ai.netlify.app',
-  'https://boilerbrain.netlify.app'
+  'https://1gassapp.netlify.app'
 ];
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? [...defaultOrigins, ...process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())]
   : defaultOrigins;
 
-console.log('[CORS] Allowed origins:', allowedOrigins);
+logger.info('[CORS] Allowed origins: ' + JSON.stringify(allowedOrigins));
+
+// Security headers (helmet) — applied before CORS
+app.use(helmet({
+  contentSecurityPolicy: false, // disabled for API (no HTML served); Netlify handles frontend CSP
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginOpenerPolicy: false,
+}));
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -93,7 +95,7 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.warn(`[CORS] Blocked request from origin: ${origin}`);
+      logger.warn(`[CORS] Blocked request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -124,13 +126,13 @@ app.use('/api', apiLimiter); // Apply rate limiting to all API routes
 app.get('/', (req, res) => {
   res.json({ 
     status: 'ok', 
-    service: 'BoilerBrain API',
+    service: '1GassApp API',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
 });
 
-app.get('/health', async (req, res) => {
+app.get('/health', apiLimiter, async (req, res) => {
   try {
     const start = Date.now();
     const { error } = await supabase.from('manufacturers').select('name', { count: 'exact', head: true });
@@ -191,13 +193,17 @@ app.get('/api/user', (req, res) => {
 
 // ─── Route modules ──────────────────────────────────────────────────────────
 app.use('/api/manuals', manualRoute);
-app.use('/api/chat', chatRoute);
-app.use('/api/agent/chat', agentRoute);
+// Chat routes retired 2026-04-21 — production chat is served by the Supabase
+// Edge Function at supabase/functions/chat/index.ts. Keeping chatRoute.js /
+// agentRoute.js on disk for historical reference only. See
+// docs/user-walkthrough-2026-04-21.md (P0) for rationale.
+// app.use('/api/chat', chatRoute);
+// app.use('/api/agent/chat', agentRoute);
 app.use('/api', sessionRoute);
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Boiler Brain server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`CORS origins: ${process.env.ALLOWED_ORIGINS || '*'}`);
+  logger.info(`Boiler Brain server running on port ${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`CORS origins: ${process.env.ALLOWED_ORIGINS || '*'}`);
 });

@@ -11,13 +11,12 @@ import './styles/professional-ui.css';
 import MobileNavigation, { MobileHeader, MobileContainer } from './components/MobileNavigation';
 import ErrorBoundary from './components/ErrorBoundary';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import OfflineBanner from './components/OfflineBanner';
 
 // Import pages
 import Login from './pages/Login';
 
 // Code-split ALL tab components — only active tab loads its JS
-const Sidebar = lazy(() => import('./components/Sidebar'));
-const MainContent = lazy(() => import('./components/MainContent'));
 const ManualFinderStandalone = lazy(() => import('./components/ManualFinderStandalone'));
 const ChatDock = lazy(() => import('./components/ChatDock'));
 const GasRateCalculator = lazy(() => import('./components/tools/gas-rate/GasRateCalculator'));
@@ -152,8 +151,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user: authUser, isAdmin, signOut: supabaseSignOut } = useAuth();
 
-  // Derive initial tab from URL path
+  // Derive initial tab from URL path — root '/' opens Home
   const getTabFromPath = useCallback((pathname) => {
+    if (pathname === '/') return TAB_IDS.HOME;
     return PATH_TO_TAB[pathname] || TAB_IDS.HOME;
   }, []);
 
@@ -230,15 +230,15 @@ const Dashboard = () => {
   // Get current tab title for header - memoized
   const tabTitle = useMemo(() => {
     const titles = {
-      [TAB_IDS.HOME]: 'BoilerBrain',
+      [TAB_IDS.HOME]: '1GassApp',
       [TAB_IDS.MANUAL_FINDER]: 'Boiler Manuals',
-      [TAB_IDS.CHAT]: 'Fault Finder Chat',
+      [TAB_IDS.CHAT]: 'Fault Diagnostic',
       [TAB_IDS.GAS_RATE]: 'Gas Rate Calculator',
       [TAB_IDS.ROOM_BTU]: 'BTU Calculator',
       [TAB_IDS.GAS_PIPE]: 'Gas Pipe Sizing',
       [TAB_IDS.GAS_DIVERSITY]: 'Meter Diversity',
-      [TAB_IDS.CP12_FORM]: 'CP12 Gas Safety',
-      [TAB_IDS.TOOLS]: 'Engineering Tools',
+      [TAB_IDS.CP12_FORM]: 'CP12 & Compliance',
+      [TAB_IDS.TOOLS]: 'Daily Tools',
       [TAB_IDS.SUPPORT]: 'Support',
       [TAB_IDS.FEEDBACK]: 'Feedback',
       [TAB_IDS.ADMIN]: 'Admin Dashboard',
@@ -258,21 +258,29 @@ const Dashboard = () => {
       [TAB_IDS.SYSTEM_VOLUME]: 'System Volume',
       [TAB_IDS.BENCHMARK]: 'Benchmark Checklist'
     };
-    return titles[activeTab] || 'BoilerBrain';
+    return titles[activeTab] || '1GassApp';
   }, [activeTab]);
 
   // Memoize support tickets to prevent child re-renders
   const supportTickets = useMemo(() => userData.supportTickets, [userData.supportTickets]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden" style={{ backgroundColor: 'var(--ios-bg-grouped-primary)' }}>
+    <div 
+      className="w-full h-full overflow-hidden" 
+      style={{ 
+        backgroundColor: 'var(--ios-bg-grouped-primary)',
+        position: 'relative',
+        touchAction: 'pan-y'
+      }}
+    >
+      <OfflineBanner />
       {/* iOS-style Mobile Header */}
       <MobileHeader 
-        title={tabTitle}
+        title={activeTab === TAB_IDS.HOME ? null : tabTitle}
         leftAction={
           <div className="flex items-center gap-2">
-            <img src="/brain-icon-nBG.png" alt="BoilerBrain" className="w-7 h-7" />
-            <span className="text-[15px] font-bold tracking-tight" style={{ color: '#007AFF', letterSpacing: '-0.3px' }}>BoilerBrain</span>
+            <img src="/brain-icon-nBG.png" alt="1GassApp" className="w-7 h-7" />
+            <span className="text-[15px] font-bold tracking-tight" style={{ color: '#007AFF', letterSpacing: '-0.3px' }}>1GassApp</span>
           </div>
         }
         rightAction={
@@ -602,7 +610,7 @@ const Dashboard = () => {
 // Default export for backward compatibility
 /**
  * Main Application Component
- * Handles layout, navigation, and authenticated state for the BoilerBrain application
+ * Handles layout, navigation, and authenticated state for the 1GassApp application
  * Implements code-splitting and routing for performance and organization
  *
  * @component

@@ -1,13 +1,22 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import SignaturePad from './SignaturePad';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
 
 // ─── Contractor Profile (localStorage) ─────────────────────────────────────
 const CONTRACTOR_PROFILE_KEY = 'bb_cp12_contractor_profile';
+const CP12_DRAFT_KEY = 'bb_cp12_draft';
 const loadProfile = () => { try { const s = localStorage.getItem(CONTRACTOR_PROFILE_KEY); return s ? JSON.parse(s) : null; } catch { return null; } };
 const saveProfile = (d) => { try { localStorage.setItem(CONTRACTOR_PROFILE_KEY, JSON.stringify(d)); } catch {} };
+const loadDraft = () => { try { const s = localStorage.getItem(CP12_DRAFT_KEY); return s ? JSON.parse(s) : null; } catch { return null; } };
+const saveDraft = (d) => { try { localStorage.setItem(CP12_DRAFT_KEY, JSON.stringify(d)); } catch {} };
+const clearDraft = () => { try { localStorage.removeItem(CP12_DRAFT_KEY); } catch {} };
 const generateCertNumber = () => { const d = new Date().toISOString().slice(0,10).replace(/-/g,''); return `CP12-${d}-${Math.floor(Math.random()*9999).toString().padStart(4,'0')}`; };
+const loadPdfDependencies = async () => {
+  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+    import('html2canvas'),
+    import('jspdf')
+  ]);
+  return { html2canvas, jsPDF };
+};
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 const applianceTypes = [
@@ -81,7 +90,7 @@ const PostcodeLookup = ({ onSelect, inputClass }) => {
           onKeyDown={(e) => e.key === 'Enter' && lookup()}
           placeholder="e.g. SW1A 1AA" className={inputClass + ' flex-1'} maxLength={8} />
         <button type="button" onClick={lookup} disabled={loading}
-          className="px-4 min-h-[44px] bg-[#1a1a2e] text-white rounded-lg font-bold text-xs uppercase tracking-wider disabled:opacity-50 whitespace-nowrap">
+          className="px-4 min-h-[44px] bg-[#007AFF] text-white rounded-xl font-bold text-xs uppercase tracking-wider disabled:opacity-50 whitespace-nowrap">
           {loading ? '...' : 'Find'}
         </button>
       </div>
@@ -98,44 +107,39 @@ const PostcodeLookup = ({ onSelect, inputClass }) => {
   );
 };
 
+const createInitialFormData = (sp) => ({
+  certificateNumber: generateCertNumber(),
+  contractorName: sp?.contractorName || '', contractorAddress: sp?.contractorAddress || '',
+  contractorPostcode: sp?.contractorPostcode || '', contractorPhone: sp?.contractorPhone || '',
+  contractorEmail: sp?.contractorEmail || '',
+  contractorGasSafeNo: sp?.contractorGasSafeNo || '', contractorGasSafeIdNo: sp?.contractorGasSafeIdNo || '',
+  installAddress: '', installPostcode: '',
+  clientName: '', clientAddress: '', clientPostcode: '', clientPhone: '', clientEmail: '',
+  tenantName: '', tenantPhone: '', tenantPresent: null,
+  inspectionDate: new Date().toISOString().split('T')[0], nextInspectionDate: '',
+  emergencyControlAccessible: null, emergencyControlLocation: '',
+  pipeworkCondition: null, gasTightnessTest: null, gasTightnessTestMethod: '',
+  coAlarmFitted: null, coAlarmTest: null, coAlarmExpiryDate: '', coAlarmMake: '',
+  smokeAlarmFitted: null, smokeAlarmTest: null,
+  additionalComments: '', recommendedWork: '',
+  appliances: [],
+  engineerName: sp?.engineerName || '', customerName: '',
+  reg26_9Confirmed: false,
+});
+
 const CP12Form = () => {
-  const [step, setStep] = useState(1);
-  const totalSteps = 6;
   const sp = loadProfile();
-  const [formData, setFormData] = useState({
-    // Certificate
-    certificateNumber: generateCertNumber(),
-    // Contractor (auto-filled from saved profile)
-    contractorName: sp?.contractorName || '', contractorAddress: sp?.contractorAddress || '',
-    contractorPostcode: sp?.contractorPostcode || '', contractorPhone: sp?.contractorPhone || '',
-    contractorEmail: sp?.contractorEmail || '',
-    contractorGasSafeNo: sp?.contractorGasSafeNo || '', contractorGasSafeIdNo: sp?.contractorGasSafeIdNo || '',
-    // Property
-    installAddress: '', installPostcode: '',
-    // Landlord/Client
-    clientName: '', clientAddress: '', clientPostcode: '', clientPhone: '', clientEmail: '',
-    // Tenant (NEW - HSE required)
-    tenantName: '', tenantPhone: '', tenantPresent: null,
-    // Dates
-    inspectionDate: new Date().toISOString().split('T')[0], nextInspectionDate: '',
-    // Gas Supply
-    emergencyControlAccessible: null, emergencyControlLocation: '',
-    pipeworkCondition: null, gasTightnessTest: null, gasTightnessTestMethod: '',
-    // Safety Devices
-    coAlarmFitted: null, coAlarmTest: null, coAlarmExpiryDate: '', coAlarmMake: '',
-    smokeAlarmFitted: null, smokeAlarmTest: null,
-    // Comments
-    additionalComments: '', recommendedWork: '',
-    // Appliances
-    appliances: [],
-    // Declaration
-    engineerName: sp?.engineerName || '', customerName: '',
-    reg26_9Confirmed: false,
-  });
-  const [engineerSignature, setEngineerSignature] = useState(null);
-  const [customerSignature, setCustomerSignature] = useState(null);
+  const initialDraft = loadDraft();
+  const [step, setStep] = useState(initialDraft?.step || 1);
+  const totalSteps = 6;
+  const [formData, setFormData] = useState(initialDraft?.formData || createInitialFormData(sp));
+  const [engineerSignature, setEngineerSignature] = useState(initialDraft?.engineerSignature || null);
+  const [customerSignature, setCustomerSignature] = useState(initialDraft?.customerSignature || null);
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [showLaunchScreen, setShowLaunchScreen] = useState(!initialDraft);
+  const [hasDraft, setHasDraft] = useState(Boolean(initialDraft));
+  const [lastSavedAt, setLastSavedAt] = useState(initialDraft?.savedAt || null);
   const certificateRef = useRef(null);
 
   const updateField = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
@@ -173,8 +177,148 @@ const CP12Form = () => {
   const [profileSaved, setProfileSaved] = useState(false);
   const [validationErrors, setValidationErrors] = useState([]);
   const [showValidation, setShowValidation] = useState(false);
+  // P1 walkthrough 2026-04-21 — per-step validation. stepErrors is the list
+  // shown inline at the top of the current step when Next is blocked.
+  const [stepErrors, setStepErrors] = useState([]);
+
+  // ─── Per-step validation (P1, walkthrough 2026-04-21) ──────────────────────
+  // The old flow deferred every required-field error to the final "Preview &
+  // Generate PDF" modal, forcing users to navigate back through 5 steps to
+  // fix them. Each step now owns its rule subset; the final modal still runs
+  // validateForm as a backstop but should report 0 errors in the happy path
+  // because per-step gates have already caught them.
+  const validateStep = useCallback((s) => {
+    const errs = [];
+    if (s === 1) {
+      if (!formData.contractorName.trim()) errs.push('Business name required');
+      if (!formData.contractorGasSafeNo.trim()) errs.push('Gas Safe registration number required');
+      if (formData.contractorGasSafeNo && !/^\d{5,7}$/.test(formData.contractorGasSafeNo.trim())) errs.push('Gas Safe number should be 5-7 digits');
+      if (!formData.contractorGasSafeIdNo.trim()) errs.push('Gas Safe ID card number required');
+    } else if (s === 2) {
+      if (!formData.installAddress.trim()) errs.push('Property address required');
+      if (!formData.clientName.trim()) errs.push('Landlord/client name required');
+      if (!formData.inspectionDate) errs.push('Inspection date required');
+      if (!formData.nextInspectionDate) errs.push('Next inspection date required');
+    } else if (s === 3) {
+      if (!formData.emergencyControlAccessible) errs.push('Emergency control accessibility required');
+      if (!formData.pipeworkCondition) errs.push('Pipework condition required');
+      if (!formData.gasTightnessTest) errs.push('Gas tightness test result required');
+    } else if (s === 4) {
+      if (formData.appliances.length === 0) errs.push('Add at least one appliance before continuing');
+      formData.appliances.forEach((a, i) => {
+        const n = i + 1;
+        if (!a.type) errs.push(`Appliance ${n}: Type required`);
+        if (!a.location) errs.push(`Appliance ${n}: Location required`);
+        if (!a.make) errs.push(`Appliance ${n}: Make required`);
+        if (!a.flueType) errs.push(`Appliance ${n}: Flue type required`);
+        if (!a.safetyDeviceOperation) errs.push(`Appliance ${n}: Safety device check required`);
+        if (!a.ventilation) errs.push(`Appliance ${n}: Ventilation check required`);
+        if (!a.applianceSafe) errs.push(`Appliance ${n}: Appliance safe status required`);
+        if (!a.classification) errs.push(`Appliance ${n}: Classification (ID/AR/Pass) required`);
+        if ((a.classification === 'ID' || a.classification === 'AR') && !a.labelledWarningIssued) {
+          errs.push(`Appliance ${n}: Warning notice required for ${a.classification}`);
+        }
+      });
+    } else if (s === 5) {
+      // Step 5 has no required fields today (CO / smoke alarm only ask for
+      // test results if fitted=Yes, and those are already conditional).
+    } else if (s === 6) {
+      if (!formData.engineerName.trim()) errs.push('Engineer name required');
+      if (!engineerSignature) errs.push('Engineer signature required');
+    }
+    return errs;
+  }, [formData, engineerSignature]);
+
+  // ✓ markers in StepIndicator: green only if the step actually passes its
+  // rule set. This means editing a previously-passing step and removing
+  // required data correctly downgrades the tick back to the step number.
+  const stepValidStatus = React.useMemo(() => {
+    const status = {};
+    for (let s = 1; s <= 6; s += 1) status[s] = validateStep(s).length === 0;
+    return status;
+  }, [validateStep]);
+
+  const goToNextStep = useCallback(() => {
+    const errs = validateStep(step);
+    if (errs.length > 0) {
+      setStepErrors(errs);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    setStepErrors([]);
+    if (step < totalSteps) setStep(step + 1);
+  }, [step, validateStep]);
+
+  const goToPrevStep = useCallback(() => {
+    setStepErrors([]);
+    if (step > 1) setStep(step - 1);
+  }, [step]);
+
+  const hasStartedData = useCallback(() => {
+    return Boolean(
+      formData.installAddress.trim() ||
+      formData.clientName.trim() ||
+      formData.additionalComments.trim() ||
+      formData.recommendedWork.trim() ||
+      formData.appliances.length > 0 ||
+      engineerSignature ||
+      customerSignature
+    );
+  }, [formData, engineerSignature, customerSignature]);
 
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [step]);
+
+  useEffect(() => {
+    if (showLaunchScreen || showPreview || !hasStartedData()) return;
+    const payload = {
+      step,
+      formData,
+      engineerSignature,
+      customerSignature,
+      savedAt: new Date().toISOString(),
+    };
+    saveDraft(payload);
+    setHasDraft(true);
+    setLastSavedAt(payload.savedAt);
+  }, [step, formData, engineerSignature, customerSignature, showLaunchScreen, showPreview, hasStartedData]);
+
+  const startFresh = () => {
+    const freshProfile = loadProfile();
+    clearDraft();
+    setHasDraft(false);
+    setLastSavedAt(null);
+    setStep(1);
+    setFormData(createInitialFormData(freshProfile));
+    setEngineerSignature(null);
+    setCustomerSignature(null);
+    setShowPreview(false);
+    setShowValidation(false);
+    setShowLaunchScreen(false);
+  };
+
+  const resumeDraft = () => {
+    const draft = loadDraft();
+    if (!draft) {
+      setShowLaunchScreen(false);
+      return;
+    }
+    setStep(draft.step || 1);
+    setFormData(draft.formData || createInitialFormData(loadProfile()));
+    setEngineerSignature(draft.engineerSignature || null);
+    setCustomerSignature(draft.customerSignature || null);
+    setLastSavedAt(draft.savedAt || null);
+    setHasDraft(true);
+    setShowPreview(false);
+    setShowValidation(false);
+    setShowLaunchScreen(false);
+  };
+
+  const discardDraft = () => {
+    clearDraft();
+    setHasDraft(false);
+    setLastSavedAt(null);
+    startFresh();
+  };
 
   const saveContractorProfile = () => {
     saveProfile({
@@ -221,6 +365,7 @@ const CP12Form = () => {
     if (!certificateRef.current) return null;
     setGenerating(true);
     try {
+      const { html2canvas, jsPDF } = await loadPdfDependencies();
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
         useCORS: true,
@@ -268,17 +413,17 @@ const CP12Form = () => {
     window.location.href = `mailto:${formData.clientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
-  const inputClass = "w-full px-4 py-3 min-h-[44px] border-2 border-gray-200 rounded-lg text-[16px] text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-[#1a1a2e] focus:border-[#1a1a2e] transition-all";
-  const selectClass = "w-full px-4 py-3 min-h-[44px] border-2 border-gray-200 rounded-lg text-[16px] text-gray-900 bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#1a1a2e]";
+  const inputClass = "w-full px-4 py-3 min-h-[44px] border-2 border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all";
+  const selectClass = "w-full px-4 py-3 min-h-[44px] border-2 border-gray-200 rounded-xl text-[16px] text-gray-900 bg-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500";
   const labelClass = "block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wider";
-  const sectionClass = "text-sm font-black text-[#1a1a2e] mb-3 uppercase tracking-wide";
+  const sectionClass = "text-sm font-black text-gray-800 mb-3 uppercase tracking-wide";
 
   const renderButtonGroup = (options, value, onChange, cols) => (
     <div className={`grid gap-2`} style={{ gridTemplateColumns: `repeat(${cols || Math.min(options.length, 4)}, 1fr)` }}>
       {options.map(opt => (
         <button key={opt} type="button" onClick={() => onChange(opt)}
           className={`min-h-[44px] py-2.5 px-2 rounded-lg text-xs font-bold border-2 transition-all active:scale-95 ${
-            value === opt ? 'bg-[#1a1a2e] text-white border-[#1a1a2e] shadow-sm' : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-400'
+            value === opt ? 'bg-[#007AFF] text-white border-[#007AFF] shadow-sm' : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-gray-400'
           }`}>{opt}</button>
       ))}
     </div>
@@ -313,11 +458,11 @@ const CP12Form = () => {
           <React.Fragment key={s}>
             <button onClick={() => setStep(s)} className="flex flex-col items-center gap-0.5 min-w-[40px] min-h-[44px] justify-center">
               <div className={`w-7 h-7 rounded-md flex items-center justify-center font-black text-[11px] transition-all ${
-                step === s ? 'bg-[#FFD600] text-black shadow-md' : step > s ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-400'
-              }`}>{step > s ? '\u2713' : s}</div>
-              <span className={`text-[9px] font-bold uppercase tracking-wider ${step === s ? 'text-[#1a1a2e]' : 'text-gray-400'}`}>{label}</span>
+                step === s ? 'bg-[#007AFF] text-white shadow-md' : stepValidStatus[s] ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-400'
+              }`}>{stepValidStatus[s] && step !== s ? '\u2713' : s}</div>
+              <span className={`text-[9px] font-bold uppercase tracking-wider ${step === s ? 'text-[#007AFF]' : stepValidStatus[s] ? 'text-green-700' : 'text-gray-400'}`}>{label}</span>
             </button>
-            {i < stepLabels.length - 1 && <div className={`flex-1 h-0.5 mx-0.5 mt-[-12px] ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />}
+            {i < stepLabels.length - 1 && <div className={`flex-1 h-0.5 mx-0.5 mt-[-12px] ${stepValidStatus[s] ? 'bg-green-500' : 'bg-gray-200'}`} />}
           </React.Fragment>
         );
       })}
@@ -337,14 +482,14 @@ const CP12Form = () => {
     const thinBorder = 'border-r border-gray-400';
 
     return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 overflow-auto">
-      <div className="bg-white max-w-[700px] w-full max-h-[95vh] overflow-auto shadow-2xl">
-        <div className="sticky top-0 bg-[#1a1a2e] text-white px-4 py-2.5 flex justify-between items-center z-10">
-          <h2 className="font-bold text-sm tracking-wide">CP12 Certificate Preview</h2>
-          <button onClick={() => setShowPreview(false)} className="w-8 h-8 bg-white/20 rounded-full text-lg leading-none">&times;</button>
-        </div>
-        
-        <div className="p-4 bg-gray-200">
+      <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-2 overflow-auto">
+        <div className="bg-white max-w-[700px] w-full max-h-[95vh] overflow-auto shadow-2xl">
+          <div className="sticky top-0 bg-[#007AFF] text-white px-4 py-2.5 flex justify-between items-center z-10">
+            <h2 className="font-bold text-sm tracking-wide">CP12 Certificate Preview</h2>
+            <button onClick={() => setShowPreview(false)} className="w-8 h-8 bg-white/20 rounded-full text-lg leading-none">&times;</button>
+          </div>
+
+          <div className="p-4 bg-gray-200">
           <div ref={certificateRef} className="bg-white text-[11px] leading-tight" style={{fontFamily:'Arial, Helvetica, sans-serif', border:'3px solid #000'}}>
 
             {/* ═══ HEADER BANNER ═══ */}
@@ -633,7 +778,7 @@ const CP12Form = () => {
             <button onClick={() => setShowPreview(false)} className="flex-1 min-h-[48px] py-3 bg-gray-100 text-gray-700 font-bold rounded-lg border border-gray-300 active:scale-[0.98] transition-transform">
               Edit
             </button>
-            <button onClick={downloadPDF} disabled={generating} className="flex-1 min-h-[48px] py-3 bg-[#1a1a2e] text-white font-bold rounded-lg disabled:opacity-50 active:scale-[0.98] transition-transform">
+            <button onClick={downloadPDF} disabled={generating} className="flex-1 min-h-[48px] py-3 bg-[#007AFF] text-white font-bold rounded-xl disabled:opacity-50 active:scale-[0.98] transition-transform">
               {generating ? 'Generating...' : 'Download PDF'}
             </button>
           </div>
@@ -646,6 +791,90 @@ const CP12Form = () => {
     </div>
     );
   };
+
+  if (showLaunchScreen) {
+    return (
+      <div className="max-w-3xl mx-auto bg-gray-50 pb-10">
+        <div className="px-4 pt-4">
+          <div className="overflow-hidden rounded-[28px] bg-gradient-to-br from-[#007AFF] to-[#0051D5] text-white shadow-[0_18px_50px_rgba(0,82,213,0.20)]">
+            <div className="px-5 py-6 sm:px-6">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/65">CP12</div>
+                  <h1 className="mt-2 text-[28px] font-black leading-tight tracking-tight">Landlord gas safety workflow</h1>
+                  <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-white/78">
+                    Start a new certificate or resume the one you were already working on. The form runs as 3 phases across 6 steps, grouped so you can hand off to a co-worker mid-job without losing context.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-white/10 px-3 py-2 text-right backdrop-blur-sm">
+                  <div className="text-[10px] font-semibold uppercase tracking-wide text-white/60">Workflow</div>
+                  <div className="mt-1 text-[12px] font-bold">Engineer → Property → Safety → PDF</div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-2 text-[11px] sm:text-[12px]">
+                <div className="rounded-2xl bg-white/10 px-3 py-3">
+                  <div className="font-black">Steps 1–2</div>
+                  <div className="mt-1 text-white/75">Capture engineer and property details</div>
+                </div>
+                <div className="rounded-2xl bg-white/10 px-3 py-3">
+                  <div className="font-black">Steps 3–4</div>
+                  <div className="mt-1 text-white/75">Gas supply and appliance checks with classifications</div>
+                </div>
+                <div className="rounded-2xl bg-white/10 px-3 py-3">
+                  <div className="font-black">Steps 5–6</div>
+                  <div className="mt-1 text-white/75">Safety devices, sign-off, PDF and email</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={startFresh}
+              className="rounded-3xl border border-gray-200 bg-white p-5 text-left shadow-sm transition-all hover:shadow-md"
+            >
+              <div className="text-[11px] font-black uppercase tracking-[0.18em] text-[#007AFF]">Start fresh</div>
+              <div className="mt-2 text-[20px] font-bold text-gray-900">New CP12 certificate</div>
+              <p className="mt-2 text-[13px] leading-relaxed text-gray-500">
+                Begin a clean landlord gas safety record with today’s certificate number and your saved engineer profile.
+              </p>
+            </button>
+
+            <div className={`rounded-3xl border p-5 shadow-sm ${hasDraft ? 'border-amber-200 bg-amber-50/70' : 'border-gray-200 bg-white/80'}`}>
+              <div className="text-[11px] font-black uppercase tracking-[0.18em] text-amber-700">Resume</div>
+              <div className="mt-2 text-[20px] font-bold text-gray-900">{hasDraft ? 'Continue saved draft' : 'No saved draft yet'}</div>
+              <p className="mt-2 text-[13px] leading-relaxed text-gray-500">
+                {hasDraft
+                  ? `Pick up where you left off${lastSavedAt ? ` — last saved ${new Date(lastSavedAt).toLocaleString('en-GB')}` : ''}.`
+                  : 'Once you start filling out a certificate, this screen will offer a resume option automatically.'}
+              </p>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={resumeDraft}
+                  disabled={!hasDraft}
+                  className="flex-1 rounded-2xl bg-[#007AFF] px-4 py-3 text-[14px] font-bold text-white disabled:opacity-40"
+                >
+                  Resume draft
+                </button>
+                {hasDraft && (
+                  <button
+                    type="button"
+                    onClick={discardDraft}
+                    className="rounded-2xl border border-amber-300 bg-white px-4 py-3 text-[14px] font-semibold text-amber-800"
+                  >
+                    Discard draft
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto bg-gray-50 pb-24">
@@ -666,7 +895,7 @@ const CP12Form = () => {
                   <span className="text-gray-700">{err}</span>
                 </div>
               ))}
-              <button onClick={() => setShowValidation(false)} className="w-full mt-3 py-2.5 bg-[#1a1a2e] text-white font-bold rounded-lg text-sm">
+              <button onClick={() => setShowValidation(false)} className="w-full mt-3 py-2.5 bg-[#007AFF] text-white font-bold rounded-xl text-sm">
                 Go Back & Fix
               </button>
             </div>
@@ -675,9 +904,9 @@ const CP12Form = () => {
       )}
 
       {/* Header - Gas Safe branded */}
-      <div className="bg-[#1a1a2e] text-white px-4 py-3 sticky top-0 z-20" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
+      <div className="bg-[#007AFF] text-white px-4 py-3 sticky top-0 z-20" style={{ paddingTop: 'max(12px, env(safe-area-inset-top))' }}>
         <div className="flex items-center justify-between">
-          <button onClick={() => step > 1 && setStep(step - 1)} disabled={step === 1}
+          <button onClick={goToPrevStep} disabled={step === 1}
             className="w-10 h-10 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center disabled:opacity-30 text-base font-bold active:scale-95 transition-transform">&#8592;</button>
           <div className="text-center flex-1 mx-3">
             <div className="flex items-center justify-center gap-2">
@@ -688,7 +917,7 @@ const CP12Form = () => {
           </div>
           <div className="flex gap-2">
             <button onClick={() => setShowPreview(true)} className="w-10 h-10 bg-[#FFD600] text-black rounded-lg flex items-center justify-center text-sm font-black active:scale-95 transition-transform">&#128065;</button>
-            <button onClick={() => step < totalSteps && setStep(step + 1)} disabled={step === totalSteps}
+            <button onClick={goToNextStep} disabled={step === totalSteps}
               className="w-10 h-10 bg-white/10 border border-white/20 rounded-lg flex items-center justify-center disabled:opacity-30 text-base font-bold active:scale-95 transition-transform">&#8594;</button>
           </div>
         </div>
@@ -700,7 +929,24 @@ const CP12Form = () => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 140px)' }}>
+
+        {/* Inline per-step error banner (P1 walkthrough 2026-04-21) */}
+        {stepErrors.length > 0 && (
+          <div className="mb-4 rounded-xl border-2 border-red-300 bg-red-50 p-3" role="alert">
+            <div className="text-[11px] font-black uppercase tracking-wider text-red-700">
+              {stepErrors.length} {stepErrors.length === 1 ? 'thing needs' : 'things need'} fixing on this step
+            </div>
+            <ul className="mt-2 space-y-1 text-[13px] text-red-800">
+              {stepErrors.map((err, i) => (
+                <li key={i} className="flex items-start gap-1.5">
+                  <span className="mt-0.5 flex-shrink-0 font-black">×</span>
+                  <span>{err}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* ═══ STEP 1: Engineer / Contractor Details ═══ */}
         {step === 1 && (
@@ -748,7 +994,7 @@ const CP12Form = () => {
               </div>
             </div>
             <button type="button" onClick={saveContractorProfile}
-              className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all ${profileSaved ? 'bg-green-100 text-green-700 border-2 border-green-300' : 'bg-gray-100 text-[#1a1a2e] border-2 border-gray-200 hover:border-gray-400'}`}>
+              className={`w-full py-2.5 rounded-xl text-sm font-bold transition-all ${profileSaved ? 'bg-green-100 text-green-700 border-2 border-green-300' : 'bg-gray-100 text-gray-700 border-2 border-gray-200 hover:border-gray-400'}`}>
               {profileSaved ? '\u2713 Profile Saved!' : 'Save Profile for Future Certificates'}
             </button>
           </div>
@@ -845,7 +1091,7 @@ const CP12Form = () => {
                 </div>
               </div>
               <button type="button" onClick={calculateNextInspection}
-                className="w-full py-2 bg-[#1a1a2e] text-white rounded-lg text-sm font-bold">
+                className="w-full py-2 bg-[#007AFF] text-white rounded-xl text-sm font-bold">
                 Auto-set to 12 months from check date
               </button>
             </div>
@@ -899,7 +1145,7 @@ const CP12Form = () => {
 
             {formData.appliances.map((app, idx) => (
               <div key={app.id} className="bg-white border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                <div className="bg-[#1a1a2e] text-white px-4 py-2.5 flex justify-between items-center">
+                <div className="bg-[#007AFF] text-white px-4 py-2.5 flex justify-between items-center">
                   <span className="font-bold text-sm">Appliance {idx + 1}</span>
                   <div className="flex items-center gap-2">
                     {app.classification && <span className={`px-2 py-0.5 rounded text-[10px] font-black ${classColor(app.classification)}`}>{app.classification}</span>}
@@ -958,7 +1204,7 @@ const CP12Form = () => {
 
                   {/* Readings - Reg 26(9) compliant */}
                   <div className="pt-3 border-t border-gray-200">
-                    <h4 className="text-[#1a1a2e] font-black text-xs mb-3 uppercase tracking-wide">Readings &amp; Combustion Analysis</h4>
+                    <h4 className="text-gray-800 font-black text-xs mb-3 uppercase tracking-wide">Readings &amp; Combustion Analysis</h4>
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <label className={labelClass}>Op. Pressure (mb)</label>
@@ -1005,7 +1251,7 @@ const CP12Form = () => {
 
                   {/* Safety Checks */}
                   <div className="pt-3 border-t border-gray-200">
-                    <h4 className="text-[#1a1a2e] font-black text-xs mb-3 uppercase tracking-wide">Safety Checks</h4>
+                    <h4 className="text-gray-800 font-black text-xs mb-3 uppercase tracking-wide">Safety Checks</h4>
                     <div className="space-y-2">
                       <div><label className={labelClass}>Safety device operation <span className="text-red-500">*</span></label>
                         {renderButtonGroup(['Pass', 'Fail', 'N/A'], app.safetyDeviceOperation, (v) => updateAppliance(app.id, 'safetyDeviceOperation', v))}</div>
@@ -1022,7 +1268,7 @@ const CP12Form = () => {
 
                   {/* Classification */}
                   <div className="pt-3 border-t border-gray-200">
-                    <h4 className="text-[#1a1a2e] font-black text-xs mb-3 uppercase tracking-wide">Classification <span className="text-red-500">*</span></h4>
+                    <h4 className="text-gray-800 font-black text-xs mb-3 uppercase tracking-wide">Classification <span className="text-red-500">*</span></h4>
                     {renderClassification(app.id, app.classification)}
                   </div>
 
@@ -1052,7 +1298,7 @@ const CP12Form = () => {
             ))}
 
             <button type="button" onClick={addAppliance} disabled={formData.appliances.length >= 10}
-              className="w-full py-3 bg-[#1a1a2e] text-white rounded-lg font-bold disabled:opacity-50 uppercase tracking-wide text-sm">
+              className="w-full py-3 bg-[#007AFF] text-white rounded-xl font-bold disabled:opacity-50 uppercase tracking-wide text-sm">
               + Add Appliance ({formData.appliances.length}/10)
             </button>
           </div>
@@ -1141,12 +1387,12 @@ const CP12Form = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-gray-200 z-10" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
         <div className="max-w-lg mx-auto flex gap-3 px-4 pt-3">
           {step > 1 && (
-            <button onClick={() => setStep(step - 1)} className="flex-1 min-h-[48px] py-3 bg-gray-100 text-gray-700 font-bold rounded-lg border border-gray-300 active:scale-[0.98] transition-transform">
+            <button onClick={goToPrevStep} className="flex-1 min-h-[48px] py-3 bg-gray-100 text-gray-700 font-bold rounded-lg border border-gray-300 active:scale-[0.98] transition-transform">
               Previous
             </button>
           )}
           {step < totalSteps ? (
-            <button onClick={() => setStep(step + 1)} className="flex-1 min-h-[48px] py-3 bg-[#1a1a2e] text-white font-bold rounded-lg active:scale-[0.98] transition-transform shadow-sm">
+            <button onClick={goToNextStep} className="flex-1 min-h-[48px] py-3 bg-[#007AFF] text-white font-bold rounded-xl active:scale-[0.98] transition-transform shadow-sm">
               Next
             </button>
           ) : (

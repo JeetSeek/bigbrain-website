@@ -234,17 +234,21 @@ export function createManualReading(formData) {
  * Generate a sample CSV for testing
  */
 export function generateSampleCSV(manufacturer = 'kane') {
+  // NOTE: columns must map to single fields that round-trip through the
+  // parser. Splitting Date+Time into two columns both normalised to
+  // _timestamp, and the Time-only value crashed new Date() → "Invalid Date".
+  // Fix (P3 walkthrough 2026-04-21): one ISO timestamp + Test Type.
   if (manufacturer === 'kane') {
-    return `Date,Time,O2 %,CO ppm,CO2 %,Flue Temp,Ambient Temp,Efficiency Net,Efficiency Gross,Excess Air,CO AF,CO/CO2,Fuel
-2026-03-01,14:30:00,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004,Natural Gas
-2026-03-01,14:35:00,4.8,38,10.1,131,21,93.1,85.2,29.5,51,0.0003,Natural Gas`;
+    return `Date/Time,Test Type,O2 %,CO ppm,CO2 %,Flue Temp,Ambient Temp,Efficiency Net,Efficiency Gross,Excess Air,CO AF,CO/CO2,Fuel
+2026-03-01T14:30:00,high-fire,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004,Natural Gas
+2026-03-01T14:35:00,low-fire,4.8,38,10.1,131,21,93.1,85.2,29.5,51,0.0003,Natural Gas`;
   }
   if (manufacturer === 'tpi') {
-    return `Timestamp,O2(%),CO(ppm),CO2(%),FT(°C),AT(°C),Eff Net,Eff Gross,EA(%),CO AF,Ratio,Fuel Type
-01/03/2026 14:30,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004,Natural Gas`;
+    return `Timestamp,Test Type,O2(%),CO(ppm),CO2(%),FT(°C),AT(°C),Eff Net,Eff Gross,EA(%),CO AF,Ratio,Fuel Type
+2026-03-01T14:30:00,high-fire,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004,Natural Gas`;
   }
-  return `Date,O2,CO,CO2,Flue Temperature,Air Temp,Net Efficiency,Gross Efficiency,Excess Air,CO Air-Free,CO/CO2 Ratio
-2026-03-01,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004`;
+  return `Date,Test Type,O2,CO,CO2,Flue Temperature,Air Temp,Net Efficiency,Gross Efficiency,Excess Air,CO Air-Free,CO/CO2 Ratio
+2026-03-01T14:30:00,high-fire,5.2,42,9.8,127,21,92.3,84.1,32.8,58,0.0004`;
 }
 
 export { FIELD_LABELS, SAFETY_THRESHOLDS };

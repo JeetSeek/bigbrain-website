@@ -25,7 +25,7 @@ export const API = {
 
 // Local storage keys
 export const STORAGE_KEYS = {
-  DEMO_SETTINGS: 'boilerbrain_demo_settings',
+  DEMO_SETTINGS: '1gassapp_demo_settings',
   DEMO_USER_LOGGED_IN: 'demoUserLoggedIn',
   ADMIN_USER_LOGGED_IN: 'adminUserLoggedIn',
   USER_PREFERENCES: 'bb_user_prefs',
@@ -35,7 +35,7 @@ export const STORAGE_KEYS = {
 export const DEMO = {
   USER: {
     DEFAULT_NAME: 'Demo User',
-    DEFAULT_EMAIL: 'demo@boilerbrain.com',
+    DEFAULT_EMAIL: 'demo@1gassapp.com',
     DEFAULT_TIER: 'Pro',
     TEST_EMAIL: import.meta.env.VITE_TEST_EMAIL || '',
     TEST_PASSWORD: import.meta.env.VITE_TEST_PASSWORD || '',
@@ -194,6 +194,32 @@ export const TAB_PATHS = {
 export const PATH_TO_TAB = Object.fromEntries(
   Object.entries(TAB_PATHS).map(([tabId, path]) => [path, tabId])
 );
+
+// P2 (walkthrough 2026-04-21): children → parent bottom-nav tab. When the
+// active tab is a child (e.g. FLUE_GAS at /tools/flue-gas), MobileNavigation
+// lights up the parent (TOOLS). Without this the bottom nav shows no active
+// tab on subroutes and the always-on Diagnose pill reads as "active".
+export const CHILD_TO_PARENT_TAB = {
+  [TAB_IDS.GAS_RATE]: TAB_IDS.TOOLS,
+  [TAB_IDS.ROOM_BTU]: TAB_IDS.TOOLS,
+  [TAB_IDS.GAS_PIPE]: TAB_IDS.TOOLS,
+  [TAB_IDS.GAS_DIVERSITY]: TAB_IDS.TOOLS,
+  [TAB_IDS.VENTILATION]: TAB_IDS.TOOLS,
+  [TAB_IDS.PURGE_CALC]: TAB_IDS.TOOLS,
+  [TAB_IDS.FLUE_GAS]: TAB_IDS.TOOLS,
+  [TAB_IDS.RADIATOR_SIZING]: TAB_IDS.TOOLS,
+  [TAB_IDS.PRESSURE_CONVERTER]: TAB_IDS.TOOLS,
+  [TAB_IDS.SYSTEM_VOLUME]: TAB_IDS.TOOLS,
+  [TAB_IDS.FAULT_CODES]: TAB_IDS.TOOLS,
+  [TAB_IDS.HELPLINES]: TAB_IDS.TOOLS,
+  [TAB_IDS.PARTS_FINDER]: TAB_IDS.TOOLS,
+  // CP12 forms family
+  [TAB_IDS.WARNING_NOTICE]: TAB_IDS.CP12_FORM,
+  [TAB_IDS.GAS_SERVICE]: TAB_IDS.CP12_FORM,
+  [TAB_IDS.GAS_BREAKDOWN]: TAB_IDS.CP12_FORM,
+  [TAB_IDS.INSTALLATION]: TAB_IDS.CP12_FORM,
+  [TAB_IDS.BENCHMARK]: TAB_IDS.CP12_FORM,
+};
 
 // Sorting options
 export const SORT_OPTIONS = {

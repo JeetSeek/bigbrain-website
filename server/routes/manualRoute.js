@@ -143,18 +143,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// --- GET /api/manuals/:id/download ---
-router.get('/:id/download', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { data: manual, error } = await supabase.from('boiler_manuals').select('*').eq('id', id).single();
-    if (error) throw error;
-    if (!manual || !manual.url) return res.status(404).json({ error: 'Manual or PDF not found' });
-    res.json({ download_url: manual.url, filename: manual.name + '.pdf' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// --- GET /api/manuals/:id/download — RETIRED 2026-04-21 (walkthrough P1) ---
+// Download/Preview is now client-side window.open gated on a HEAD probe via
+// the check-manual-link edge function. manual.url comes from the Manuals list
+// fetch already; there is no need to round-trip through this endpoint. See
+// docs/user-walkthrough-2026-04-21.md and
+// src/components/ManualFinderStandalone.jsx:openManualUrl.
 
 // --- POST /api/manuals (admin only, stub) ---
 router.post('/', adminAuth, async (req, res) => {

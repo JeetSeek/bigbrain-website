@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TAB_IDS } from '../utils/constants';
+import { TAB_IDS, CHILD_TO_PARENT_TAB } from '../utils/constants';
 import { FiHome, FiBook, FiMessageCircle, FiFileText, FiTool, FiSettings } from 'react-icons/fi';
 
 /**
@@ -41,31 +41,31 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
       id: TAB_IDS.HOME,
       label: 'Home',
       Icon: FiHome,
-      description: 'Feature overview'
+      description: 'Launchpad for diagnosis, CP12 and daily tools'
+    },
+    {
+      id: TAB_IDS.CHAT,
+      label: 'Diagnose',
+      Icon: FiMessageCircle,
+      description: 'AI fault diagnostic workflow'
+    },
+    {
+      id: TAB_IDS.CP12_FORM,
+      label: 'CP12',
+      Icon: FiFileText,
+      description: 'CP12 gas safety and compliance workflow'
+    },
+    {
+      id: TAB_IDS.TOOLS,
+      label: 'Tools',
+      Icon: FiTool,
+      description: 'Daily installation, design and service tools'
     },
     {
       id: TAB_IDS.MANUAL_FINDER,
       label: 'Manuals',
       Icon: FiBook,
       description: 'Find boiler manuals'
-    },
-    {
-      id: TAB_IDS.CHAT,
-      label: 'Chat',
-      Icon: FiMessageCircle,
-      description: 'Fault finder chat assistant'
-    },
-    {
-      id: TAB_IDS.CP12_FORM,
-      label: 'CP12',
-      Icon: FiFileText,
-      description: 'CP12 Gas Safety Record'
-    },
-    {
-      id: TAB_IDS.TOOLS,
-      label: 'Tools',
-      Icon: FiTool,
-      description: 'Engineering calculators and tools'
     },
     ...(isAdmin ? [{
       id: TAB_IDS.ADMIN,
@@ -74,6 +74,10 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
       description: 'Admin dashboard'
     }] : [])
   ];
+
+  // Map child tabs (e.g. FLUE_GAS at /tools/flue-gas) onto their parent
+  // bottom-nav tab so exactly one tab ever reads as active. P2 fix.
+  const effectiveActive = CHILD_TO_PARENT_TAB[activeTab] || activeTab;
 
   return (
     <nav 
@@ -88,9 +92,11 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
       }}
     >
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.id;
+        const isActive = effectiveActive === tab.id;
         const isPressed = pressedTab === tab.id;
-        
+
+        const isDiagnose = tab.id === TAB_IDS.CHAT;
+
         return (
           <button
             key={tab.id}
@@ -107,43 +113,68 @@ const MobileNavigation = ({ activeTab, onTabChange, isAdmin = false }) => {
             onTouchStart={() => setPressedTab(tab.id)}
             onTouchEnd={() => setPressedTab(null)}
           >
-            {/* Active background pill */}
-            {isActive && (
+            {/* Active background pill (all tabs) */}
+            {isActive && !isDiagnose && (
               <div
                 className="absolute inset-x-1 top-0.5 bottom-0.5 rounded-xl"
-                style={{
-                  background: 'rgba(0, 122, 255, 0.08)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
+                style={{ background: 'rgba(0, 122, 255, 0.08)', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
               />
             )}
 
-            {/* Icon */}
-            <div className="relative mb-0.5" aria-hidden="true">
-              <tab.Icon 
-                size={22} 
-                strokeWidth={isActive ? 2.5 : 1.5}
-                style={{
-                  color: isActive ? '#007AFF' : '#8E8E93',
-                  transition: 'all 0.2s ease',
-                  transform: isActive ? 'scale(1.08)' : 'scale(1)',
-                }}
-              />
-            </div>
-            
-            {/* Label */}
-            <span 
-              className="text-[10px] leading-none text-center relative"
-              style={{
-                fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, sans-serif',
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? '#007AFF' : '#8E8E93',
-                letterSpacing: '-0.02em',
+            {/* Diagnose: hero blue pill ONLY when active. Previously the pill
+                rendered on every route, giving two "active" tabs at once and
+                training users to distrust the active indicator. P2 walkthrough fix. */}
+            {isDiagnose && isActive ? (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                background: 'linear-gradient(180deg, #007AFF 0%, #0051D5 100%)',
+                borderRadius: 12,
+                padding: '5px 10px 4px',
+                boxShadow: '0 3px 10px rgba(0,122,255,0.45)',
+                transform: 'translateY(-2px)',
                 transition: 'all 0.2s ease',
-              }}
-            >
-              {tab.label}
-            </span>
+              }}>
+                <tab.Icon size={19} strokeWidth={2.5} style={{ color: '#fff' }} />
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: '#fff',
+                  letterSpacing: '0.02em',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, sans-serif',
+                }}>Diagnose</span>
+              </div>
+            ) : (
+              <>
+                {/* Icon */}
+                <div className="relative mb-0.5" aria-hidden="true">
+                  <tab.Icon 
+                    size={22} 
+                    strokeWidth={isActive ? 2.5 : 1.5}
+                    style={{
+                      color: isActive ? '#007AFF' : '#8E8E93',
+                      transition: 'all 0.2s ease',
+                      transform: isActive ? 'scale(1.08)' : 'scale(1)',
+                    }}
+                  />
+                </div>
+                {/* Label */}
+                <span 
+                  className="text-[11px] leading-none text-center relative"
+                  style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, SF Pro Text, sans-serif',
+                    fontWeight: isActive ? 600 : 400,
+                    color: isActive ? '#007AFF' : '#8E8E93',
+                    letterSpacing: '-0.02em',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  {tab.label}
+                </span>
+              </>
+            )}
           </button>
         );
       })}
@@ -178,17 +209,22 @@ export const MobileHeader = ({ title, leftAction, rightAction }) => {
         {leftAction}
       </div>
       
-      {/* Title */}
-      <h1 
-        className="font-semibold text-center flex-1 truncate px-2"
-        style={{ 
-          color: 'var(--ios-label-primary)',
-          fontSize: '17px',
-          letterSpacing: '-0.4px',
-        }}
-      >
-        {title}
-      </h1>
+      {/* Title — caller can pass an empty/falsy title to suppress the centred
+          heading (e.g. on Home where leftAction already shows the brand). */}
+      {title ? (
+        <h1 
+          className="font-semibold text-center flex-1 truncate px-2"
+          style={{ 
+            color: 'var(--ios-label-primary)',
+            fontSize: '17px',
+            letterSpacing: '-0.4px',
+          }}
+        >
+          {title}
+        </h1>
+      ) : (
+        <div className="flex-1" />
+      )}
       
       {/* Right Action */}
       <div className="flex-shrink-0 pr-3 flex items-center min-w-0">
@@ -223,7 +259,14 @@ export const MobileContainer = ({ children, hasTabBar = true, hasHeader = true }
         backgroundColor: 'var(--ios-bg-grouped-primary)'
       }}
     >
-      <div className="h-full overflow-y-auto overscroll-contain">
+      <div 
+        className="h-full overflow-y-auto"
+        style={{
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain',
+          position: 'relative'
+        }}
+      >
         {children}
       </div>
     </div>
